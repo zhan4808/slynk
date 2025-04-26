@@ -1,0 +1,20 @@
+{
+    "aaron_judge": {
+        "image_path": "db\\images\\aaron_judge.jpg",
+        "audio_files": "[WindowsPath('db/audio/aaron_judge_0.mp3'), WindowsPath('db/audio/aaron_judge_1.mp3'), WindowsPath('db/audio/aaron_judge_2.mp3'), WindowsPath('db/audio/aaron_judge_3.mp3'), WindowsPath('db/audio/aaron_judge_4.mp3'), WindowsPath('db/audio/aaron_judge_5.mp3'), WindowsPath('db/audio/aaron_judge_6.mp3'), WindowsPath('db/audio/aaron_judge_7.mp3'), WindowsPath('db/audio/aaron_judge_8.mp3'), WindowsPath('db/audio/aaron_judge_9.mp3')]",
+        "clip_lengths": "[7, 6, 6, 11, 10, 12, 8, 18, 8, 9]",
+        "video_paths": "['db/videos/aaron_judge_0.mp4', 'db/videos/aaron_judge_1.mp4', 'db/videos/aaron_judge_2.mp4', 'db/videos/aaron_judge_3.mp4', 'db/videos/aaron_judge_4.mp4', 'db/videos/aaron_judge_5.mp4', 'db/videos/aaron_judge_6.mp4', 'db/videos/aaron_judge_7.mp4', 'db/videos/aaron_judge_8.mp4', 'db/videos/aaron_judge_9.mp4']"
+    },
+    "minecraft_movie": {
+        "image_path": "db\\images\\minecraft_movie.jpg",
+        "audio_files": "[WindowsPath('db/audio/minecraft_movie_0.mp3'), WindowsPath('db/audio/minecraft_movie_1.mp3'), WindowsPath('db/audio/minecraft_movie_10.mp3'), WindowsPath('db/audio/minecraft_movie_2.mp3'), WindowsPath('db/audio/minecraft_movie_3.mp3'), WindowsPath('db/audio/minecraft_movie_4.mp3'), WindowsPath('db/audio/minecraft_movie_5.mp3'), WindowsPath('db/audio/minecraft_movie_6.mp3'), WindowsPath('db/audio/minecraft_movie_7.mp3'), WindowsPath('db/audio/minecraft_movie_8.mp3'), WindowsPath('db/audio/minecraft_movie_9.mp3')]",
+        "clip_lengths": "[8, 6, 10, 9, 4, 3, 6, 4, 4, 6, 7]",
+        "video_paths": "['db/videos/minecraft_movie_0.mp4', 'db/videos/minecraft_movie_1.mp4', 'db/videos/minecraft_movie_2.mp4', 'db/videos/minecraft_movie_3.mp4', 'db/videos/minecraft_movie_4.mp4', 'db/videos/minecraft_movie_5.mp4', 'db/videos/minecraft_movie_6.mp4', 'db/videos/minecraft_movie_7.mp4', 'db/videos/minecraft_movie_8.mp4', 'db/videos/minecraft_movie_9.mp4', 'db/videos/minecraft_movie_10.mp4']"
+    },
+    "snow_white": {
+        "image_path": "db\\images\\snow_white.jpg",
+        "audio_files": "[WindowsPath('db/audio/snow_white_0.mp3'), WindowsPath('db/audio/snow_white_1.mp3'), WindowsPath('db/audio/snow_white_10.mp3'), WindowsPath('db/audio/snow_white_2.mp3'), WindowsPath('db/audio/snow_white_3.mp3'), WindowsPath('db/audio/snow_white_4.mp3'), WindowsPath('db/audio/snow_white_5.mp3'), WindowsPath('db/audio/snow_white_6.mp3'), WindowsPath('db/audio/snow_white_7.mp3'), WindowsPath('db/audio/snow_white_8.mp3'), WindowsPath('db/audio/snow_white_9.mp3')]",
+        "clip_lengths": "[13, 6, 6, 5, 5, 9, 3, 3, 4, 10, 3]",
+        "video_paths": "['db/videos/snow_white_0.mp4', 'db/videos/snow_white_1.mp4', 'db/videos/snow_white_2.mp4', 'db/videos/snow_white_3.mp4', 'db/videos/snow_white_4.mp4', 'db/videos/snow_white_5.mp4', 'db/videos/snow_white_6.mp4', 'db/videos/snow_white_7.mp4', 'db/videos/snow_white_8.mp4', 'db/videos/snow_white_9.mp4', 'db/videos/snow_white_10.mp4']"
+    }
+}
