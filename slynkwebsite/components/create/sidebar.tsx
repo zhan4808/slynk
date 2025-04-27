@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import {
   Sidebar,
   SidebarHeader,
@@ -12,51 +12,55 @@ import {
 } from "@/components/ui/sidebar"
 import { Logo } from "@/components/logo"
 import { Button } from "@/components/ui/button"
-import { PlusCircle, Search, User, Loader2 } from "lucide-react"
+import { PlusCircle, Search, User } from "lucide-react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
-import { useSession } from "next-auth/react"
 
 interface AIPersona {
   id: string
   name: string
-  createdAt: string
+  dateCreated: Date
 }
 
 export function CreateSidebar() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [personas, setPersonas] = useState<AIPersona[]>([])
-  const [loading, setLoading] = useState(true)
-  const { data: session } = useSession()
 
-  useEffect(() => {
-    // Only fetch personas if user is authenticated
-    if (session?.user) {
-      fetchPersonas()
-    }
-  }, [session])
-
-  // Function to fetch personas from the API
-  const fetchPersonas = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch("/api/personas")
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch personas: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      setPersonas(data)
-    } catch (error) {
-      console.error("Error fetching personas:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
+  // Mock data for AI personas
+  const recentPersonas: AIPersona[] = [
+    {
+      id: "1",
+      name: "Tina - Customer Service",
+      dateCreated: new Date("2023-04-15"),
+    },
+    {
+      id: "2",
+      name: "Max - Product Specialist",
+      dateCreated: new Date("2023-05-22"),
+    },
+    {
+      id: "3",
+      name: "Sarah - Fashion Advisor",
+      dateCreated: new Date("2023-06-10"),
+    },
+    {
+      id: "4",
+      name: "Dr. Michael - Health Advisor",
+      dateCreated: new Date("2023-07-05"),
+    },
+    {
+      id: "5",
+      name: "Tech Support Assistant",
+      dateCreated: new Date("2023-08-12"),
+    },
+    {
+      id: "6",
+      name: "Sales Representative",
+      dateCreated: new Date("2023-09-18"),
+    },
+  ]
 
   // Filter personas based on search query
-  const filteredPersonas = personas.filter((persona) =>
+  const filteredPersonas = recentPersonas.filter((persona) =>
     persona.name.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
@@ -65,14 +69,13 @@ export function CreateSidebar() {
       <SidebarHeader className="p-3">
         <div className="flex items-center justify-between mb-3">
           <Logo />
-          <Link href="/dashboard">
+          <Link href="/">
             <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full p-0">
               <User size={16} />
               <span className="sr-only">Profile</span>
             </Button>
           </Link>
         </div>
-        <Link href="/create">
         <Button
           className="w-full gap-2 bg-gradient-to-r from-pink-400 to-pink-600 text-white hover:opacity-90 rounded-full"
           size="sm"
@@ -80,7 +83,6 @@ export function CreateSidebar() {
           <PlusCircle size={16} />
           <span>New persona</span>
         </Button>
-        </Link>
         <div className="relative mt-3">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
@@ -97,21 +99,12 @@ export function CreateSidebar() {
           <h3 className="text-xs font-medium text-gray-500 mb-2">Recent Personas</h3>
         </div>
         <SidebarMenu>
-          {loading ? (
-            <div className="flex justify-center py-4">
-              <Loader2 className="h-5 w-5 animate-spin text-pink-500" />
-            </div>
-          ) : filteredPersonas.length > 0 ? (
+          {filteredPersonas.length > 0 ? (
             filteredPersonas.map((persona) => (
               <SidebarMenuItem key={persona.id}>
-                <Link href={`/edit/${persona.id}`} className="w-full">
-                  <SidebarMenuButton className="rounded-md text-sm py-1.5 px-3 h-auto w-full text-left">
+                <SidebarMenuButton className="rounded-md text-sm py-1.5 px-3 h-auto">
                   <span className="truncate">{persona.name}</span>
-                    <span className="mt-1 block text-xs text-gray-500">
-                      {new Date(persona.createdAt).toLocaleDateString()}
-                    </span>
                 </SidebarMenuButton>
-                </Link>
               </SidebarMenuItem>
             ))
           ) : (
@@ -123,15 +116,11 @@ export function CreateSidebar() {
       <SidebarFooter className="p-3 border-t border-gray-200">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-medium text-sm">
-            {session?.user?.name?.[0] || "U"}
+            VX
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-700 truncate">
-              {session?.user?.name || "User"}
-            </p>
-            <p className="text-xs text-gray-500">
-              {session?.user?.email || ""}
-            </p>
+            <p className="text-sm font-medium text-gray-700 truncate">Voxen AI</p>
+            <p className="text-xs text-gray-500">Professional</p>
           </div>
         </div>
       </SidebarFooter>

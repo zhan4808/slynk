@@ -14,6 +14,7 @@ import { ParallaxBackground } from "@/components/parallax-background"
 //import { AnimatedBackground } from "@/components/animated-background"
 import { AnimatedScrollIndicator } from "@/components/animated-scroll-indicator"
 import { SignInPopup } from "@/components/sign-in-popup"
+import { PersistentSignInButton } from "@/components/persistent-sign-in-button"
 import { AnimatedGradientBackground } from "@/components/animated-gradient-background"
 import { ScrollingInfographic } from "@/components/scrolling-infographic"
 import { AnimatedStats } from "@/components/animated-stats"
@@ -26,7 +27,7 @@ export default function Home() {
       <AnimatedGradientBackground />
       {/*<AnimatedBackground />*/}
       <ParallaxBackground />
-      <TopHeader />
+      <TopHeader onSignInClick={() => setIsSignInOpen(true)} />
       <FloatingNavbar />
       <HeroSection />
       <AnimatedScrollIndicator />
@@ -38,6 +39,7 @@ export default function Home() {
       <ValuesSection />
       <ContactSection />
       <Footer />
+      <PersistentSignInButton onSignInClick={() => setIsSignInOpen(true)} />
       <SignInPopup isOpen={isSignInOpen} onClose={() => setIsSignInOpen(false)} />
     </main>
   )

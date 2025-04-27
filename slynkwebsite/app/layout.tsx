@@ -2,19 +2,14 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import type React from "react"
-import { Providers } from "./providers"
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata = {
-  title: "Slynk",
-  description: "Reinventing Ads with Live Interaction",
-  icons: {
-    icon: [
-      { url: "/slynkicon.svg", type: "image/x-icon" },
-    ],
-  },
-};
+export const metadata: Metadata = {
+  title: "Voxen - Interactive Virtual Spokespersons",
+  description: "Transform static advertisements into engaging, conversational experiences with AI-driven avatars",
+    generator: 'v0.dev'
+}
 
 export default function RootLayout({
   children,
@@ -23,9 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-white text-gray-900 antialiased`}>
-        <Providers>{children}</Providers>
-      </body>
+      <body className={`${inter.className} bg-white text-gray-900 antialiased`}>{children}</body>
     </html>
   )
 }
