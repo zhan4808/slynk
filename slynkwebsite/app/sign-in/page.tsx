@@ -7,13 +7,13 @@ function SignInPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl")
-
+  
   useEffect(() => {
     // Redirect to /signin, preserving any callbackUrl
-    const redirectUrl = callbackUrl
+    const redirectUrl = callbackUrl 
       ? `/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`
       : "/signin"
-
+    
     router.push(redirectUrl)
   }, [router, callbackUrl])
 
