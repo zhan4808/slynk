@@ -10,6 +10,7 @@ import { AnimatedText } from "@/components/animated-text"
 import { toast } from "@/components/ui/use-toast"
 import { AnimatedEmojiBackground } from "@/components/animated-emoji-background"
 import { motion, AnimatePresence } from "framer-motion"
+import { AnimatedLogo } from "@/components/animated-logo"
 
 export function HeroSection() {
   const [email, setEmail] = useState("")
@@ -96,6 +97,9 @@ export function HeroSection() {
               <br />
               with AI personas
             </h1>
+            <div className="flex justify-center mt-6 mb-6">
+              <AnimatedLogo isAnimating={true} />
+            </div>
           </motion.div>
           
           <motion.p 

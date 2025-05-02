@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2, Plus, Edit, MoreVertical, Trash2, Play, LogOut, Home, Users, MessageSquare, Pencil } from "lucide-react"
+import { Loader2, Plus, Edit, MoreVertical, Trash2, Play, LogOut, Home, Users, MessageSquare, Pencil, CheckCircle } from "lucide-react"
 import { motion } from "framer-motion"
 import { 
   DropdownMenu,
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { toast } from "@/components/ui/use-toast"
 import { Logo } from "@/components/logo"
+import { AnimatedLogo } from "@/components/animated-logo"
 import { DynamicNavbar } from "@/components/dynamic-navbar"
 import { CircularSpinner } from "@/components/ui/circular-spinner"
 
@@ -168,18 +169,35 @@ export default function DashboardPage() {
               <p className="text-gray-500 mt-1">Manage your digital personas</p>
             </div>
 
-            <motion.div
-              whileHover="hover"
-              whileTap="tap"
-              variants={buttonVariants}
-            >
-              <Link href="/create">
-                <Button className="gap-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 border-0 text-white shadow-md hover:shadow-lg hover:from-pink-600 hover:to-purple-700 transition-all">
-                  <Plus className="h-4 w-4" />
-                  Create New Persona
+            <div className="flex items-center gap-3">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <Button 
+                  variant="outline" 
+                  className="gap-2 rounded-full border border-gray-300 bg-white hover:bg-pink-50 hover:border-pink-200 hover:text-pink-600 shadow-sm px-5"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
                 </Button>
-              </Link>
-            </motion.div>
+              </motion.div>
+              
+              <motion.div
+                whileHover="hover"
+                whileTap="tap"
+                variants={buttonVariants}
+              >
+                <Link href="/create">
+                  <Button className="gap-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 border-0 text-white shadow-md hover:shadow-lg hover:from-pink-600 hover:to-purple-700 transition-all">
+                    <Plus className="h-4 w-4" />
+                    Create New Persona
+                  </Button>
+                </Link>
+              </motion.div>
+            </div>
           </div>
 
           {personas.length === 0 ? (
@@ -323,14 +341,74 @@ export default function DashboardPage() {
       </main>
       
       <motion.footer 
-        className="py-8 px-4 mt-12 border-t border-gray-100 bg-white/80 backdrop-blur-sm"
+        className="py-10 px-4 mt-12 border-t border-gray-100 bg-white/90 backdrop-blur-sm"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7, type: "spring", stiffness: 100 }}
       >
-        <div className="container mx-auto max-w-6xl text-center text-gray-500 text-sm">
-          <p>Powered by <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-pink-600 font-medium">Slynk AI</span> &copy; {new Date().getFullYear()}</p>
-          <p className="mt-1 text-xs text-gray-400">Create, deploy, and analyze AI personas for your business</p>
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Left side */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <AnimatedLogo isAnimating={true} />
+                <div className="h-8 w-px bg-gray-200"></div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span className="text-xs text-green-600 font-medium">All services online</span>
+                </div>
+              </div>
+              
+              <p className="text-gray-600 text-sm max-w-md">
+                Slynk is an AI-powered assistant built for creating engaging
+                digital personas for marketing, customer service, and more.
+              </p>
+              
+              <p className="text-xs text-gray-500">
+                © 2025 slynk. All rights reserved.
+              </p>
+            </div>
+            
+            {/* Right side */}
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <h4 className="font-medium text-gray-800 mb-2">Legal</h4>
+                <ul className="space-y-2">
+                  <li>
+                    <Link href="#" className="text-sm text-gray-500 hover:text-pink-600 transition-colors">
+                      Terms of Service
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="text-sm text-gray-500 hover:text-pink-600 transition-colors">
+                      Privacy Policy
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="space-y-4">
+                <h4 className="font-medium text-gray-800 mb-2">Links</h4>
+                <ul className="space-y-2">
+                  <li>
+                    <Link href="#" className="text-sm text-gray-500 hover:text-pink-600 transition-colors">
+                      Help Center
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="text-sm text-gray-500 hover:text-pink-600 transition-colors">
+                      Get Started
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/signin" className="text-sm text-gray-500 hover:text-pink-600 transition-colors">
+                      Log in to Slynk
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </motion.footer>
     </div>

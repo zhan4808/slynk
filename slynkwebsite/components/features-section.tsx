@@ -1,6 +1,6 @@
 "use client"
 
-import { Upload, Users, Eye, BarChart2, ArrowRight } from "lucide-react"
+import { Upload, Users, Eye, BarChart2, ArrowRight, ZapIcon, Layers, Globe } from "lucide-react"
 import { useInView } from "react-intersection-observer"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -22,126 +22,115 @@ export function FeaturesSection() {
 
   const features = [
     {
-      title: "Seamless Media Integration",
-      description: "Upload once, deploy everywhere. Our platform handles all the technical complexities.",
-      icon: Upload,
-      color: "text-blue-500",
-      gradient: "from-blue-500/20 to-blue-500/5",
-      align: "left",
-    },
-    {
-      title: "AI-Generated Personas",
-      description:
-        "Our advanced AI creates realistic, emotionally intelligent virtual spokespersons tailored to your brand voice.",
-      icon: Users,
-      color: "text-purple-500",
-      gradient: "from-purple-500/20 to-purple-500/5",
-      align: "right",
-    },
-    {
-      title: "Interactive Experiences",
-      description: "Transform passive content into dynamic conversations that adapt to user behavior in real-time.",
+      title: "Live Interaction",
+      description: "Engage your audience with real-time, responsive AI personas that adapt to user behavior.",
       icon: Eye,
+      color: "text-indigo-500",
+      gradient: "from-indigo-500/20 to-indigo-500/5",
+      delay: 0.1
+    },
+    {
+      title: "Custom Ad Generation",
+      description: "Create personalized, dynamic advertisements that speak directly to your target audience.",
+      icon: Layers,
+      color: "text-pink-500",
+      gradient: "from-pink-500/20 to-pink-500/5",
+      delay: 0.2
+    },
+    {
+      title: "Deploy Everywhere",
+      description: "Upload once, deploy across platforms. Seamlessly integrate with websites, social media, and more.",
+      icon: Globe,
       color: "text-teal-500",
       gradient: "from-teal-500/20 to-teal-500/5",
-      align: "left",
-    },
-    {
-      title: "Engagement Analytics",
-      description:
-        "Gain deep insights into how users interact with your virtual personas to continuously optimize performance.",
-      icon: BarChart2,
-      color: "text-amber-500",
-      gradient: "from-amber-500/20 to-amber-500/5",
-      align: "right",
-    },
+      delay: 0.3
+    }
   ]
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  }
-
   return (
-    <section id="paradigm" className="py-12 px-6 bg-gray-50 relative overflow-hidden">
+    <section id="features" className="py-24 px-6 bg-gray-50 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50" />
 
-      <div className="max-w-4xl mx-auto relative z-10" ref={ref}>
+      {/* Decorative elements */}
+      <motion.div 
+        className="absolute w-64 h-64 rounded-full bg-pink-200 opacity-10 blur-3xl -top-20 -left-20"
+        animate={{ 
+          scale: [1, 1.2, 1],
+          opacity: [0.1, 0.15, 0.1],
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      
+      <motion.div 
+        className="absolute w-72 h-72 rounded-full bg-indigo-200 opacity-10 blur-3xl -bottom-20 -right-20"
+        animate={{ 
+          scale: [1, 1.3, 1],
+          opacity: [0.1, 0.15, 0.1],
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+      />
+
+      <div className="max-w-6xl mx-auto relative z-10" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-pink-600">
-            A new paradigm for digital interaction
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900">
+            Transform Your <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-indigo-600">Digital Presence</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            Move beyond static content with AI-powered personas that create meaningful connections with your audience.
+            Our platform brings your content to life through AI-powered experiences
           </p>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={isVisible ? "visible" : "hidden"}
-          className="grid md:grid-cols-2 gap-4"
-        >
+        <div className="grid md:grid-cols-3 gap-6">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              variants={itemVariants}
-              className={`relative rounded-xl overflow-hidden bg-white shadow-md hover:shadow-lg transition-all duration-300 group widget`}
+              initial={{ opacity: 0, y: 30 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: feature.delay }}
+              whileHover={{ 
+                y: -8,
+                boxShadow: "0 20px 60px -15px rgba(0,0,0,0.1)",
+                transition: { duration: 0.3 }
+              }}
+              className="relative rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300"
             >
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-30 group-hover:opacity-50 transition-opacity duration-300`}
-              />
-
-              <div
-                className={`relative z-10 p-5 flex ${feature.align === "left" ? "flex-row" : "flex-row-reverse"} items-start gap-4`}
-              >
-                <div className="flex-shrink-0">
-                  <AnimatedIcon icon={feature.icon} color={feature.color} size={28} />
+              <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${feature.gradient.replace('/20', '/60').replace('/5', '/40')}`} />
+              
+              <div className="p-8">
+                <div className="mb-6 relative">
+                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${feature.gradient.replace('/20', '/10').replace('/5', '/5')} ${feature.color}`}>
+                    <feature.icon size={24} />
+                  </div>
+                  <motion.div 
+                    className="absolute inset-0 rounded-xl opacity-0"
+                    whileHover={{ opacity: 0.4, scale: 1.3 }}
+                    transition={{ duration: 0.3 }}
+                  />
                 </div>
 
-                <div className={`flex-grow ${feature.align === "left" ? "text-left" : "text-right"}`}>
-                  <h3 className="text-lg font-semibold mb-1.5 text-gray-900">{feature.title}</h3>
-                  <p className="text-gray-600 text-sm mb-3">{feature.description}</p>
-
-                  <motion.div
-                    className={`flex items-center gap-1.5 text-xs font-medium ${feature.color} ${feature.align === "left" ? "" : "justify-end"}`}
-                    whileHover={{ x: feature.align === "left" ? 5 : -5 }}
-                    transition={{ type: "spring", stiffness: 400 }}
-                  >
-                    {feature.align === "right" && <ArrowRight size={14} />}
-                    <Link href="/customers" className="flex items-center gap-1.5">
-                      <span>Learn more</span>
-                      {feature.align === "left" && <ArrowRight size={14} />}
-                    </Link>
-                    {feature.align === "right" && <ArrowRight size={14} />}
-                  </motion.div>
-                </div>
+                <h3 className="text-xl font-bold mb-3 text-gray-900">{feature.title}</h3>
+                
+                <p className="text-gray-600 mb-5">{feature.description}</p>
+                
+                <motion.div
+                  className={`flex items-center gap-1 text-sm font-medium ${feature.color}`}
+                  whileHover={{ x: 5 }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                >
+                  <Link href="/customers" className="flex items-center gap-1.5">
+                    <span>Learn more</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </motion.div>
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   )

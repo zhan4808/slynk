@@ -96,28 +96,33 @@ export function DynamicNavbar() {
     <>
       {/* Top spread-out navigation when at top of page */}
       <motion.header 
-        className="fixed top-0 left-0 w-full z-50 px-6 py-6 pointer-events-auto"
-        style={{ opacity: 1 - navState }}
+        className="fixed top-0 left-0 w-full z-50 px-6 py-6"
+        style={{ 
+          opacity: 1 - navState,
+          pointerEvents: navState > 0.9 ? "none" : "auto" 
+        }}
         variants={navContainerVariants}
         initial="collapsed"
         animate={navState < 0.9 ? "expanded" : "collapsed"}
         key="spread-navbar"
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between relative">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo on the left */}
           <motion.div
             variants={navItemVariants}
-            className="transform-gpu z-10 pointer-events-auto"
+            className="z-20"
           >
-            <AnimatedLogo />
+            <div className="cursor-pointer" onClick={() => navigateTo("/")}>
+              <AnimatedLogo />
+            </div>
           </motion.div>
           
-          {/* Nav Links in center on the same line */}
+          {/* Nav Links in center */}
           <motion.div 
-            className="absolute left-0 right-0 flex justify-center items-center h-full pointer-events-none"
             variants={navItemVariants}
+            className="z-10 absolute left-0 right-0 mx-auto flex justify-center"
           >
-            <nav className="flex items-center space-x-8 pointer-events-auto">
+            <nav className="flex items-center space-x-8">
               {NAV_ITEMS.map((item, index) => (
                 <WideNavButton 
                   key={item.label}
@@ -132,7 +137,7 @@ export function DynamicNavbar() {
           {/* Create Ad Button on the right */}
           <motion.div
             variants={navItemVariants}
-            className="transform-gpu z-10 pointer-events-auto"
+            className="z-20"
           >
             <Button
               onClick={() => navigateTo("/create")}
@@ -151,7 +156,7 @@ export function DynamicNavbar() {
       <AnimatePresence>
         {shouldShowPill && (
           <motion.div 
-            className="fixed top-6 left-0 w-full z-50 px-4 flex justify-center pointer-events-auto"
+            className="fixed top-6 left-0 w-full z-50 px-4 flex justify-center"
             style={{ opacity: navState }}
             variants={pillVariants}
             initial="hidden"
@@ -168,13 +173,14 @@ export function DynamicNavbar() {
             >
               {/* Logo */}
               <motion.div
-                className="transform-gpu pointer-events-auto"
+                className="cursor-pointer"
+                onClick={() => navigateTo("/")}
               >
                 <AnimatedLogo isAnimating={true} />
               </motion.div>
               
               {/* Nav Links */}
-              <nav className="flex items-center space-x-6 mx-4 pointer-events-auto">
+              <nav className="flex items-center space-x-6 mx-4">
                 {NAV_ITEMS.map((item, index) => (
                   <PillNavButton
                     key={item.label}
@@ -186,9 +192,7 @@ export function DynamicNavbar() {
               </nav>
               
               {/* Create Ad Button */}
-              <motion.div
-                className="pointer-events-auto"
-              >
+              <motion.div>
                 <Button
                   onClick={() => navigateTo("/create")}
                   className="text-base font-medium bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:opacity-90 rounded-full px-5 py-2 h-auto shadow-md hover:shadow-pink-400/20 hover:shadow-lg transition-all"
@@ -214,17 +218,10 @@ function WideNavButton({ label, href, index }: { label: string, href: string, in
   return (
     <motion.button
       onClick={() => router.push(href)}
-      className="relative px-4 py-2 text-base font-medium text-gray-800 transition-all"
-      whileHover={{ scale: 1.1 }}
+      className="relative px-4 py-2 text-base font-medium text-gray-800 transition-all rounded-full hover:bg-gray-100/70"
       whileTap={{ scale: 0.95 }}
     >
       {label}
-      <motion.div
-        className="absolute bottom-0 left-1 right-1 h-0.5 bg-gray-800 origin-left"
-        initial={{ scaleX: 0 }}
-        whileHover={{ scaleX: 1 }}
-        transition={{ duration: 0.3 }}
-      />
     </motion.button>
   )
 }
@@ -236,13 +233,12 @@ function PillNavButton({ label, href, index }: { label: string, href: string, in
   return (
     <motion.button
       onClick={() => router.push(href)}
-      className="relative px-4 py-2 text-base font-medium text-gray-800 transition-all rounded-full hover:bg-gray-100"
+      className="relative px-4 py-2 text-base font-medium text-gray-800 transition-all rounded-full hover:bg-gray-100/80"
       initial={{ opacity: 0 }}
       animate={{ 
         opacity: 1,
         transition: { delay: 0.1 + (index * 0.05), duration: 0.3 }
       }}
-      whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
       {label}

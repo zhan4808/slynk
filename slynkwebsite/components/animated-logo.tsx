@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
 
 interface AnimatedLogoProps {
   isAnimating?: boolean
@@ -13,12 +12,14 @@ export function AnimatedLogo({ isAnimating = false }: AnimatedLogoProps) {
   const shouldAnimate = isHovered || isAnimating
   
   return (
-    <Link href="/" className="inline-block">
+    <div className="inline-block">
       <motion.div
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        whileHover={{ scale: 1.05 }}
+        whileHover={{ 
+          backgroundColor: "rgba(243, 244, 246, 0.8)" 
+        }}
         whileTap={{ scale: 0.95 }}
       >
         {/* Logo mark */}
@@ -74,28 +75,11 @@ export function AnimatedLogo({ isAnimating = false }: AnimatedLogoProps) {
         </motion.div>
         
         {/* Logo text */}
-        <motion.div 
-          className="text-xl font-bold text-gray-900"
-          animate={shouldAnimate ? { color: "#db2777" } : {}}
-          transition={{ duration: 0.3 }}
-        >
+        <div className="text-xl font-bold text-gray-900">
           slynk
-          <motion.span
-            className="text-pink-500 ml-[1px]"
-            animate={shouldAnimate ? {
-              opacity: [1, 0, 1],
-              y: [0, -1, 0]
-            } : {}}
-            transition={{
-              duration: 0.5,
-              repeat: shouldAnimate ? Infinity : 0,
-              ease: "easeInOut"
-            }}
-          >
-            .
-          </motion.span>
-        </motion.div>
+          <span className="text-pink-500 ml-[1px]">.</span>
+        </div>
       </motion.div>
-    </Link>
+    </div>
   )
 } 
