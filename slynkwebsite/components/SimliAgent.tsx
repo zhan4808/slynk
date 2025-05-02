@@ -7,6 +7,27 @@ import { cn } from "@/lib/utils";
 import { DEFAULT_FACE_ID, startE2ESession } from "@/lib/simli-api";
 import { Mic, MicOff, Send, Volume2, VolumeX, RefreshCw } from "lucide-react";
 
+// Add type definition for window.audioContext
+declare global {
+  interface Window {
+    audioContext?: AudioContext;
+  }
+}
+
+// Browser/Device detection for audio handling
+const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator?.userAgent || '');
+};
+
+const isIOS = () => {
+  return /iPad|iPhone|iPod/.test(navigator?.userAgent || '') || 
+    (navigator?.platform === 'MacIntel' && navigator?.maxTouchPoints > 1);
+};
+
+const isSafari = () => {
+  return /^((?!chrome|android).)*safari/i.test(navigator?.userAgent || '');
+};
+
 // Global reference to prevent duplicate instances
 let globalCallObject: DailyCall | null = null;
 
@@ -238,6 +259,7 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const audioIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const micStreamRef = useRef<MediaStream | null>(null);
   
   // Speech recognition refs
   const recognitionRef = useRef<any>(null);
@@ -255,6 +277,14 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
   
   // New pending transcript ref to accumulate potential text
   const pendingTranscriptRef = useRef<string>("");
+  
+  // Track device type for UI adjustments
+  const [isMobileDevice, setIsMobileDevice] = useState<boolean>(false);
+  
+  // Check device type on component mount
+  useEffect(() => {
+    setIsMobileDevice(isMobile());
+  }, []);
   
   // Define a global filter patterns list for consistency
   const commandFilterPatterns = [
@@ -300,10 +330,19 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
           const source = newAudioContext.createBufferSource();
           source.buffer = buffer;
           source.connect(newAudioContext.destination);
-          source.start();
           
-          audioElementRef.current = audioEl;
-          addDebugInfo("Audio element created and initialized");
+          // On iOS/Safari, audio playback must be triggered by user interaction
+          if (isIOS() || isSafari()) {
+            addDebugInfo("iOS/Safari detected, deferring audio start until user interaction");
+            
+            // We'll start the source later when user interacts
+            audioElementRef.current = audioEl;
+          } else {
+            // Start immediately on other browsers
+            source.start();
+            audioElementRef.current = audioEl;
+            addDebugInfo("Audio element created and initialized");
+          }
         }
         
         // Resume audio context to allow audio playback
@@ -313,22 +352,25 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
           });
         }
         
-        // Test audio with a quick beep to validate audio setup
-        const oscillator = newAudioContext.createOscillator();
-        const gainNode = newAudioContext.createGain();
-        
-        oscillator.type = "sine";
-        oscillator.frequency.value = 523.25; // C5
-        gainNode.gain.value = 0.1; // Low volume
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(newAudioContext.destination);
-        
-        oscillator.start();
-        setTimeout(() => {
-          oscillator.stop();
-          addDebugInfo("Audio test beep played");
-        }, 200);
+        // Only play test tone on desktop - can be disruptive on mobile
+        if (!isMobile()) {
+          // Test audio with a quick beep to validate audio setup
+          const oscillator = newAudioContext.createOscillator();
+          const gainNode = newAudioContext.createGain();
+          
+          oscillator.type = "sine";
+          oscillator.frequency.value = 523.25; // C5
+          gainNode.gain.value = 0.1; // Low volume
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(newAudioContext.destination);
+          
+          oscillator.start();
+          setTimeout(() => {
+            oscillator.stop();
+            addDebugInfo("Audio test beep played");
+          }, 200);
+        }
         
       } catch (err) {
         console.error("Error initializing audio:", err);
@@ -376,6 +418,14 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
       if (audioIntervalRef.current) {
         clearInterval(audioIntervalRef.current);
         audioIntervalRef.current = null;
+      }
+      
+      // Stop microphone stream if active
+      if (micStreamRef.current) {
+        micStreamRef.current.getTracks().forEach(track => {
+          track.stop();
+        });
+        micStreamRef.current = null;
       }
       
       // Clean up speech recognition
@@ -908,6 +958,29 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
     // Initialize audio on user interaction
     initAudio();
     
+    // For mobile devices, explicitly request microphone permission first
+    if (isMobile()) {
+      addDebugInfo("Mobile device detected, explicitly requesting microphone permissions");
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        addDebugInfo("Microphone permission granted on mobile");
+        
+        // Keep the stream active to maintain permissions
+        micStreamRef.current = stream;
+        
+        // On iOS/Safari we need to make sure audio context is running
+        if ((isIOS() || isSafari()) && audioContext && audioContext.state === 'suspended') {
+          await audioContext.resume();
+          addDebugInfo("Audio context resumed on iOS/Safari");
+        }
+      } catch (err) {
+        addDebugInfo(`Error getting microphone permission: ${err}`);
+        setError("Microphone permission is required for conversation. Please allow microphone access and try again.");
+        setIsLoading(false);
+        return;
+      }
+    }
+    
     addDebugInfo(`Starting Simli session for persona: ${personaId}`);
 
     try {
@@ -968,6 +1041,14 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
             autoGainControl: true,
             echoCancellation: true,
             noiseSuppression: true,
+            // For mobile we need different settings, but avoid TypeScript issues
+            // by using simpler configuration acceptable to Daily.js
+            ...(isMobile() ? {
+              // Mobile-friendly settings
+              autoGainControl: { ideal: true },
+              echoCancellation: { ideal: true },
+              noiseSuppression: { ideal: true }
+            } : {})
           }
         }
       });
@@ -1319,6 +1400,27 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
     if (callObject) {
       const currentAudioState = callObject.localAudio();
       addDebugInfo(`Toggling microphone: ${currentAudioState ? "muting" : "unmuting"}`);
+      
+      if (!currentAudioState) {
+        // For mobile, make sure we have microphone permissions before unmuting
+        if (isMobile() && !micStreamRef.current) {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            micStreamRef.current = stream;
+            addDebugInfo("Obtained microphone permission for unmuting");
+            
+            // Make sure audio context is running
+            if (audioContext && audioContext.state === 'suspended') {
+              await audioContext.resume();
+              addDebugInfo("AudioContext resumed when unmuting on mobile");
+            }
+          } catch (err) {
+            addDebugInfo(`Error getting microphone permission: ${err}`);
+            // Show error but don't exit - the Daily call might still have access
+          }
+        }
+      }
+      
       callObject.setLocalAudio(!currentAudioState);
       setIsMuted(currentAudioState);
       
@@ -1724,6 +1826,19 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
           <p className="text-gray-500 text-center mb-8 max-w-md">
             Begin talking with {personaData.name} - ask questions, get advice, or just chat.
           </p>
+          
+          {isMobileDevice && (
+            <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 max-w-md">
+              <p className="text-sm text-blue-700 mb-2 font-medium">
+                <span className="mr-2">ℹ️</span> 
+                You'll need to allow microphone access to talk with {personaData.name}.
+              </p>
+              <p className="text-xs text-blue-600">
+                When prompted, please tap "Allow" to enable your microphone.
+              </p>
+            </div>
+          )}
+          
           <button
             onClick={handleJoinRoom}
             disabled={isLoading}
@@ -1752,22 +1867,20 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
           </button>
           
           {error && (
-            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm max-w-lg">
-              <p className="font-medium flex items-center mb-1">
-                <svg className="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="8" x2="12" y2="12"></line>
-                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-                Error
-              </p>
-              <p>{error}</p>
+            <div className="mt-6 bg-red-50 border border-red-100 rounded-lg p-4 max-w-md">
+              <p className="text-red-600 text-sm">{error}</p>
+              <button 
+                onClick={resetSimliSession} 
+                className="mt-2 text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-full transition-colors"
+              >
+                Try Again
+              </button>
             </div>
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-6">
-          {/* Avatar video section */}
+        <div className="grid md:grid-cols-7 grid-cols-1 gap-6">
+          {/* Video container */}
           <div className="md:col-span-4 bg-gradient-to-br from-white to-pink-50 p-5 rounded-xl shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-pink-700">{personaData.name}</h2>
@@ -1793,53 +1906,87 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
                 >
                   {isAudioMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
                 </button>
-
-                <button
-                  onClick={resetSimliSession}
-                  disabled={isLoading}
-                  className={cn(
-                    "flex items-center justify-center h-10 w-10 rounded-full transition-all duration-200",
-                    isLoading ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-pink-100 text-pink-700 hover:bg-pink-200"
-                  )}
-                  title="Reset Avatar Connection"
-                >
-                  <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />
-                </button>
               </div>
             </div>
             
-            {callObject && chatbotId && (
-              <div className="rounded-xl overflow-hidden shadow-md">
-                <RecoilRoot>
-                  <DailyProvider callObject={callObject}>
-                    <VideoComponent id={chatbotId} name={personaData.name} />
-                  </DailyProvider>
-                </RecoilRoot>
+            <RecoilRoot>
+              <DailyProvider callObject={callObject as DailyCall}>
+                <VideoComponent id={chatbotId || ""} name={personaData.name} />
+              </DailyProvider>
+            </RecoilRoot>
+            
+            {/* Mobile-specific controls */}
+            {isMobileDevice && (
+              <div className="mt-4 bg-gray-50 border border-gray-100 rounded-lg p-3">
+                <h3 className="text-sm font-medium text-gray-700 mb-2">Having trouble with audio?</h3>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={async () => {
+                      // Request microphone permission and initiate audio
+                      try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        micStreamRef.current = stream;
+                        
+                        // Resume audio context
+                        if (audioContext && audioContext.state === 'suspended') {
+                          await audioContext.resume();
+                        }
+                        
+                        // Unmute if currently muted
+                        if (isMuted && callObject) {
+                          callObject.setLocalAudio(true);
+                          setIsMuted(false);
+                        }
+                        
+                        addDebugInfo("Mobile mic permission obtained via button");
+                      } catch (err) {
+                        addDebugInfo(`Error getting microphone permission: ${err}`);
+                      }
+                    }}
+                    className="bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs px-3 py-2 rounded-lg flex items-center"
+                  >
+                    <Mic size={14} className="mr-1" /> Enable Microphone
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      initAudio();
+                      // Force enable audio for the chatbot
+                      if (callObject) {
+                        const participants = callObject.participants();
+                        const chatbot = Object.values(participants).find(
+                          (p: any) => p.user_name === 'Chatbot'
+                        );
+                        
+                        if (chatbot) {
+                          const audioTrack = chatbot.tracks?.audio;
+                          if (audioTrack && audioTrack.track) {
+                            audioTrack.track.enabled = true;
+                            
+                            // Try direct connection to audio element
+                            if (audioElementRef.current) {
+                              try {
+                                const stream = new MediaStream([audioTrack.track]);
+                                audioElementRef.current.srcObject = stream;
+                                audioElementRef.current.play()
+                                  .catch(e => addDebugInfo(`Mobile audio play failed: ${e.message}`));
+                              } catch (err) {
+                                addDebugInfo(`Mobile audio connection error: ${err}`);
+                              }
+                            }
+                          }
+                        }
+                      }
+                      
+                      setupAvatarAudioMonitoring();
+                    }}
+                    className="bg-green-100 hover:bg-green-200 text-green-700 text-xs px-3 py-2 rounded-lg flex items-center"
+                  >
+                    <Volume2 size={14} className="mr-1" /> Fix Audio
+                  </button>
+                </div>
               </div>
             )}
-            
-            {/* Add speech/transcription status indicator */}
-            <div className="flex justify-center mt-3 mb-2">
-              {isAvatarSpeaking ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-green-50 text-green-700 border border-green-200">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                  </span>
-                  Avatar speaking
-                </span>
-              ) : waitingForSimliResponse ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-blue-50 text-blue-700 border border-blue-200">
-                  <span className="animate-pulse inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                  Waiting for response...
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-gray-100 text-gray-700 border border-gray-200">
-                  <span className="inline-flex rounded-full h-2 w-2 bg-gray-400"></span>
-                  Not speaking
-                </span>
-              )}
-            </div>
             
             <div className="flex justify-center mt-5">
               <button
@@ -1849,48 +1996,50 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
                 End Conversation
               </button>
               
-              <button
-                onClick={() => {
-                  // Force initialize audio
-                  initAudio();
-                  
-                  // Force enable audio for the chatbot if possible
-                  if (callObject) {
-                    const participants = callObject.participants();
-                    const chatbot = Object.values(participants).find(
-                      (p: any) => p.user_name === 'Chatbot'
-                    );
+              {!isMobileDevice && (
+                <button
+                  onClick={() => {
+                    // Force initialize audio
+                    initAudio();
                     
-                    if (chatbot) {
-                      const audioTrack = chatbot.tracks?.audio;
-                      if (audioTrack && audioTrack.track) {
-                        audioTrack.track.enabled = true;
-                        addDebugInfo("Manually enabled audio track");
-                        
-                        // Try direct connection to audio element
-                        if (audioElementRef.current) {
-                          try {
-                            const stream = new MediaStream([audioTrack.track]);
-                            audioElementRef.current.srcObject = stream;
-                            audioElementRef.current.play()
-                              .then(() => addDebugInfo("Manual audio connection established"))
-                              .catch(e => addDebugInfo(`Manual audio play failed: ${e.message}`));
-                          } catch (err) {
-                            addDebugInfo(`Manual audio connection error: ${err}`);
+                    // Force enable audio for the chatbot if possible
+                    if (callObject) {
+                      const participants = callObject.participants();
+                      const chatbot = Object.values(participants).find(
+                        (p: any) => p.user_name === 'Chatbot'
+                      );
+                      
+                      if (chatbot) {
+                        const audioTrack = chatbot.tracks?.audio;
+                        if (audioTrack && audioTrack.track) {
+                          audioTrack.track.enabled = true;
+                          addDebugInfo("Manually enabled audio track");
+                          
+                          // Try direct connection to audio element
+                          if (audioElementRef.current) {
+                            try {
+                              const stream = new MediaStream([audioTrack.track]);
+                              audioElementRef.current.srcObject = stream;
+                              audioElementRef.current.play()
+                                .then(() => addDebugInfo("Manual audio connection established"))
+                                .catch(e => addDebugInfo(`Manual audio play failed: ${e.message}`));
+                            } catch (err) {
+                              addDebugInfo(`Manual audio connection error: ${err}`);
+                            }
                           }
                         }
                       }
                     }
-                  }
-                  
-                  // Setup audio monitoring again
-                  setupAvatarAudioMonitoring();
-                }}
-                className="flex items-center justify-center h-11 px-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-full transition-colors ml-3 shadow-sm hover:shadow"
-              >
-                <Volume2 size={16} className="mr-2" />
-                Fix Audio
-              </button>
+                    
+                    // Setup audio monitoring again
+                    setupAvatarAudioMonitoring();
+                  }}
+                  className="flex items-center justify-center h-11 px-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-full transition-colors ml-3 shadow-sm hover:shadow"
+                >
+                  <Volume2 size={16} className="mr-2" />
+                  Fix Audio
+                </button>
+              )}
             </div>
           </div>
           
@@ -1929,43 +2078,24 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
                   </div>
                 </div>
               ) : (
-                transcript.map((entry, idx) => (
-                  <div 
-                    key={idx} 
-                    className={cn(
-                      "p-4 rounded-xl max-w-[90%] shadow-sm transition-all duration-200 animate-fadeIn",
-                      entry.speaker === 'You' 
-                        ? "bg-gradient-to-r from-pink-100 to-pink-50 text-gray-800 ml-auto rounded-br-none border-r-2 border-pink-200" 
-                        : "bg-white border border-gray-200 mr-auto rounded-bl-none"
-                    )}
-                  >
-                    <p className={cn(
-                      "text-xs mb-1 font-medium flex items-center gap-1",
-                      entry.speaker === 'You' ? "text-pink-700" : "text-gray-700"
-                    )}>
-                      {entry.speaker === 'You' ? (
+                // Only show user messages for a cleaner interface
+                transcript
+                  .filter(entry => entry.speaker === 'You')
+                  .map((entry, idx) => (
+                    <div 
+                      key={idx} 
+                      className="bg-gradient-to-r from-pink-100 to-pink-50 text-gray-800 ml-auto rounded-xl rounded-br-none border-r-2 border-pink-200 p-4 max-w-[90%] shadow-sm transition-all duration-200 animate-fadeIn"
+                    >
+                      <p className="text-xs mb-1 font-medium flex items-center gap-1 text-pink-700">
                         <Mic size={12} className="inline" />
-                      ) : (
-                        <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <circle cx="12" cy="8" r="7" />
-                          <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12" />
-                        </svg>
-                      )}
-                      {entry.speaker}
-                    </p>
-                    <p className="text-sm">{entry.text}</p>
-                  </div>
-                ))
+                        You
+                      </p>
+                      <p className="text-sm">{entry.text}</p>
+                    </div>
+                  ))
               )}
               {isProcessing && (
                 <div className="bg-white border border-gray-200 p-3 rounded-xl max-w-[85%] mr-auto rounded-bl-none shadow-sm animate-fadeIn">
-                  <p className="text-xs mb-1 font-medium text-gray-700 flex items-center gap-1">
-                    <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="8" r="7" />
-                      <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12" />
-                    </svg>
-                    {personaData.name}
-                  </p>
                   <div className="flex space-x-2">
                     <div className="w-2 h-2 bg-pink-300 rounded-full animate-bounce"></div>
                     <div className="w-2 h-2 bg-pink-300 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>

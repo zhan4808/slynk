@@ -137,14 +137,18 @@ const VideoBox: React.FC<VideoBoxProps> = ({ id }) => {
   }
 
   return (
-    <div className="w-full h-full relative">
-      <video
-        autoPlay
-        playsInline
-        muted={isLocal}
-        ref={videoElement}
-        className="w-full h-full object-cover"
-      />
+    <div className="w-full h-full relative bg-black flex items-center justify-center">
+      <div className="w-full max-w-full">
+        <div className="aspect-ratio-16/9">
+          <video
+            autoPlay
+            playsInline
+            muted={isLocal}
+            ref={videoElement}
+            className="object-contain"
+          />
+        </div>
+      </div>
       
       {!videoConnected && (
         <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center text-white">
