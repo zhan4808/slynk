@@ -280,8 +280,8 @@ export async function createSimliAgent(agentData: {
       name: agentData.name,
       first_message: agentData.firstMessage || `Hello, I'm ${agentData.name}. How can I help you today?`,
       prompt: agentData.prompt || `You are a helpful assistant named ${agentData.name}.`,
-      voice_provider: agentData.voiceProvider || 'cartesia',
-      voice_id: agentData.voiceId,
+      voice_provider: "ElevenLabs", // Always use ElevenLabs
+      voice_id: agentData.voiceId || "21m00Tcm4TlvDq8ikWAM",
       voice_model: agentData.voiceModel || 'sonic-english',
       language: agentData.language || 'en',
       llm_model: agentData.llmModel || 'gpt-4o-mini',
@@ -320,8 +320,8 @@ export async function createSimliAgent(agentData: {
             name: agentData.name,
             first_message: agentData.firstMessage || `Hello, I'm ${agentData.name}. How can I help you today?`,
             prompt: agentData.prompt || `You are a helpful assistant named ${agentData.name}.`,
-            voice_provider: agentData.voiceProvider || 'cartesia',
-            voice_id: agentData.voiceId,
+            voice_provider: "ElevenLabs", // Always use ElevenLabs
+            voice_id: agentData.voiceId || "21m00Tcm4TlvDq8ikWAM",
             voice_model: agentData.voiceModel || 'sonic-english',
             language: agentData.language || 'en',
             llm_model: agentData.llmModel || 'gpt-4o-mini',
@@ -577,6 +577,8 @@ export async function startE2ESession(config: {
   faceId: string;
   systemPrompt: string;
   firstMessage: string;
+  voiceId?: string;
+  useCustomVoice?: boolean;
 }): Promise<{
   roomUrl: string;
   sessionId: string;
@@ -585,6 +587,9 @@ export async function startE2ESession(config: {
     console.log(`Starting E2E session with face ID: ${config.faceId}`);
     console.log(`System prompt: "${config.systemPrompt.substring(0, 50)}..."`);
     console.log(`First message: "${config.firstMessage}"`);
+    if (config.voiceId) {
+      console.log(`Voice ID: ${config.voiceId}, Custom voice: ${config.useCustomVoice ? 'yes' : 'no'}`);
+    }
     
     // Check if we have a valid API key - if not, return a mock session
     if (!config.apiKey || config.apiKey.startsWith('mock-token-') || config.apiKey.startsWith('fallback-token-')) {
@@ -596,15 +601,18 @@ export async function startE2ESession(config: {
       };
     }
     
+    // Always use ElevenLabs as the TTS provider
+    const ttsProvider = "ElevenLabs";
+    
     const requestBody = {
       apiKey: config.apiKey,
       faceId: config.faceId,
       systemPrompt: config.systemPrompt,
       firstMessage: config.firstMessage,
       createTranscript: true,
-      ttsProvider: "Cartesia", // Ensure we specify a TTS provider
+      ttsProvider: ttsProvider,
       ttsModel: "sonic-turbo-2025-03-07", // Use a specific newer model
-      voiceId: "a167e0f3-df7e-4d52-a9c3-f949145efdab", // Specific voice ID
+      voiceId: config.voiceId || "21m00Tcm4TlvDq8ikWAM", // Use Rachel as the fallback voice
       language: "en", // Specify language
       llmModel: "gpt-4o-mini" // Specify LLM model
     };
@@ -629,35 +637,15 @@ export async function startE2ESession(config: {
     }
     
     const data = await response.json();
-    console.log("Simli E2E session response:", data);
+    console.log("Session started successfully:", data);
     
-    // Check for roomUrl (camelCase) or room_url (snake_case)
-    const roomUrl = data.roomUrl || data.room_url;
-    const sessionId = data.sessionId || data.session_id;
-    
-    // Validate the response shape and provide fallbacks with working Daily.co URLs
-    if (!roomUrl || !roomUrl.includes('daily.co')) {
-      console.warn("Invalid or missing room URL in Simli response, using fallback Daily.co URL");
-      return {
-        roomUrl: getValidDailyRoomUrl(),
-        sessionId: sessionId || `fallback-session-${Date.now()}`,
-      };
-    }
-    
-    // Verify this room actually exists - this could be done better with a Daily.co API call
-    // but for simplicity we'll use the URL directly if it appears to be valid
     return {
-      roomUrl: roomUrl,
-      sessionId: sessionId || `session-${Date.now()}`,
+      roomUrl: data.roomUrl,
+      sessionId: data.sessionId
     };
   } catch (error) {
-    console.error('Error starting E2E session:', error);
-    
-    // Return a working Daily.co URL in case of any error
-    return {
-      roomUrl: getValidDailyRoomUrl(),
-      sessionId: `exception-session-${Date.now()}`
-    };
+    console.error('Error starting session:', error);
+    throw error;
   }
 }
 
@@ -726,4 +714,4 @@ export async function createAgent(agentData: {
     console.error('Error in legacy createAgent:', error);
     throw error;
   }
-} 
+}

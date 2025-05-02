@@ -255,9 +255,9 @@ export async function POST(req: NextRequest) {
     const simliRequestBody = {
       apiKey: sessionToken, // Send session token as apiKey as required in the body
       faceId: persona.faceId || "tmp9i8bbq7c",
-      ttsProvider: "Cartesia", // Using Cartesia as default
+      ttsProvider: "ElevenLabs", // Always use ElevenLabs voices
       ttsModel: "sonic-turbo-2025-03-07", // Latest model from API docs
-      voiceId: "a167e0f3-df7e-4d52-a9c3-f949145efdab", // Default voice ID
+      voiceId: persona.voice || "21m00Tcm4TlvDq8ikWAM", // Use persona's voice ID with Rachel as fallback
       systemPrompt: systemPrompt,
       firstMessage: "Hello! How can I help you today?",
       maxSessionLength: 3600, // 1 hour
@@ -267,6 +267,7 @@ export async function POST(req: NextRequest) {
     };
     
     console.log(`[start-session] Calling Simli API to start E2E session with face ID: ${simliRequestBody.faceId}`);
+    console.log(`[start-session] Using voice: ${simliRequestBody.voiceId} with provider: ${simliRequestBody.ttsProvider}`);
 
     // Call the Simli API to start a session with error logging
     let response;

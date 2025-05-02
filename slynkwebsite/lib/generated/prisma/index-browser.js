@@ -168,6 +168,8 @@ exports.Prisma.AIPersonaScalarFieldEnum = {
   systemPrompt: 'systemPrompt',
   firstMessage: 'firstMessage',
   isCustomFaceInQueue: 'isCustomFaceInQueue',
+  voice: 'voice',
+  useCustomVoice: 'useCustomVoice',
   metadata: 'metadata',
   userId: 'userId',
   createdAt: 'createdAt',

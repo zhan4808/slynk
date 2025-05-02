@@ -159,7 +159,23 @@ export function AnimatedBackground() {
           key={index}
           className={`absolute ${element.className}`}
           style={element.style}
-          
-
-\
-Let's create an enhanced background for the customers page:
+        />
+      ))}
+      
+      {particles.map((particle, index) => (
+        <div
+          key={`particle-${index}`}
+          className="absolute rounded-full"
+          style={{
+            left: particle.x,
+            top: particle.y,
+            width: particle.size,
+            height: particle.size,
+            backgroundColor: particle.color,
+            opacity: 0.3,
+          }}
+        />
+      ))}
+    </div>
+  );
+}

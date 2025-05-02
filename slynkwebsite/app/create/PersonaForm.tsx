@@ -447,7 +447,6 @@ export default function PersonaForm() {
         faceId: formData.faceId,
         originalCharacterId: isCustomFaceInQueue ? originalFaceResponse?.character_uid : undefined,
         voice: formData.voice,
-        useCustomVoice: formData.useCustomVoice,
         hasVoiceFile: !!voiceDataUrl,
         systemPrompt: systemPrompt.substring(0, 50) + "...",
         firstMessage: firstMessage
@@ -763,7 +762,7 @@ export default function PersonaForm() {
             {/* Content sections - Framer style */}
             <div className="p-8">
               {/* Step 1: Basic Information */}
-              <div className={`transition-all duration-500 ${activeStep === 1 ? 'opacity-100' : 'opacity-40'}`}>
+              <div className="transition-all duration-500">
                 <motion.div
                   className="flex items-center gap-2 mb-6"
                   initial={{ opacity: 0, y: 10 }}
@@ -836,7 +835,7 @@ export default function PersonaForm() {
               <div className="my-8 border-t border-gray-100"></div>
           
           {/* Step 2: Appearance */}
-              <div className={`transition-all duration-500 ${activeStep === 2 ? 'opacity-100' : 'opacity-40'}`}>
+              <div className="transition-all duration-500">
           <motion.div 
                   className="flex items-center gap-2 mb-6"
                   initial={{ opacity: 0, y: 10 }}
@@ -1027,7 +1026,7 @@ export default function PersonaForm() {
               <div className="my-8 border-t border-gray-100"></div>
           
           {/* Step 3: Preview & Voice */}
-              <div className={`transition-all duration-500 ${activeStep === 3 ? 'opacity-100' : 'opacity-40'}`}>
+              <div className="transition-all duration-500">
           <motion.div 
                   className="flex items-center gap-2 mb-6"
                   initial={{ opacity: 0, y: 10 }}

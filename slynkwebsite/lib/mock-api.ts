@@ -32,6 +32,8 @@ export const mockApi = {
       ...data,
       userId: MOCK_USER_ID,
       faceId: data.faceId || 'tmp9i8bbq7c', // Default Simli face ID
+      voice: data.voice || '21m00Tcm4TlvDq8ikWAM', // Add default voice
+      useCustomVoice: data.useCustomVoice || false,
       simliSessionId: data.simliSessionId || `simli-${Date.now()}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -75,6 +77,8 @@ export const mockApi = {
         description: "This is an automatically generated mock persona for development",
         userId: MOCK_USER_ID,
         faceId: 'tmp9i8bbq7c',
+        voice: '21m00Tcm4TlvDq8ikWAM', // Add default voice
+        useCustomVoice: false,
         simliSessionId: `simli-${Date.now()}`,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),

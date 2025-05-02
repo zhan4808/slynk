@@ -1506,17 +1506,17 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    accounts: number
-    sessions: number
     personas: number
+    accounts: number
     chatSessions: number
+    sessions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    accounts?: boolean | UserCountOutputTypeCountAccountsArgs
-    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     personas?: boolean | UserCountOutputTypeCountPersonasArgs
+    accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     chatSessions?: boolean | UserCountOutputTypeCountChatSessionsArgs
+    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   }
 
   // Custom InputTypes
@@ -1533,22 +1533,15 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: AccountWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SessionWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
   export type UserCountOutputTypeCountPersonasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AIPersonaWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AccountWhereInput
   }
 
   /**
@@ -1558,19 +1551,26 @@ export namespace Prisma {
     where?: ChatSessionWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SessionWhereInput
+  }
+
 
   /**
    * Count Type AIPersonaCountOutputType
    */
 
   export type AIPersonaCountOutputType = {
-    qaPairs: number
     sessions: number
+    qaPairs: number
   }
 
   export type AIPersonaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    qaPairs?: boolean | AIPersonaCountOutputTypeCountQaPairsArgs
     sessions?: boolean | AIPersonaCountOutputTypeCountSessionsArgs
+    qaPairs?: boolean | AIPersonaCountOutputTypeCountQaPairsArgs
   }
 
   // Custom InputTypes
@@ -1587,15 +1587,15 @@ export namespace Prisma {
   /**
    * AIPersonaCountOutputType without action
    */
-  export type AIPersonaCountOutputTypeCountQaPairsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: QAPairWhereInput
+  export type AIPersonaCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChatSessionWhereInput
   }
 
   /**
    * AIPersonaCountOutputType without action
    */
-  export type AIPersonaCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ChatSessionWhereInput
+  export type AIPersonaCountOutputTypeCountQaPairsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: QAPairWhereInput
   }
 
 
@@ -5011,10 +5011,10 @@ export namespace Prisma {
     image?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    accounts?: boolean | User$accountsArgs<ExtArgs>
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
     personas?: boolean | User$personasArgs<ExtArgs>
+    accounts?: boolean | User$accountsArgs<ExtArgs>
     chatSessions?: boolean | User$chatSessionsArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -5050,10 +5050,10 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    accounts?: boolean | User$accountsArgs<ExtArgs>
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
     personas?: boolean | User$personasArgs<ExtArgs>
+    accounts?: boolean | User$accountsArgs<ExtArgs>
     chatSessions?: boolean | User$chatSessionsArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -5062,10 +5062,10 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      accounts: Prisma.$AccountPayload<ExtArgs>[]
-      sessions: Prisma.$SessionPayload<ExtArgs>[]
       personas: Prisma.$AIPersonaPayload<ExtArgs>[]
+      accounts: Prisma.$AccountPayload<ExtArgs>[]
       chatSessions: Prisma.$ChatSessionPayload<ExtArgs>[]
+      sessions: Prisma.$SessionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5469,10 +5469,10 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     personas<T extends User$personasArgs<ExtArgs> = {}>(args?: Subset<T, User$personasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AIPersonaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     chatSessions<T extends User$chatSessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$chatSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5897,54 +5897,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.accounts
-   */
-  export type User$accountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Account
-     */
-    select?: AccountSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Account
-     */
-    omit?: AccountOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AccountInclude<ExtArgs> | null
-    where?: AccountWhereInput
-    orderBy?: AccountOrderByWithRelationInput | AccountOrderByWithRelationInput[]
-    cursor?: AccountWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: AccountScalarFieldEnum | AccountScalarFieldEnum[]
-  }
-
-  /**
-   * User.sessions
-   */
-  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Session
-     */
-    select?: SessionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Session
-     */
-    omit?: SessionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionInclude<ExtArgs> | null
-    where?: SessionWhereInput
-    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
-    cursor?: SessionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
-  }
-
-  /**
    * User.personas
    */
   export type User$personasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5969,6 +5921,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.accounts
+   */
+  export type User$accountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
+    where?: AccountWhereInput
+    orderBy?: AccountOrderByWithRelationInput | AccountOrderByWithRelationInput[]
+    cursor?: AccountWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AccountScalarFieldEnum | AccountScalarFieldEnum[]
+  }
+
+  /**
    * User.chatSessions
    */
   export type User$chatSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5990,6 +5966,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ChatSessionScalarFieldEnum | ChatSessionScalarFieldEnum[]
+  }
+
+  /**
+   * User.sessions
+   */
+  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    where?: SessionWhereInput
+    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
+    cursor?: SessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
   }
 
   /**
@@ -6034,6 +6034,8 @@ export namespace Prisma {
     systemPrompt: string | null
     firstMessage: string | null
     isCustomFaceInQueue: boolean | null
+    voice: string | null
+    useCustomVoice: boolean | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6052,6 +6054,8 @@ export namespace Prisma {
     systemPrompt: string | null
     firstMessage: string | null
     isCustomFaceInQueue: boolean | null
+    voice: string | null
+    useCustomVoice: boolean | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6070,6 +6074,8 @@ export namespace Prisma {
     systemPrompt: number
     firstMessage: number
     isCustomFaceInQueue: number
+    voice: number
+    useCustomVoice: number
     metadata: number
     userId: number
     createdAt: number
@@ -6091,6 +6097,8 @@ export namespace Prisma {
     systemPrompt?: true
     firstMessage?: true
     isCustomFaceInQueue?: true
+    voice?: true
+    useCustomVoice?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -6109,6 +6117,8 @@ export namespace Prisma {
     systemPrompt?: true
     firstMessage?: true
     isCustomFaceInQueue?: true
+    voice?: true
+    useCustomVoice?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -6127,6 +6137,8 @@ export namespace Prisma {
     systemPrompt?: true
     firstMessage?: true
     isCustomFaceInQueue?: true
+    voice?: true
+    useCustomVoice?: true
     metadata?: true
     userId?: true
     createdAt?: true
@@ -6219,6 +6231,8 @@ export namespace Prisma {
     systemPrompt: string | null
     firstMessage: string | null
     isCustomFaceInQueue: boolean
+    voice: string | null
+    useCustomVoice: boolean
     metadata: JsonValue | null
     userId: string
     createdAt: Date
@@ -6255,13 +6269,15 @@ export namespace Prisma {
     systemPrompt?: boolean
     firstMessage?: boolean
     isCustomFaceInQueue?: boolean
+    voice?: boolean
+    useCustomVoice?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    qaPairs?: boolean | AIPersona$qaPairsArgs<ExtArgs>
-    sessions?: boolean | AIPersona$sessionsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    sessions?: boolean | AIPersona$sessionsArgs<ExtArgs>
+    qaPairs?: boolean | AIPersona$qaPairsArgs<ExtArgs>
     _count?: boolean | AIPersonaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["aIPersona"]>
 
@@ -6278,6 +6294,8 @@ export namespace Prisma {
     systemPrompt?: boolean
     firstMessage?: boolean
     isCustomFaceInQueue?: boolean
+    voice?: boolean
+    useCustomVoice?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -6298,6 +6316,8 @@ export namespace Prisma {
     systemPrompt?: boolean
     firstMessage?: boolean
     isCustomFaceInQueue?: boolean
+    voice?: boolean
+    useCustomVoice?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -6318,17 +6338,19 @@ export namespace Prisma {
     systemPrompt?: boolean
     firstMessage?: boolean
     isCustomFaceInQueue?: boolean
+    voice?: boolean
+    useCustomVoice?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AIPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "pageLink" | "adImageUrl" | "voiceSampleUrl" | "faceId" | "simliSessionId" | "simliAgentId" | "systemPrompt" | "firstMessage" | "isCustomFaceInQueue" | "metadata" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["aIPersona"]>
+  export type AIPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "pageLink" | "adImageUrl" | "voiceSampleUrl" | "faceId" | "simliSessionId" | "simliAgentId" | "systemPrompt" | "firstMessage" | "isCustomFaceInQueue" | "voice" | "useCustomVoice" | "metadata" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["aIPersona"]>
   export type AIPersonaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    qaPairs?: boolean | AIPersona$qaPairsArgs<ExtArgs>
-    sessions?: boolean | AIPersona$sessionsArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    sessions?: boolean | AIPersona$sessionsArgs<ExtArgs>
+    qaPairs?: boolean | AIPersona$qaPairsArgs<ExtArgs>
     _count?: boolean | AIPersonaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AIPersonaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6341,9 +6363,9 @@ export namespace Prisma {
   export type $AIPersonaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "AIPersona"
     objects: {
-      qaPairs: Prisma.$QAPairPayload<ExtArgs>[]
-      sessions: Prisma.$ChatSessionPayload<ExtArgs>[]
       user: Prisma.$UserPayload<ExtArgs>
+      sessions: Prisma.$ChatSessionPayload<ExtArgs>[]
+      qaPairs: Prisma.$QAPairPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6358,6 +6380,8 @@ export namespace Prisma {
       systemPrompt: string | null
       firstMessage: string | null
       isCustomFaceInQueue: boolean
+      voice: string | null
+      useCustomVoice: boolean
       metadata: Prisma.JsonValue | null
       userId: string
       createdAt: Date
@@ -6756,9 +6780,9 @@ export namespace Prisma {
    */
   export interface Prisma__AIPersonaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    qaPairs<T extends AIPersona$qaPairsArgs<ExtArgs> = {}>(args?: Subset<T, AIPersona$qaPairsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QAPairPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    sessions<T extends AIPersona$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, AIPersona$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    sessions<T extends AIPersona$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, AIPersona$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    qaPairs<T extends AIPersona$qaPairsArgs<ExtArgs> = {}>(args?: Subset<T, AIPersona$qaPairsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QAPairPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6800,6 +6824,8 @@ export namespace Prisma {
     readonly systemPrompt: FieldRef<"AIPersona", 'String'>
     readonly firstMessage: FieldRef<"AIPersona", 'String'>
     readonly isCustomFaceInQueue: FieldRef<"AIPersona", 'Boolean'>
+    readonly voice: FieldRef<"AIPersona", 'String'>
+    readonly useCustomVoice: FieldRef<"AIPersona", 'Boolean'>
     readonly metadata: FieldRef<"AIPersona", 'Json'>
     readonly userId: FieldRef<"AIPersona", 'String'>
     readonly createdAt: FieldRef<"AIPersona", 'DateTime'>
@@ -7200,30 +7226,6 @@ export namespace Prisma {
   }
 
   /**
-   * AIPersona.qaPairs
-   */
-  export type AIPersona$qaPairsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the QAPair
-     */
-    select?: QAPairSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the QAPair
-     */
-    omit?: QAPairOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: QAPairInclude<ExtArgs> | null
-    where?: QAPairWhereInput
-    orderBy?: QAPairOrderByWithRelationInput | QAPairOrderByWithRelationInput[]
-    cursor?: QAPairWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: QAPairScalarFieldEnum | QAPairScalarFieldEnum[]
-  }
-
-  /**
    * AIPersona.sessions
    */
   export type AIPersona$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7245,6 +7247,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ChatSessionScalarFieldEnum | ChatSessionScalarFieldEnum[]
+  }
+
+  /**
+   * AIPersona.qaPairs
+   */
+  export type AIPersona$qaPairsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the QAPair
+     */
+    select?: QAPairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the QAPair
+     */
+    omit?: QAPairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QAPairInclude<ExtArgs> | null
+    where?: QAPairWhereInput
+    orderBy?: QAPairOrderByWithRelationInput | QAPairOrderByWithRelationInput[]
+    cursor?: QAPairWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: QAPairScalarFieldEnum | QAPairScalarFieldEnum[]
   }
 
   /**
@@ -10568,6 +10594,8 @@ export namespace Prisma {
     systemPrompt: 'systemPrompt',
     firstMessage: 'firstMessage',
     isCustomFaceInQueue: 'isCustomFaceInQueue',
+    voice: 'voice',
+    useCustomVoice: 'useCustomVoice',
     metadata: 'metadata',
     userId: 'userId',
     createdAt: 'createdAt',
@@ -10934,10 +10962,10 @@ export namespace Prisma {
     image?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    accounts?: AccountListRelationFilter
-    sessions?: SessionListRelationFilter
     personas?: AIPersonaListRelationFilter
+    accounts?: AccountListRelationFilter
     chatSessions?: ChatSessionListRelationFilter
+    sessions?: SessionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -10948,10 +10976,10 @@ export namespace Prisma {
     image?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    accounts?: AccountOrderByRelationAggregateInput
-    sessions?: SessionOrderByRelationAggregateInput
     personas?: AIPersonaOrderByRelationAggregateInput
+    accounts?: AccountOrderByRelationAggregateInput
     chatSessions?: ChatSessionOrderByRelationAggregateInput
+    sessions?: SessionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -10965,10 +10993,10 @@ export namespace Prisma {
     image?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    accounts?: AccountListRelationFilter
-    sessions?: SessionListRelationFilter
     personas?: AIPersonaListRelationFilter
+    accounts?: AccountListRelationFilter
     chatSessions?: ChatSessionListRelationFilter
+    sessions?: SessionListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -11013,13 +11041,15 @@ export namespace Prisma {
     systemPrompt?: StringNullableFilter<"AIPersona"> | string | null
     firstMessage?: StringNullableFilter<"AIPersona"> | string | null
     isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
+    voice?: StringNullableFilter<"AIPersona"> | string | null
+    useCustomVoice?: BoolFilter<"AIPersona"> | boolean
     metadata?: JsonNullableFilter<"AIPersona">
     userId?: StringFilter<"AIPersona"> | string
     createdAt?: DateTimeFilter<"AIPersona"> | Date | string
     updatedAt?: DateTimeFilter<"AIPersona"> | Date | string
-    qaPairs?: QAPairListRelationFilter
-    sessions?: ChatSessionListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    sessions?: ChatSessionListRelationFilter
+    qaPairs?: QAPairListRelationFilter
   }
 
   export type AIPersonaOrderByWithRelationInput = {
@@ -11035,13 +11065,15 @@ export namespace Prisma {
     systemPrompt?: SortOrderInput | SortOrder
     firstMessage?: SortOrderInput | SortOrder
     isCustomFaceInQueue?: SortOrder
+    voice?: SortOrderInput | SortOrder
+    useCustomVoice?: SortOrder
     metadata?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    qaPairs?: QAPairOrderByRelationAggregateInput
-    sessions?: ChatSessionOrderByRelationAggregateInput
     user?: UserOrderByWithRelationInput
+    sessions?: ChatSessionOrderByRelationAggregateInput
+    qaPairs?: QAPairOrderByRelationAggregateInput
   }
 
   export type AIPersonaWhereUniqueInput = Prisma.AtLeast<{
@@ -11060,13 +11092,15 @@ export namespace Prisma {
     systemPrompt?: StringNullableFilter<"AIPersona"> | string | null
     firstMessage?: StringNullableFilter<"AIPersona"> | string | null
     isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
+    voice?: StringNullableFilter<"AIPersona"> | string | null
+    useCustomVoice?: BoolFilter<"AIPersona"> | boolean
     metadata?: JsonNullableFilter<"AIPersona">
     userId?: StringFilter<"AIPersona"> | string
     createdAt?: DateTimeFilter<"AIPersona"> | Date | string
     updatedAt?: DateTimeFilter<"AIPersona"> | Date | string
-    qaPairs?: QAPairListRelationFilter
-    sessions?: ChatSessionListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    sessions?: ChatSessionListRelationFilter
+    qaPairs?: QAPairListRelationFilter
   }, "id">
 
   export type AIPersonaOrderByWithAggregationInput = {
@@ -11082,6 +11116,8 @@ export namespace Prisma {
     systemPrompt?: SortOrderInput | SortOrder
     firstMessage?: SortOrderInput | SortOrder
     isCustomFaceInQueue?: SortOrder
+    voice?: SortOrderInput | SortOrder
+    useCustomVoice?: SortOrder
     metadata?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -11107,6 +11143,8 @@ export namespace Prisma {
     systemPrompt?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
     firstMessage?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
     isCustomFaceInQueue?: BoolWithAggregatesFilter<"AIPersona"> | boolean
+    voice?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
+    useCustomVoice?: BoolWithAggregatesFilter<"AIPersona"> | boolean
     metadata?: JsonNullableWithAggregatesFilter<"AIPersona">
     userId?: StringWithAggregatesFilter<"AIPersona"> | string
     createdAt?: DateTimeWithAggregatesFilter<"AIPersona"> | Date | string
@@ -11491,10 +11529,10 @@ export namespace Prisma {
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
     personas?: AIPersonaCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -11505,10 +11543,10 @@ export namespace Prisma {
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     personas?: AIPersonaUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -11519,10 +11557,10 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     personas?: AIPersonaUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -11533,10 +11571,10 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     personas?: AIPersonaUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -11582,12 +11620,14 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    voice?: string | null
+    useCustomVoice?: boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    qaPairs?: QAPairCreateNestedManyWithoutPersonaInput
-    sessions?: ChatSessionCreateNestedManyWithoutPersonaInput
     user: UserCreateNestedOneWithoutPersonasInput
+    sessions?: ChatSessionCreateNestedManyWithoutPersonaInput
+    qaPairs?: QAPairCreateNestedManyWithoutPersonaInput
   }
 
   export type AIPersonaUncheckedCreateInput = {
@@ -11603,12 +11643,14 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    voice?: string | null
+    useCustomVoice?: boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    qaPairs?: QAPairUncheckedCreateNestedManyWithoutPersonaInput
     sessions?: ChatSessionUncheckedCreateNestedManyWithoutPersonaInput
+    qaPairs?: QAPairUncheckedCreateNestedManyWithoutPersonaInput
   }
 
   export type AIPersonaUpdateInput = {
@@ -11624,12 +11666,14 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    voice?: NullableStringFieldUpdateOperationsInput | string | null
+    useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    qaPairs?: QAPairUpdateManyWithoutPersonaNestedInput
-    sessions?: ChatSessionUpdateManyWithoutPersonaNestedInput
     user?: UserUpdateOneRequiredWithoutPersonasNestedInput
+    sessions?: ChatSessionUpdateManyWithoutPersonaNestedInput
+    qaPairs?: QAPairUpdateManyWithoutPersonaNestedInput
   }
 
   export type AIPersonaUncheckedUpdateInput = {
@@ -11645,12 +11689,14 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    voice?: NullableStringFieldUpdateOperationsInput | string | null
+    useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    qaPairs?: QAPairUncheckedUpdateManyWithoutPersonaNestedInput
     sessions?: ChatSessionUncheckedUpdateManyWithoutPersonaNestedInput
+    qaPairs?: QAPairUncheckedUpdateManyWithoutPersonaNestedInput
   }
 
   export type AIPersonaCreateManyInput = {
@@ -11666,6 +11712,8 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    voice?: string | null
+    useCustomVoice?: boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
@@ -11685,6 +11733,8 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    voice?: NullableStringFieldUpdateOperationsInput | string | null
+    useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11703,6 +11753,8 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    voice?: NullableStringFieldUpdateOperationsInput | string | null
+    useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12125,22 +12177,16 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type AccountListRelationFilter = {
-    every?: AccountWhereInput
-    some?: AccountWhereInput
-    none?: AccountWhereInput
-  }
-
-  export type SessionListRelationFilter = {
-    every?: SessionWhereInput
-    some?: SessionWhereInput
-    none?: SessionWhereInput
-  }
-
   export type AIPersonaListRelationFilter = {
     every?: AIPersonaWhereInput
     some?: AIPersonaWhereInput
     none?: AIPersonaWhereInput
+  }
+
+  export type AccountListRelationFilter = {
+    every?: AccountWhereInput
+    some?: AccountWhereInput
+    none?: AccountWhereInput
   }
 
   export type ChatSessionListRelationFilter = {
@@ -12149,19 +12195,25 @@ export namespace Prisma {
     none?: ChatSessionWhereInput
   }
 
-  export type AccountOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type SessionOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type SessionListRelationFilter = {
+    every?: SessionWhereInput
+    some?: SessionWhereInput
+    none?: SessionWhereInput
   }
 
   export type AIPersonaOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
+  export type AccountOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type ChatSessionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SessionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12260,6 +12312,8 @@ export namespace Prisma {
     systemPrompt?: SortOrder
     firstMessage?: SortOrder
     isCustomFaceInQueue?: SortOrder
+    voice?: SortOrder
+    useCustomVoice?: SortOrder
     metadata?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -12279,6 +12333,8 @@ export namespace Prisma {
     systemPrompt?: SortOrder
     firstMessage?: SortOrder
     isCustomFaceInQueue?: SortOrder
+    voice?: SortOrder
+    useCustomVoice?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -12297,6 +12353,8 @@ export namespace Prisma {
     systemPrompt?: SortOrder
     firstMessage?: SortOrder
     isCustomFaceInQueue?: SortOrder
+    voice?: SortOrder
+    useCustomVoice?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -12479,25 +12537,18 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSessionsInput, UserUpdateWithoutSessionsInput>, UserUncheckedUpdateWithoutSessionsInput>
   }
 
-  export type AccountCreateNestedManyWithoutUserInput = {
-    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
-    createMany?: AccountCreateManyUserInputEnvelope
-    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-  }
-
-  export type SessionCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-  }
-
   export type AIPersonaCreateNestedManyWithoutUserInput = {
     create?: XOR<AIPersonaCreateWithoutUserInput, AIPersonaUncheckedCreateWithoutUserInput> | AIPersonaCreateWithoutUserInput[] | AIPersonaUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AIPersonaCreateOrConnectWithoutUserInput | AIPersonaCreateOrConnectWithoutUserInput[]
     createMany?: AIPersonaCreateManyUserInputEnvelope
     connect?: AIPersonaWhereUniqueInput | AIPersonaWhereUniqueInput[]
+  }
+
+  export type AccountCreateNestedManyWithoutUserInput = {
+    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
+    createMany?: AccountCreateManyUserInputEnvelope
+    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
   }
 
   export type ChatSessionCreateNestedManyWithoutUserInput = {
@@ -12507,14 +12558,7 @@ export namespace Prisma {
     connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
   }
 
-  export type AccountUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
-    createMany?: AccountCreateManyUserInputEnvelope
-    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-  }
-
-  export type SessionUncheckedCreateNestedManyWithoutUserInput = {
+  export type SessionCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
     createMany?: SessionCreateManyUserInputEnvelope
@@ -12528,6 +12572,13 @@ export namespace Prisma {
     connect?: AIPersonaWhereUniqueInput | AIPersonaWhereUniqueInput[]
   }
 
+  export type AccountUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
+    createMany?: AccountCreateManyUserInputEnvelope
+    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+  }
+
   export type ChatSessionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<ChatSessionCreateWithoutUserInput, ChatSessionUncheckedCreateWithoutUserInput> | ChatSessionCreateWithoutUserInput[] | ChatSessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ChatSessionCreateOrConnectWithoutUserInput | ChatSessionCreateOrConnectWithoutUserInput[]
@@ -12535,36 +12586,15 @@ export namespace Prisma {
     connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
-  export type AccountUpdateManyWithoutUserNestedInput = {
-    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
-    upsert?: AccountUpsertWithWhereUniqueWithoutUserInput | AccountUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: AccountCreateManyUserInputEnvelope
-    set?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    disconnect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    delete?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
-  }
-
-  export type SessionUpdateManyWithoutUserNestedInput = {
+  export type SessionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
     createMany?: SessionCreateManyUserInputEnvelope
-    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
     connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type AIPersonaUpdateManyWithoutUserNestedInput = {
@@ -12581,6 +12611,20 @@ export namespace Prisma {
     deleteMany?: AIPersonaScalarWhereInput | AIPersonaScalarWhereInput[]
   }
 
+  export type AccountUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
+    upsert?: AccountUpsertWithWhereUniqueWithoutUserInput | AccountUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AccountCreateManyUserInputEnvelope
+    set?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    disconnect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    delete?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
+  }
+
   export type ChatSessionUpdateManyWithoutUserNestedInput = {
     create?: XOR<ChatSessionCreateWithoutUserInput, ChatSessionUncheckedCreateWithoutUserInput> | ChatSessionCreateWithoutUserInput[] | ChatSessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ChatSessionCreateOrConnectWithoutUserInput | ChatSessionCreateOrConnectWithoutUserInput[]
@@ -12595,21 +12639,7 @@ export namespace Prisma {
     deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
   }
 
-  export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
-    upsert?: AccountUpsertWithWhereUniqueWithoutUserInput | AccountUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: AccountCreateManyUserInputEnvelope
-    set?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    disconnect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    delete?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-    update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
-  }
-
-  export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
+  export type SessionUpdateManyWithoutUserNestedInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
     upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
@@ -12637,6 +12667,20 @@ export namespace Prisma {
     deleteMany?: AIPersonaScalarWhereInput | AIPersonaScalarWhereInput[]
   }
 
+  export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
+    upsert?: AccountUpsertWithWhereUniqueWithoutUserInput | AccountUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AccountCreateManyUserInputEnvelope
+    set?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    disconnect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    delete?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
+  }
+
   export type ChatSessionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<ChatSessionCreateWithoutUserInput, ChatSessionUncheckedCreateWithoutUserInput> | ChatSessionCreateWithoutUserInput[] | ChatSessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ChatSessionCreateOrConnectWithoutUserInput | ChatSessionCreateOrConnectWithoutUserInput[]
@@ -12651,11 +12695,24 @@ export namespace Prisma {
     deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
   }
 
-  export type QAPairCreateNestedManyWithoutPersonaInput = {
-    create?: XOR<QAPairCreateWithoutPersonaInput, QAPairUncheckedCreateWithoutPersonaInput> | QAPairCreateWithoutPersonaInput[] | QAPairUncheckedCreateWithoutPersonaInput[]
-    connectOrCreate?: QAPairCreateOrConnectWithoutPersonaInput | QAPairCreateOrConnectWithoutPersonaInput[]
-    createMany?: QAPairCreateManyPersonaInputEnvelope
-    connect?: QAPairWhereUniqueInput | QAPairWhereUniqueInput[]
+  export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutPersonasInput = {
+    create?: XOR<UserCreateWithoutPersonasInput, UserUncheckedCreateWithoutPersonasInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPersonasInput
+    connect?: UserWhereUniqueInput
   }
 
   export type ChatSessionCreateNestedManyWithoutPersonaInput = {
@@ -12665,13 +12722,7 @@ export namespace Prisma {
     connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
   }
 
-  export type UserCreateNestedOneWithoutPersonasInput = {
-    create?: XOR<UserCreateWithoutPersonasInput, UserUncheckedCreateWithoutPersonasInput>
-    connectOrCreate?: UserCreateOrConnectWithoutPersonasInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type QAPairUncheckedCreateNestedManyWithoutPersonaInput = {
+  export type QAPairCreateNestedManyWithoutPersonaInput = {
     create?: XOR<QAPairCreateWithoutPersonaInput, QAPairUncheckedCreateWithoutPersonaInput> | QAPairCreateWithoutPersonaInput[] | QAPairUncheckedCreateWithoutPersonaInput[]
     connectOrCreate?: QAPairCreateOrConnectWithoutPersonaInput | QAPairCreateOrConnectWithoutPersonaInput[]
     createMany?: QAPairCreateManyPersonaInputEnvelope
@@ -12685,22 +12736,23 @@ export namespace Prisma {
     connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
   }
 
+  export type QAPairUncheckedCreateNestedManyWithoutPersonaInput = {
+    create?: XOR<QAPairCreateWithoutPersonaInput, QAPairUncheckedCreateWithoutPersonaInput> | QAPairCreateWithoutPersonaInput[] | QAPairUncheckedCreateWithoutPersonaInput[]
+    connectOrCreate?: QAPairCreateOrConnectWithoutPersonaInput | QAPairCreateOrConnectWithoutPersonaInput[]
+    createMany?: QAPairCreateManyPersonaInputEnvelope
+    connect?: QAPairWhereUniqueInput | QAPairWhereUniqueInput[]
+  }
+
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
   }
 
-  export type QAPairUpdateManyWithoutPersonaNestedInput = {
-    create?: XOR<QAPairCreateWithoutPersonaInput, QAPairUncheckedCreateWithoutPersonaInput> | QAPairCreateWithoutPersonaInput[] | QAPairUncheckedCreateWithoutPersonaInput[]
-    connectOrCreate?: QAPairCreateOrConnectWithoutPersonaInput | QAPairCreateOrConnectWithoutPersonaInput[]
-    upsert?: QAPairUpsertWithWhereUniqueWithoutPersonaInput | QAPairUpsertWithWhereUniqueWithoutPersonaInput[]
-    createMany?: QAPairCreateManyPersonaInputEnvelope
-    set?: QAPairWhereUniqueInput | QAPairWhereUniqueInput[]
-    disconnect?: QAPairWhereUniqueInput | QAPairWhereUniqueInput[]
-    delete?: QAPairWhereUniqueInput | QAPairWhereUniqueInput[]
-    connect?: QAPairWhereUniqueInput | QAPairWhereUniqueInput[]
-    update?: QAPairUpdateWithWhereUniqueWithoutPersonaInput | QAPairUpdateWithWhereUniqueWithoutPersonaInput[]
-    updateMany?: QAPairUpdateManyWithWhereWithoutPersonaInput | QAPairUpdateManyWithWhereWithoutPersonaInput[]
-    deleteMany?: QAPairScalarWhereInput | QAPairScalarWhereInput[]
+  export type UserUpdateOneRequiredWithoutPersonasNestedInput = {
+    create?: XOR<UserCreateWithoutPersonasInput, UserUncheckedCreateWithoutPersonasInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPersonasInput
+    upsert?: UserUpsertWithoutPersonasInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPersonasInput, UserUpdateWithoutPersonasInput>, UserUncheckedUpdateWithoutPersonasInput>
   }
 
   export type ChatSessionUpdateManyWithoutPersonaNestedInput = {
@@ -12717,15 +12769,7 @@ export namespace Prisma {
     deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
   }
 
-  export type UserUpdateOneRequiredWithoutPersonasNestedInput = {
-    create?: XOR<UserCreateWithoutPersonasInput, UserUncheckedCreateWithoutPersonasInput>
-    connectOrCreate?: UserCreateOrConnectWithoutPersonasInput
-    upsert?: UserUpsertWithoutPersonasInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPersonasInput, UserUpdateWithoutPersonasInput>, UserUncheckedUpdateWithoutPersonasInput>
-  }
-
-  export type QAPairUncheckedUpdateManyWithoutPersonaNestedInput = {
+  export type QAPairUpdateManyWithoutPersonaNestedInput = {
     create?: XOR<QAPairCreateWithoutPersonaInput, QAPairUncheckedCreateWithoutPersonaInput> | QAPairCreateWithoutPersonaInput[] | QAPairUncheckedCreateWithoutPersonaInput[]
     connectOrCreate?: QAPairCreateOrConnectWithoutPersonaInput | QAPairCreateOrConnectWithoutPersonaInput[]
     upsert?: QAPairUpsertWithWhereUniqueWithoutPersonaInput | QAPairUpsertWithWhereUniqueWithoutPersonaInput[]
@@ -12751,6 +12795,20 @@ export namespace Prisma {
     update?: ChatSessionUpdateWithWhereUniqueWithoutPersonaInput | ChatSessionUpdateWithWhereUniqueWithoutPersonaInput[]
     updateMany?: ChatSessionUpdateManyWithWhereWithoutPersonaInput | ChatSessionUpdateManyWithWhereWithoutPersonaInput[]
     deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
+  }
+
+  export type QAPairUncheckedUpdateManyWithoutPersonaNestedInput = {
+    create?: XOR<QAPairCreateWithoutPersonaInput, QAPairUncheckedCreateWithoutPersonaInput> | QAPairCreateWithoutPersonaInput[] | QAPairUncheckedCreateWithoutPersonaInput[]
+    connectOrCreate?: QAPairCreateOrConnectWithoutPersonaInput | QAPairCreateOrConnectWithoutPersonaInput[]
+    upsert?: QAPairUpsertWithWhereUniqueWithoutPersonaInput | QAPairUpsertWithWhereUniqueWithoutPersonaInput[]
+    createMany?: QAPairCreateManyPersonaInputEnvelope
+    set?: QAPairWhereUniqueInput | QAPairWhereUniqueInput[]
+    disconnect?: QAPairWhereUniqueInput | QAPairWhereUniqueInput[]
+    delete?: QAPairWhereUniqueInput | QAPairWhereUniqueInput[]
+    connect?: QAPairWhereUniqueInput | QAPairWhereUniqueInput[]
+    update?: QAPairUpdateWithWhereUniqueWithoutPersonaInput | QAPairUpdateWithWhereUniqueWithoutPersonaInput[]
+    updateMany?: QAPairUpdateManyWithWhereWithoutPersonaInput | QAPairUpdateManyWithWhereWithoutPersonaInput[]
+    deleteMany?: QAPairScalarWhereInput | QAPairScalarWhereInput[]
   }
 
   export type AIPersonaCreateNestedOneWithoutQaPairsInput = {
@@ -13056,9 +13114,9 @@ export namespace Prisma {
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
     personas?: AIPersonaCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -13069,9 +13127,9 @@ export namespace Prisma {
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     personas?: AIPersonaUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -13098,9 +13156,9 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     personas?: AIPersonaUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -13111,9 +13169,9 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     personas?: AIPersonaUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -13124,8 +13182,8 @@ export namespace Prisma {
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    accounts?: AccountCreateNestedManyWithoutUserInput
     personas?: AIPersonaCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
   }
 
@@ -13137,8 +13195,8 @@ export namespace Prisma {
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     personas?: AIPersonaUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -13166,8 +13224,8 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUpdateManyWithoutUserNestedInput
     personas?: AIPersonaUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
   }
 
@@ -13179,9 +13237,63 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     personas?: AIPersonaUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type AIPersonaCreateWithoutUserInput = {
+    id?: string
+    name: string
+    description: string
+    pageLink?: string | null
+    adImageUrl?: string | null
+    voiceSampleUrl?: string | null
+    faceId?: string | null
+    simliSessionId?: string | null
+    simliAgentId?: string | null
+    systemPrompt?: string | null
+    firstMessage?: string | null
+    isCustomFaceInQueue?: boolean
+    voice?: string | null
+    useCustomVoice?: boolean
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: ChatSessionCreateNestedManyWithoutPersonaInput
+    qaPairs?: QAPairCreateNestedManyWithoutPersonaInput
+  }
+
+  export type AIPersonaUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    description: string
+    pageLink?: string | null
+    adImageUrl?: string | null
+    voiceSampleUrl?: string | null
+    faceId?: string | null
+    simliSessionId?: string | null
+    simliAgentId?: string | null
+    systemPrompt?: string | null
+    firstMessage?: string | null
+    isCustomFaceInQueue?: boolean
+    voice?: string | null
+    useCustomVoice?: boolean
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: ChatSessionUncheckedCreateNestedManyWithoutPersonaInput
+    qaPairs?: QAPairUncheckedCreateNestedManyWithoutPersonaInput
+  }
+
+  export type AIPersonaCreateOrConnectWithoutUserInput = {
+    where: AIPersonaWhereUniqueInput
+    create: XOR<AIPersonaCreateWithoutUserInput, AIPersonaUncheckedCreateWithoutUserInput>
+  }
+
+  export type AIPersonaCreateManyUserInputEnvelope = {
+    data: AIPersonaCreateManyUserInput | AIPersonaCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -13222,78 +13334,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type SessionCreateWithoutUserInput = {
-    id?: string
-    sessionToken: string
-    expires: Date | string
-  }
-
-  export type SessionUncheckedCreateWithoutUserInput = {
-    id?: string
-    sessionToken: string
-    expires: Date | string
-  }
-
-  export type SessionCreateOrConnectWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionCreateManyUserInputEnvelope = {
-    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type AIPersonaCreateWithoutUserInput = {
-    id?: string
-    name: string
-    description: string
-    pageLink?: string | null
-    adImageUrl?: string | null
-    voiceSampleUrl?: string | null
-    faceId?: string | null
-    simliSessionId?: string | null
-    simliAgentId?: string | null
-    systemPrompt?: string | null
-    firstMessage?: string | null
-    isCustomFaceInQueue?: boolean
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    qaPairs?: QAPairCreateNestedManyWithoutPersonaInput
-    sessions?: ChatSessionCreateNestedManyWithoutPersonaInput
-  }
-
-  export type AIPersonaUncheckedCreateWithoutUserInput = {
-    id?: string
-    name: string
-    description: string
-    pageLink?: string | null
-    adImageUrl?: string | null
-    voiceSampleUrl?: string | null
-    faceId?: string | null
-    simliSessionId?: string | null
-    simliAgentId?: string | null
-    systemPrompt?: string | null
-    firstMessage?: string | null
-    isCustomFaceInQueue?: boolean
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    qaPairs?: QAPairUncheckedCreateNestedManyWithoutPersonaInput
-    sessions?: ChatSessionUncheckedCreateNestedManyWithoutPersonaInput
-  }
-
-  export type AIPersonaCreateOrConnectWithoutUserInput = {
-    where: AIPersonaWhereUniqueInput
-    create: XOR<AIPersonaCreateWithoutUserInput, AIPersonaUncheckedCreateWithoutUserInput>
-  }
-
-  export type AIPersonaCreateManyUserInputEnvelope = {
-    data: AIPersonaCreateManyUserInput | AIPersonaCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
   export type ChatSessionCreateWithoutUserInput = {
     id?: string
     createdAt?: Date | string
@@ -13318,6 +13358,68 @@ export namespace Prisma {
   export type ChatSessionCreateManyUserInputEnvelope = {
     data: ChatSessionCreateManyUserInput | ChatSessionCreateManyUserInput[]
     skipDuplicates?: boolean
+  }
+
+  export type SessionCreateWithoutUserInput = {
+    id?: string
+    sessionToken: string
+    expires: Date | string
+  }
+
+  export type SessionUncheckedCreateWithoutUserInput = {
+    id?: string
+    sessionToken: string
+    expires: Date | string
+  }
+
+  export type SessionCreateOrConnectWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SessionCreateManyUserInputEnvelope = {
+    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AIPersonaUpsertWithWhereUniqueWithoutUserInput = {
+    where: AIPersonaWhereUniqueInput
+    update: XOR<AIPersonaUpdateWithoutUserInput, AIPersonaUncheckedUpdateWithoutUserInput>
+    create: XOR<AIPersonaCreateWithoutUserInput, AIPersonaUncheckedCreateWithoutUserInput>
+  }
+
+  export type AIPersonaUpdateWithWhereUniqueWithoutUserInput = {
+    where: AIPersonaWhereUniqueInput
+    data: XOR<AIPersonaUpdateWithoutUserInput, AIPersonaUncheckedUpdateWithoutUserInput>
+  }
+
+  export type AIPersonaUpdateManyWithWhereWithoutUserInput = {
+    where: AIPersonaScalarWhereInput
+    data: XOR<AIPersonaUpdateManyMutationInput, AIPersonaUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type AIPersonaScalarWhereInput = {
+    AND?: AIPersonaScalarWhereInput | AIPersonaScalarWhereInput[]
+    OR?: AIPersonaScalarWhereInput[]
+    NOT?: AIPersonaScalarWhereInput | AIPersonaScalarWhereInput[]
+    id?: StringFilter<"AIPersona"> | string
+    name?: StringFilter<"AIPersona"> | string
+    description?: StringFilter<"AIPersona"> | string
+    pageLink?: StringNullableFilter<"AIPersona"> | string | null
+    adImageUrl?: StringNullableFilter<"AIPersona"> | string | null
+    voiceSampleUrl?: StringNullableFilter<"AIPersona"> | string | null
+    faceId?: StringNullableFilter<"AIPersona"> | string | null
+    simliSessionId?: StringNullableFilter<"AIPersona"> | string | null
+    simliAgentId?: StringNullableFilter<"AIPersona"> | string | null
+    systemPrompt?: StringNullableFilter<"AIPersona"> | string | null
+    firstMessage?: StringNullableFilter<"AIPersona"> | string | null
+    isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
+    voice?: StringNullableFilter<"AIPersona"> | string | null
+    useCustomVoice?: BoolFilter<"AIPersona"> | boolean
+    metadata?: JsonNullableFilter<"AIPersona">
+    userId?: StringFilter<"AIPersona"> | string
+    createdAt?: DateTimeFilter<"AIPersona"> | Date | string
+    updatedAt?: DateTimeFilter<"AIPersona"> | Date | string
   }
 
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
@@ -13354,70 +13456,6 @@ export namespace Prisma {
     session_state?: StringNullableFilter<"Account"> | string | null
   }
 
-  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
-    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
-  }
-
-  export type SessionUpdateManyWithWhereWithoutUserInput = {
-    where: SessionScalarWhereInput
-    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type SessionScalarWhereInput = {
-    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    OR?: SessionScalarWhereInput[]
-    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    id?: StringFilter<"Session"> | string
-    sessionToken?: StringFilter<"Session"> | string
-    userId?: StringFilter<"Session"> | string
-    expires?: DateTimeFilter<"Session"> | Date | string
-  }
-
-  export type AIPersonaUpsertWithWhereUniqueWithoutUserInput = {
-    where: AIPersonaWhereUniqueInput
-    update: XOR<AIPersonaUpdateWithoutUserInput, AIPersonaUncheckedUpdateWithoutUserInput>
-    create: XOR<AIPersonaCreateWithoutUserInput, AIPersonaUncheckedCreateWithoutUserInput>
-  }
-
-  export type AIPersonaUpdateWithWhereUniqueWithoutUserInput = {
-    where: AIPersonaWhereUniqueInput
-    data: XOR<AIPersonaUpdateWithoutUserInput, AIPersonaUncheckedUpdateWithoutUserInput>
-  }
-
-  export type AIPersonaUpdateManyWithWhereWithoutUserInput = {
-    where: AIPersonaScalarWhereInput
-    data: XOR<AIPersonaUpdateManyMutationInput, AIPersonaUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type AIPersonaScalarWhereInput = {
-    AND?: AIPersonaScalarWhereInput | AIPersonaScalarWhereInput[]
-    OR?: AIPersonaScalarWhereInput[]
-    NOT?: AIPersonaScalarWhereInput | AIPersonaScalarWhereInput[]
-    id?: StringFilter<"AIPersona"> | string
-    name?: StringFilter<"AIPersona"> | string
-    description?: StringFilter<"AIPersona"> | string
-    pageLink?: StringNullableFilter<"AIPersona"> | string | null
-    adImageUrl?: StringNullableFilter<"AIPersona"> | string | null
-    voiceSampleUrl?: StringNullableFilter<"AIPersona"> | string | null
-    faceId?: StringNullableFilter<"AIPersona"> | string | null
-    simliSessionId?: StringNullableFilter<"AIPersona"> | string | null
-    simliAgentId?: StringNullableFilter<"AIPersona"> | string | null
-    systemPrompt?: StringNullableFilter<"AIPersona"> | string | null
-    firstMessage?: StringNullableFilter<"AIPersona"> | string | null
-    isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
-    metadata?: JsonNullableFilter<"AIPersona">
-    userId?: StringFilter<"AIPersona"> | string
-    createdAt?: DateTimeFilter<"AIPersona"> | Date | string
-    updatedAt?: DateTimeFilter<"AIPersona"> | Date | string
-  }
-
   export type ChatSessionUpsertWithWhereUniqueWithoutUserInput = {
     where: ChatSessionWhereUniqueInput
     update: XOR<ChatSessionUpdateWithoutUserInput, ChatSessionUncheckedUpdateWithoutUserInput>
@@ -13445,30 +13483,61 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"ChatSession"> | Date | string
   }
 
-  export type QAPairCreateWithoutPersonaInput = {
+  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SessionUpdateManyWithWhereWithoutUserInput = {
+    where: SessionScalarWhereInput
+    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SessionScalarWhereInput = {
+    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    OR?: SessionScalarWhereInput[]
+    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    id?: StringFilter<"Session"> | string
+    sessionToken?: StringFilter<"Session"> | string
+    userId?: StringFilter<"Session"> | string
+    expires?: DateTimeFilter<"Session"> | Date | string
+  }
+
+  export type UserCreateWithoutPersonasInput = {
     id?: string
-    question: string
-    answer: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
-  export type QAPairUncheckedCreateWithoutPersonaInput = {
+  export type UserUncheckedCreateWithoutPersonasInput = {
     id?: string
-    question: string
-    answer: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
-  export type QAPairCreateOrConnectWithoutPersonaInput = {
-    where: QAPairWhereUniqueInput
-    create: XOR<QAPairCreateWithoutPersonaInput, QAPairUncheckedCreateWithoutPersonaInput>
-  }
-
-  export type QAPairCreateManyPersonaInputEnvelope = {
-    data: QAPairCreateManyPersonaInput | QAPairCreateManyPersonaInput[]
-    skipDuplicates?: boolean
+  export type UserCreateOrConnectWithoutPersonasInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPersonasInput, UserUncheckedCreateWithoutPersonasInput>
   }
 
   export type ChatSessionCreateWithoutPersonaInput = {
@@ -13497,35 +13566,83 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UserCreateWithoutPersonasInput = {
+  export type QAPairCreateWithoutPersonaInput = {
     id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    image?: string | null
+    question: string
+    answer: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
   }
 
-  export type UserUncheckedCreateWithoutPersonasInput = {
+  export type QAPairUncheckedCreateWithoutPersonaInput = {
     id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    image?: string | null
+    question: string
+    answer: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
   }
 
-  export type UserCreateOrConnectWithoutPersonasInput = {
-    where: UserWhereUniqueInput
+  export type QAPairCreateOrConnectWithoutPersonaInput = {
+    where: QAPairWhereUniqueInput
+    create: XOR<QAPairCreateWithoutPersonaInput, QAPairUncheckedCreateWithoutPersonaInput>
+  }
+
+  export type QAPairCreateManyPersonaInputEnvelope = {
+    data: QAPairCreateManyPersonaInput | QAPairCreateManyPersonaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutPersonasInput = {
+    update: XOR<UserUpdateWithoutPersonasInput, UserUncheckedUpdateWithoutPersonasInput>
     create: XOR<UserCreateWithoutPersonasInput, UserUncheckedCreateWithoutPersonasInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutPersonasInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPersonasInput, UserUncheckedUpdateWithoutPersonasInput>
+  }
+
+  export type UserUpdateWithoutPersonasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPersonasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type ChatSessionUpsertWithWhereUniqueWithoutPersonaInput = {
+    where: ChatSessionWhereUniqueInput
+    update: XOR<ChatSessionUpdateWithoutPersonaInput, ChatSessionUncheckedUpdateWithoutPersonaInput>
+    create: XOR<ChatSessionCreateWithoutPersonaInput, ChatSessionUncheckedCreateWithoutPersonaInput>
+  }
+
+  export type ChatSessionUpdateWithWhereUniqueWithoutPersonaInput = {
+    where: ChatSessionWhereUniqueInput
+    data: XOR<ChatSessionUpdateWithoutPersonaInput, ChatSessionUncheckedUpdateWithoutPersonaInput>
+  }
+
+  export type ChatSessionUpdateManyWithWhereWithoutPersonaInput = {
+    where: ChatSessionScalarWhereInput
+    data: XOR<ChatSessionUpdateManyMutationInput, ChatSessionUncheckedUpdateManyWithoutPersonaInput>
   }
 
   export type QAPairUpsertWithWhereUniqueWithoutPersonaInput = {
@@ -13556,59 +13673,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"QAPair"> | Date | string
   }
 
-  export type ChatSessionUpsertWithWhereUniqueWithoutPersonaInput = {
-    where: ChatSessionWhereUniqueInput
-    update: XOR<ChatSessionUpdateWithoutPersonaInput, ChatSessionUncheckedUpdateWithoutPersonaInput>
-    create: XOR<ChatSessionCreateWithoutPersonaInput, ChatSessionUncheckedCreateWithoutPersonaInput>
-  }
-
-  export type ChatSessionUpdateWithWhereUniqueWithoutPersonaInput = {
-    where: ChatSessionWhereUniqueInput
-    data: XOR<ChatSessionUpdateWithoutPersonaInput, ChatSessionUncheckedUpdateWithoutPersonaInput>
-  }
-
-  export type ChatSessionUpdateManyWithWhereWithoutPersonaInput = {
-    where: ChatSessionScalarWhereInput
-    data: XOR<ChatSessionUpdateManyMutationInput, ChatSessionUncheckedUpdateManyWithoutPersonaInput>
-  }
-
-  export type UserUpsertWithoutPersonasInput = {
-    update: XOR<UserUpdateWithoutPersonasInput, UserUncheckedUpdateWithoutPersonasInput>
-    create: XOR<UserCreateWithoutPersonasInput, UserUncheckedCreateWithoutPersonasInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutPersonasInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutPersonasInput, UserUncheckedUpdateWithoutPersonasInput>
-  }
-
-  export type UserUpdateWithoutPersonasInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutPersonasInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-  }
-
   export type AIPersonaCreateWithoutQaPairsInput = {
     id?: string
     name: string
@@ -13622,11 +13686,13 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    voice?: string | null
+    useCustomVoice?: boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    sessions?: ChatSessionCreateNestedManyWithoutPersonaInput
     user: UserCreateNestedOneWithoutPersonasInput
+    sessions?: ChatSessionCreateNestedManyWithoutPersonaInput
   }
 
   export type AIPersonaUncheckedCreateWithoutQaPairsInput = {
@@ -13642,6 +13708,8 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    voice?: string | null
+    useCustomVoice?: boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
@@ -13678,11 +13746,13 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    voice?: NullableStringFieldUpdateOperationsInput | string | null
+    useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: ChatSessionUpdateManyWithoutPersonaNestedInput
     user?: UserUpdateOneRequiredWithoutPersonasNestedInput
+    sessions?: ChatSessionUpdateManyWithoutPersonaNestedInput
   }
 
   export type AIPersonaUncheckedUpdateWithoutQaPairsInput = {
@@ -13698,6 +13768,8 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    voice?: NullableStringFieldUpdateOperationsInput | string | null
+    useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13742,11 +13814,13 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    voice?: string | null
+    useCustomVoice?: boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    qaPairs?: QAPairCreateNestedManyWithoutPersonaInput
     user: UserCreateNestedOneWithoutPersonasInput
+    qaPairs?: QAPairCreateNestedManyWithoutPersonaInput
   }
 
   export type AIPersonaUncheckedCreateWithoutSessionsInput = {
@@ -13762,6 +13836,8 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    voice?: string | null
+    useCustomVoice?: boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
@@ -13782,9 +13858,9 @@ export namespace Prisma {
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    personas?: AIPersonaCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
-    personas?: AIPersonaCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChatSessionsInput = {
@@ -13795,9 +13871,9 @@ export namespace Prisma {
     image?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    personas?: AIPersonaUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    personas?: AIPersonaUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutChatSessionsInput = {
@@ -13856,11 +13932,13 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    voice?: NullableStringFieldUpdateOperationsInput | string | null
+    useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    qaPairs?: QAPairUpdateManyWithoutPersonaNestedInput
     user?: UserUpdateOneRequiredWithoutPersonasNestedInput
+    qaPairs?: QAPairUpdateManyWithoutPersonaNestedInput
   }
 
   export type AIPersonaUncheckedUpdateWithoutSessionsInput = {
@@ -13876,6 +13954,8 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    voice?: NullableStringFieldUpdateOperationsInput | string | null
+    useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13902,9 +13982,9 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    personas?: AIPersonaUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    personas?: AIPersonaUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChatSessionsInput = {
@@ -13915,9 +13995,9 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    personas?: AIPersonaUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    personas?: AIPersonaUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ChatSessionCreateWithoutMessagesInput = {
@@ -13968,6 +14048,26 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AIPersonaCreateManyUserInput = {
+    id?: string
+    name: string
+    description: string
+    pageLink?: string | null
+    adImageUrl?: string | null
+    voiceSampleUrl?: string | null
+    faceId?: string | null
+    simliSessionId?: string | null
+    simliAgentId?: string | null
+    systemPrompt?: string | null
+    firstMessage?: string | null
+    isCustomFaceInQueue?: boolean
+    voice?: string | null
+    useCustomVoice?: boolean
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AccountCreateManyUserInput = {
     id?: string
     type: string
@@ -13982,35 +14082,81 @@ export namespace Prisma {
     session_state?: string | null
   }
 
+  export type ChatSessionCreateManyUserInput = {
+    id?: string
+    personaId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type SessionCreateManyUserInput = {
     id?: string
     sessionToken: string
     expires: Date | string
   }
 
-  export type AIPersonaCreateManyUserInput = {
-    id?: string
-    name: string
-    description: string
-    pageLink?: string | null
-    adImageUrl?: string | null
-    voiceSampleUrl?: string | null
-    faceId?: string | null
-    simliSessionId?: string | null
-    simliAgentId?: string | null
-    systemPrompt?: string | null
-    firstMessage?: string | null
-    isCustomFaceInQueue?: boolean
+  export type AIPersonaUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    pageLink?: NullableStringFieldUpdateOperationsInput | string | null
+    adImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    voiceSampleUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faceId?: NullableStringFieldUpdateOperationsInput | string | null
+    simliSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    simliAgentId?: NullableStringFieldUpdateOperationsInput | string | null
+    systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
+    firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    voice?: NullableStringFieldUpdateOperationsInput | string | null
+    useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: ChatSessionUpdateManyWithoutPersonaNestedInput
+    qaPairs?: QAPairUpdateManyWithoutPersonaNestedInput
   }
 
-  export type ChatSessionCreateManyUserInput = {
-    id?: string
-    personaId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type AIPersonaUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    pageLink?: NullableStringFieldUpdateOperationsInput | string | null
+    adImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    voiceSampleUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faceId?: NullableStringFieldUpdateOperationsInput | string | null
+    simliSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    simliAgentId?: NullableStringFieldUpdateOperationsInput | string | null
+    systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
+    firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    voice?: NullableStringFieldUpdateOperationsInput | string | null
+    useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: ChatSessionUncheckedUpdateManyWithoutPersonaNestedInput
+    qaPairs?: QAPairUncheckedUpdateManyWithoutPersonaNestedInput
+  }
+
+  export type AIPersonaUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    pageLink?: NullableStringFieldUpdateOperationsInput | string | null
+    adImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    voiceSampleUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faceId?: NullableStringFieldUpdateOperationsInput | string | null
+    simliSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    simliAgentId?: NullableStringFieldUpdateOperationsInput | string | null
+    systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
+    firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    voice?: NullableStringFieldUpdateOperationsInput | string | null
+    useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -14055,82 +14201,6 @@ export namespace Prisma {
     session_state?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type SessionUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sessionToken?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sessionToken?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sessionToken?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AIPersonaUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    pageLink?: NullableStringFieldUpdateOperationsInput | string | null
-    adImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    voiceSampleUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    faceId?: NullableStringFieldUpdateOperationsInput | string | null
-    simliSessionId?: NullableStringFieldUpdateOperationsInput | string | null
-    simliAgentId?: NullableStringFieldUpdateOperationsInput | string | null
-    systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
-    firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    qaPairs?: QAPairUpdateManyWithoutPersonaNestedInput
-    sessions?: ChatSessionUpdateManyWithoutPersonaNestedInput
-  }
-
-  export type AIPersonaUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    pageLink?: NullableStringFieldUpdateOperationsInput | string | null
-    adImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    voiceSampleUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    faceId?: NullableStringFieldUpdateOperationsInput | string | null
-    simliSessionId?: NullableStringFieldUpdateOperationsInput | string | null
-    simliAgentId?: NullableStringFieldUpdateOperationsInput | string | null
-    systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
-    firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    qaPairs?: QAPairUncheckedUpdateManyWithoutPersonaNestedInput
-    sessions?: ChatSessionUncheckedUpdateManyWithoutPersonaNestedInput
-  }
-
-  export type AIPersonaUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    pageLink?: NullableStringFieldUpdateOperationsInput | string | null
-    adImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    voiceSampleUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    faceId?: NullableStringFieldUpdateOperationsInput | string | null
-    simliSessionId?: NullableStringFieldUpdateOperationsInput | string | null
-    simliAgentId?: NullableStringFieldUpdateOperationsInput | string | null
-    systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
-    firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type ChatSessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14154,6 +14224,31 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SessionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionToken?: StringFieldUpdateOperationsInput | string
+    expires?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionToken?: StringFieldUpdateOperationsInput | string
+    expires?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionToken?: StringFieldUpdateOperationsInput | string
+    expires?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChatSessionCreateManyPersonaInput = {
+    id?: string
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type QAPairCreateManyPersonaInput = {
     id?: string
     question: string
@@ -14162,11 +14257,27 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type ChatSessionCreateManyPersonaInput = {
-    id?: string
-    userId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type ChatSessionUpdateWithoutPersonaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: ChatMessageUpdateManyWithoutSessionNestedInput
+    user?: UserUpdateOneRequiredWithoutChatSessionsNestedInput
+  }
+
+  export type ChatSessionUncheckedUpdateWithoutPersonaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: ChatMessageUncheckedUpdateManyWithoutSessionNestedInput
+  }
+
+  export type ChatSessionUncheckedUpdateManyWithoutPersonaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type QAPairUpdateWithoutPersonaInput = {
@@ -14189,29 +14300,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     question?: StringFieldUpdateOperationsInput | string
     answer?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ChatSessionUpdateWithoutPersonaInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    messages?: ChatMessageUpdateManyWithoutSessionNestedInput
-    user?: UserUpdateOneRequiredWithoutChatSessionsNestedInput
-  }
-
-  export type ChatSessionUncheckedUpdateWithoutPersonaInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    messages?: ChatMessageUncheckedUpdateManyWithoutSessionNestedInput
-  }
-
-  export type ChatSessionUncheckedUpdateManyWithoutPersonaInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

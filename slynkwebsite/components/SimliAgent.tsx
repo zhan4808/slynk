@@ -100,6 +100,8 @@ interface SimliAgentProps {
     systemPrompt: string;
     firstMessage: string;
     faceId?: string; // Optional face ID from the persona
+    voice?: string; // Voice ID
+    useCustomVoice?: boolean; // Whether to use a custom voice
   };
   onStart?: () => void;
   onClose?: () => void;
@@ -943,6 +945,8 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
         faceId: personaData.faceId || DEFAULT_FACE_ID,
         systemPrompt: personaData.systemPrompt,
         firstMessage: personaData.firstMessage,
+        voiceId: personaData.voice, // Pass voice ID if available
+        useCustomVoice: personaData.useCustomVoice, // Pass custom voice flag if available
       });
       
       // Add a check to ensure roomUrl exists before calling substring

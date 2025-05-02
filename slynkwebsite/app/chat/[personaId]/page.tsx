@@ -20,7 +20,9 @@ export default function ChatPage() {
     description?: string,
     systemPrompt?: string,
     firstMessage?: string,
-    faceId?: string
+    faceId?: string,
+    voice?: string,
+    useCustomVoice?: boolean
   } | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -168,7 +170,9 @@ export default function ChatPage() {
               name: persona.name,
               systemPrompt: systemPrompt,
               firstMessage: firstMessage,
-              faceId: persona.faceId
+              faceId: persona.faceId,
+              voice: persona.voice,
+              useCustomVoice: persona.useCustomVoice
             }}
           />
         </div>
