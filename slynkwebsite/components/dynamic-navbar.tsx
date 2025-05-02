@@ -96,7 +96,7 @@ export function DynamicNavbar() {
     <>
       {/* Top spread-out navigation when at top of page */}
       <motion.header 
-        className="fixed top-0 left-0 w-full z-50 px-6 py-6"
+        className="fixed top-0 left-0 w-full z-50 px-6 py-6 pointer-events-auto"
         style={{ opacity: 1 - navState }}
         variants={navContainerVariants}
         initial="collapsed"
@@ -107,18 +107,17 @@ export function DynamicNavbar() {
           {/* Logo on the left */}
           <motion.div
             variants={navItemVariants}
-            className="transform-gpu"
-            layoutId="logo-container"
+            className="transform-gpu z-10 pointer-events-auto"
           >
             <AnimatedLogo />
           </motion.div>
           
           {/* Nav Links in center on the same line */}
           <motion.div 
-            className="absolute left-0 right-0 flex justify-center items-center h-full"
+            className="absolute left-0 right-0 flex justify-center items-center h-full pointer-events-none"
             variants={navItemVariants}
           >
-            <nav className="flex items-center space-x-8">
+            <nav className="flex items-center space-x-8 pointer-events-auto">
               {NAV_ITEMS.map((item, index) => (
                 <WideNavButton 
                   key={item.label}
@@ -133,8 +132,7 @@ export function DynamicNavbar() {
           {/* Create Ad Button on the right */}
           <motion.div
             variants={navItemVariants}
-            className="transform-gpu"
-            layoutId="create-button-container"
+            className="transform-gpu z-10 pointer-events-auto"
           >
             <Button
               onClick={() => navigateTo("/create")}
@@ -153,7 +151,7 @@ export function DynamicNavbar() {
       <AnimatePresence>
         {shouldShowPill && (
           <motion.div 
-            className="fixed top-6 left-0 w-full z-50 px-4 flex justify-center"
+            className="fixed top-6 left-0 w-full z-50 px-4 flex justify-center pointer-events-auto"
             style={{ opacity: navState }}
             variants={pillVariants}
             initial="hidden"
@@ -170,14 +168,13 @@ export function DynamicNavbar() {
             >
               {/* Logo */}
               <motion.div
-                className="transform-gpu"
-                layoutId="logo-container"
+                className="transform-gpu pointer-events-auto"
               >
                 <AnimatedLogo isAnimating={true} />
               </motion.div>
               
               {/* Nav Links */}
-              <nav className="flex items-center space-x-6 mx-4">
+              <nav className="flex items-center space-x-6 mx-4 pointer-events-auto">
                 {NAV_ITEMS.map((item, index) => (
                   <PillNavButton
                     key={item.label}
@@ -190,7 +187,7 @@ export function DynamicNavbar() {
               
               {/* Create Ad Button */}
               <motion.div
-                layoutId="create-button-container"
+                className="pointer-events-auto"
               >
                 <Button
                   onClick={() => navigateTo("/create")}
@@ -217,13 +214,13 @@ function WideNavButton({ label, href, index }: { label: string, href: string, in
   return (
     <motion.button
       onClick={() => router.push(href)}
-      className="relative px-4 py-2 text-base font-medium text-gray-800 transition-colors hover:text-pink-600"
-      whileHover={{ y: -2 }}
+      className="relative px-4 py-2 text-base font-medium text-gray-800 transition-all"
+      whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
       {label}
       <motion.div
-        className="absolute bottom-0 left-1 right-1 h-0.5 bg-pink-500 origin-left"
+        className="absolute bottom-0 left-1 right-1 h-0.5 bg-gray-800 origin-left"
         initial={{ scaleX: 0 }}
         whileHover={{ scaleX: 1 }}
         transition={{ duration: 0.3 }}
@@ -239,22 +236,16 @@ function PillNavButton({ label, href, index }: { label: string, href: string, in
   return (
     <motion.button
       onClick={() => router.push(href)}
-      className="relative px-4 py-2 text-base font-medium text-gray-800 transition-colors hover:text-pink-600 rounded-full hover:bg-pink-50"
+      className="relative px-4 py-2 text-base font-medium text-gray-800 transition-all rounded-full hover:bg-gray-100"
       initial={{ opacity: 0 }}
       animate={{ 
         opacity: 1,
         transition: { delay: 0.1 + (index * 0.05), duration: 0.3 }
       }}
-      whileHover={{ y: -2, backgroundColor: "rgba(236, 72, 153, 0.1)" }}
+      whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
       {label}
-      <motion.div
-        className="absolute bottom-1 left-3 right-3 h-0.5 bg-pink-500 origin-left"
-        initial={{ scaleX: 0 }}
-        whileHover={{ scaleX: 1 }}
-        transition={{ duration: 0.2 }}
-      />
     </motion.button>
   )
 } 

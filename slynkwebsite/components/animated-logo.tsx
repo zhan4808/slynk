@@ -79,7 +79,7 @@ export function AnimatedLogo({ isAnimating = false }: AnimatedLogoProps) {
           animate={shouldAnimate ? { color: "#db2777" } : {}}
           transition={{ duration: 0.3 }}
         >
-          Slynk
+          slynk
           <motion.span
             className="text-pink-500 ml-[1px]"
             animate={shouldAnimate ? {

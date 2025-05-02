@@ -413,9 +413,14 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
       if (response.ok) {
         const data = await response.json();
         console.log("Video preview generated successfully:", data);
+        
+        // Convert HTTP URLs to HTTPS
+        const hlsUrl = data.hls_url.replace(/^http:\/\//i, 'https://');
+        const mp4Url = data.mp4_url.replace(/^http:\/\//i, 'https://');
+        
         return {
-          hlsUrl: data.hls_url,
-          mp4Url: data.mp4_url,
+          hlsUrl,
+          mp4Url,
         };
       }
       
@@ -451,9 +456,14 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
         if (altResponse.ok) {
           const altData = await altResponse.json();
           console.log("Alternative video preview generated successfully:", altData);
+          
+          // Convert HTTP URLs to HTTPS
+          const hlsUrl = altData.hls_url.replace(/^http:\/\//i, 'https://');
+          const mp4Url = altData.mp4_url.replace(/^http:\/\//i, 'https://');
+          
           return {
-            hlsUrl: altData.hls_url,
-            mp4Url: altData.mp4_url,
+            hlsUrl,
+            mp4Url,
           };
         }
         
@@ -486,9 +496,14 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
           const fallbackData = await fallbackResponse.json();
           console.log("Fallback video preview generated successfully (without voice):", fallbackData);
           console.log("Note: Voice selection was ignored due to API limitations");
+          
+          // Convert HTTP URLs to HTTPS
+          const hlsUrl = fallbackData.hls_url.replace(/^http:\/\//i, 'https://');
+          const mp4Url = fallbackData.mp4_url.replace(/^http:\/\//i, 'https://');
+          
           return {
-            hlsUrl: fallbackData.hls_url,
-            mp4Url: fallbackData.mp4_url,
+            hlsUrl,
+            mp4Url,
           };
         }
         
@@ -527,9 +542,14 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
           const fallbackData = await fallbackResponse.json();
           console.log("Fallback video preview generated successfully (without voice):", fallbackData);
           console.log("Note: Voice selection was ignored due to API limitations");
+          
+          // Convert HTTP URLs to HTTPS
+          const hlsUrl = fallbackData.hls_url.replace(/^http:\/\//i, 'https://');
+          const mp4Url = fallbackData.mp4_url.replace(/^http:\/\//i, 'https://');
+          
           return {
-            hlsUrl: fallbackData.hls_url,
-            mp4Url: fallbackData.mp4_url,
+            hlsUrl,
+            mp4Url,
           };
         }
         

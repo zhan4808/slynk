@@ -127,6 +127,10 @@ const config: Config = {
           '0%': { opacity: '0.3', filter: 'blur(4px)' },
           '50%': { opacity: '0.7', filter: 'blur(8px)' },
           '100%': { opacity: '0.3', filter: 'blur(4px)' }
+        },
+        'blink': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' }
         }
   		},
   		animation: {
@@ -139,7 +143,8 @@ const config: Config = {
         'spinner-scale': 'spinner-scale 1.5s ease-in-out infinite',
         'spinner-rotate': 'spinner-rotate 2s linear infinite',
         'spinner-dash': 'spinner-dash 1.5s ease-in-out infinite',
-        'spinner-glow': 'spinner-glow 2s ease-in-out infinite'
+        'spinner-glow': 'spinner-glow 2s ease-in-out infinite',
+        'blink': 'blink 1s ease-in-out infinite'
   		}
   	}
   },

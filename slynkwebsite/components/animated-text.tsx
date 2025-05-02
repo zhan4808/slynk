@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
 
 interface AnimatedTextProps {
   words: string[]
@@ -18,68 +17,50 @@ export function AnimatedText({
   delayBetweenWords = 1500,
   className = "",
 }: AnimatedTextProps) {
-  const [currentWordIndex, setCurrentWordIndex] = useState(0)
-  const [currentText, setCurrentText] = useState("")
+  const [displayText, setDisplayText] = useState("")
+  const [wordIndex, setWordIndex] = useState(0)
+  const [charIndex, setCharIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [isAnimating, setIsAnimating] = useState(true)
 
   useEffect(() => {
-    if (!isAnimating) return
-
-    const timeout = setTimeout(() => {
+    const timer = setTimeout(() => {
+      // Current word we're processing
+      const currentWord = words[wordIndex]
+      
+      // Update display text based on current indices
       if (!isDeleting) {
-        // Typing
-        if (currentText.length < words[currentWordIndex].length) {
-          setCurrentText(words[currentWordIndex].substring(0, currentText.length + 1))
+        // Adding characters
+        if (charIndex < currentWord.length) {
+          setDisplayText(currentWord.substring(0, charIndex + 1))
+          setCharIndex(charIndex + 1)
         } else {
-          // Finished typing, wait and start deleting
+          // Finished typing the word - pause before deleting
+          setIsDeleting(true)
+          clearTimeout(timer)
           setTimeout(() => {
             setIsDeleting(true)
           }, delayBetweenWords)
         }
       } else {
-        // Deleting
-        if (currentText.length > 0) {
-          setCurrentText(words[currentWordIndex].substring(0, currentText.length - 1))
+        // Removing characters
+        if (charIndex > 0) {
+          setDisplayText(currentWord.substring(0, charIndex - 1))
+          setCharIndex(charIndex - 1)
         } else {
-          // Finished deleting, start typing the next word
+          // Move to next word
           setIsDeleting(false)
-          setCurrentWordIndex((prev) => (prev + 1) % words.length)
+          setWordIndex((wordIndex + 1) % words.length)
         }
       }
     }, isDeleting ? deletingSpeed : typingSpeed)
-
-    return () => clearTimeout(timeout)
-  }, [currentText, currentWordIndex, delayBetweenWords, deletingSpeed, isAnimating, isDeleting, typingSpeed, words])
-
-  const variants = {
-    hidden: { opacity: 0, y: 5 },
-    visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -5 }
-  }
+    
+    return () => clearTimeout(timer)
+  }, [charIndex, delayBetweenWords, deletingSpeed, isDeleting, typingSpeed, wordIndex, words])
 
   return (
     <span className={className}>
-      <AnimatePresence mode="wait">
-        <motion.span
-          key={currentText}
-          variants={variants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          transition={{
-            duration: 0.2,
-            ease: "easeInOut"
-          }}
-        >
-          {currentText}
-          <motion.span
-            animate={{ opacity: [1, 0, 1] }}
-            transition={{ repeat: Infinity, duration: 1 }}
-            className="inline-block ml-[1px] w-[2px] h-[1.1em] bg-pink-400 relative top-[0.2em]"
-          />
-        </motion.span>
-      </AnimatePresence>
+      {displayText}
+      <span className="inline-block ml-[1px] w-[2px] h-[1.1em] bg-pink-400 relative top-[0.2em] animate-blink"></span>
     </span>
   )
 }
