@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/ui/navbar"
 import { 
   Loader2, ArrowLeft, Save, Upload, Check, Play, X,
-  Mic, Image as ImageIcon, UserRound, Sparkles
+  Mic, Image as ImageIcon, UserRound, Sparkles, MessageSquare
 } from "lucide-react"
 import Link from "next/link"
 import { toast } from "@/components/ui/use-toast"
@@ -46,34 +46,15 @@ export default function EditPersonaPage() {
   const router = useRouter()
   const { data: session, status } = useSession()
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
   const [persona, setPersona] = useState<PersonaData | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [image, setImage] = useState<File | null>(null)
-  const [previewImage, setPreviewImage] = useState<string | null>(null)
-  const [isGeneratingFace, setIsGeneratingFace] = useState(false)
-  const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false)
-  const [videoPreview, setVideoPreview] = useState<{hlsUrl: string, mp4Url: string} | null>(null)
-  const [isGeneratingPreview, setIsGeneratingPreview] = useState(false)
-  const [activeStep, setActiveStep] = useState(1)
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // If not authenticated, redirect to sign-in
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/signin")
+      router.push("/signin?callbackUrl=/edit/" + params.personaId)
     }
-  }, [status, router])
-  
-  // Auto advance steps when criteria are met
-  useEffect(() => {
-    if (persona?.name && persona?.description && activeStep === 1) {
-      setActiveStep(2)
-    }
-    if (persona?.faceId && activeStep === 2) {
-      setActiveStep(3)
-    }
-  }, [persona?.name, persona?.description, persona?.faceId, activeStep])
+  }, [status, router, params.personaId])
 
   // Fetch persona data
   useEffect(() => {
@@ -115,13 +96,159 @@ export default function EditPersonaPage() {
     fetchPersona()
   }, [params.personaId, status])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Show loading or return null while checking authentication status
+  if (status === "loading" || status === "unauthenticated") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="w-12 h-12 rounded-full bg-purple-200 mb-4"></div>
+          <div className="h-4 w-32 bg-purple-100 rounded"></div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-purple-50">
+      <DynamicNavbar />
+      
+      <div className="container mx-auto max-w-6xl px-4 pt-24 pb-16">
+        <div className="w-full max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <motion.h1 
+              className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Edit AI Persona
+            </motion.h1>
+            
+            <Link href="/dashboard">
+              <Button variant="outline" className="rounded-full border-2 border-gray-200 hover:border-gray-300">
+                <ArrowLeft size={16} className="mr-2" />
+                Back to Dashboard
+              </Button>
+            </Link>
+          </div>
+          
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+            </div>
+          ) : error ? (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600">
+              {error}
+            </div>
+          ) : persona ? (
+            <EditPersonaForm persona={persona} personaId={params.personaId as string} />
+          ) : null}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+interface EditPersonaFormProps {
+  persona: PersonaData;
+  personaId: string;
+}
+
+function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState<PersonaData>({
+    ...persona
+  })
+  const [image, setImage] = useState<File | null>(null)
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
+  const [isGeneratingFace, setIsGeneratingFace] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [videoPreview, setVideoPreview] = useState<{mp4Url: string} | null>(null)
+  const [isGeneratingPreview, setIsGeneratingPreview] = useState(false)
+  
+  // Reuse the PersonaForm state management and logic, but with saving changes
+  // instead of creating a new persona
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    
+    try {
+      // Prepare data for API request
+      const formDataToSend = new FormData()
+      formDataToSend.append("name", formData.name)
+      formDataToSend.append("description", formData.description)
+      
+      if (formData.systemPrompt) {
+        formDataToSend.append("systemPrompt", formData.systemPrompt)
+      }
+      
+      if (formData.firstMessage) {
+        formDataToSend.append("firstMessage", formData.firstMessage)
+      }
+      
+      if (formData.faceId) {
+        formDataToSend.append("faceId", formData.faceId)
+      }
+      
+      if (formData.voice) {
+        formDataToSend.append("voice", formData.voice)
+      }
+      
+      // QA pairs
+      if (formData.qaPairs && formData.qaPairs.length > 0) {
+        formDataToSend.append("qaPairs", JSON.stringify(formData.qaPairs))
+      }
+      
+      // Append files if any
+      if (image) {
+        formDataToSend.append("image", image)
+      }
+      
+      // Send the update request
+      const response = await fetch(`/api/personas/${personaId}`, {
+        method: "PUT",
+        body: formDataToSend,
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Error updating persona: ${response.status}`)
+      }
+      
+      // Success
+      toast({
+        title: "Success!",
+        description: "Your AI persona has been updated successfully.",
+      })
+      
+      // Redirect to dashboard
+      router.push("/dashboard")
+    } catch (error) {
+      console.error("Error saving persona:", error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save persona",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setPersona((prev) => prev ? { ...prev, [name]: value } : null)
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
   }
 
   const handleVoiceChange = (value: string) => {
-    setPersona((prev) => prev ? { ...prev, voice: value } : null)
+    setFormData(prev => ({
+      ...prev,
+      voice: value
+    }))
   }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,554 +267,312 @@ export default function EditPersonaPage() {
 
   const handleGenerateFaceId = async () => {
     if (!image) {
-      setError("Please upload an image first")
+      toast({
+        title: "Error",
+        description: "Please upload an image first",
+        variant: "destructive",
+      })
       return
     }
     
     setIsGeneratingFace(true)
-    setError(null)
     
     try {
       // Attempt to generate a face ID
-      let faceId: string
-      try {
-        console.log("Generating face ID from uploaded image...")
-        const result = await generateFaceId(image, persona?.name || "unnamed_persona")
-        faceId = result.faceId
-        console.log("Successfully generated face ID:", faceId)
-      } catch (e) {
-        console.error("Error generating face ID, using default:", e)
-        // Use default face ID if generation fails
-        faceId = "tmp9i8bbq7c"
-      }
+      const result = await generateFaceId(image, formData.name || "unnamed_persona")
       
-      setPersona(prev => prev ? { ...prev, faceId } : null)
+      setFormData(prev => ({
+        ...prev,
+        faceId: result.faceId
+      }))
+      
+      toast({
+        title: "Success",
+        description: "Face ID generated successfully",
+      })
     } catch (error) {
       console.error("Error generating face ID:", error)
-      setError(error instanceof Error ? error.message : "Failed to generate face")
+      toast({
+        title: "Error",
+        description: "Failed to generate face ID. Using default instead.",
+        variant: "destructive",
+      })
       
-      // Set a default face ID even if there's an error
-      setPersona(prev => prev ? { ...prev, faceId: "tmp9i8bbq7c" } : null)
+      // Use default face ID if generation fails
+      setFormData(prev => ({
+        ...prev,
+        faceId: "tmp9i8bbq7c"
+      }))
     } finally {
       setIsGeneratingFace(false)
     }
   }
   
-  const handleGenerateAvatar = async () => {
-    // Use default Face ID for avatar generation
-    setIsGeneratingAvatar(true)
-    setError(null)
-    
-    try {
-      // In production, you would call a different API endpoint for avatar generation
-      // For now, we'll use the default face ID
-      setPersona(prev => prev ? { ...prev, faceId: "tmp9i8bbq7c" } : null)
-    } catch (error) {
-      console.error("Error generating avatar:", error)
-      setError(error instanceof Error ? error.message : "Failed to generate avatar")
-    } finally {
-      setIsGeneratingAvatar(false)
-    }
-  }
-  
   const handleGeneratePreview = async () => {
-    if (!persona?.faceId) {
-      setError("Please generate a face ID or avatar first")
+    if (!formData.faceId) {
+      toast({
+        title: "Error",
+        description: "Please generate a face ID first",
+        variant: "destructive",
+      })
       return
     }
     
-    const previewText = persona.firstMessage || 
-      `Hello, I'm ${persona.name || "your AI assistant"}. How can I help you today?`
+    const previewText = formData.firstMessage || 
+      `Hello, I'm ${formData.name || "your AI assistant"}. How can I help you today?`
     
     setIsGeneratingPreview(true)
-    setError(null)
     
     try {
-      const preview = await generateVideoPreview(previewText, persona.faceId)
+      const preview = await generateVideoPreview(previewText, formData.faceId)
       setVideoPreview(preview)
     } catch (error) {
       console.error("Error generating preview:", error)
-      setError(error instanceof Error ? error.message : "Failed to generate preview")
+      toast({
+        title: "Error",
+        description: "Failed to generate preview",
+        variant: "destructive",
+      })
     } finally {
       setIsGeneratingPreview(false)
     }
   }
 
-  const handleFileChange = (field: "adImage" | "voiceSample", file: File | null) => {
-    setPersona((prev) => prev ? { ...prev, [field]: file } : null)
-  }
-
-  const handleQAPairsChange = (qaPairs: Array<{ id: string; question: string; answer: string }>) => {
-    setPersona((prev) => prev ? { ...prev, qaPairs } : null)
-  }
-
-  const handleSave = async () => {
-    if (!persona) return
-    
-    setSaving(true)
-    setError(null)
-    
-    try {
-      // Prepare data for API request
-      const formData = new FormData()
-      formData.append("name", persona.name)
-      formData.append("description", persona.description)
-      
-      if (persona.systemPrompt) {
-        formData.append("systemPrompt", persona.systemPrompt)
-      }
-      
-      if (persona.firstMessage) {
-        formData.append("firstMessage", persona.firstMessage)
-      }
-      
-      if (persona.faceId) {
-        formData.append("faceId", persona.faceId)
-      }
-      
-      if (persona.voice) {
-        formData.append("voice", persona.voice)
-      }
-      
-      if (persona.pageLink) {
-        formData.append("pageLink", persona.pageLink)
-      }
-      
-      if (persona.qaPairs && persona.qaPairs.length > 0) {
-        formData.append("qaPairs", JSON.stringify(persona.qaPairs))
-      }
-      
-      if (image) {
-        formData.append("image", image)
-      }
-      
-      if (persona.adImage) {
-        formData.append("adImage", persona.adImage)
-      }
-      
-      if (persona.voiceSample) {
-        formData.append("voiceSample", persona.voiceSample)
-      }
-      
-      // Send update request
-      const response = await fetch(`/api/personas/${persona.id}`, {
-        method: "PUT",
-        body: formData,
-      })
-      
-      if (!response.ok) {
-        throw new Error(`Failed to update persona: ${response.status}`)
-      }
-      
-      toast({
-        title: "Success",
-        description: "Persona updated successfully",
-      })
-      
-      router.push("/dashboard")
-    } catch (error) {
-      console.error("Error saving persona:", error)
-      setError(error instanceof Error ? error.message : "Failed to save persona")
-      
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save persona",
-        variant: "destructive",
-      })
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  // Generate preview button component
-  const GeneratePreviewButton = () => (
-    <motion.div
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-    >
-      <Button
-        onClick={handleGeneratePreview}
-        disabled={isGeneratingPreview || !persona?.faceId}
-        className={`gap-2 ${persona?.faceId ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'} shadow-md hover:shadow-lg rounded-xl transition-all`}
-      >
-        {isGeneratingPreview ? (
-          <>
-            <CircularSpinner size="sm" variant="gradient" />
-            <span>Generating...</span>
-          </>
-        ) : (
-          <>
-            <Play className="h-4 w-4" />
-            <span>Generate Preview</span>
-          </>
-        )}
-      </Button>
-    </motion.div>
-  )
-
-  // Save button component
-  const SaveButton = () => (
-    <motion.div
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-    >
-      <Button
-        onClick={handleSave}
-        disabled={saving || !persona?.name || !persona?.description}
-        className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md hover:shadow-lg rounded-xl"
-      >
-        {saving ? (
-          <>
-            <CircularSpinner size="sm" variant="gradient" />
-            <span>Saving...</span>
-          </>
-        ) : (
-          <>
-            <Save className="h-4 w-4" />
-            <span>Save Changes</span>
-          </>
-        )}
-      </Button>
-    </motion.div>
-  )
-
-  // Loading state
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
-        <motion.div 
-          className="text-center"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 300, 
-            damping: 30 
-          }}
-        >
-          <CircularSpinner size="lg" variant="gradient" label="Loading persona..." />
-        </motion.div>
-      </div>
-    )
-  }
-  
-  // Error state
-  if (error && !persona) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
-        <DynamicNavbar />
-        <div className="container mx-auto max-w-4xl px-4 pt-24 pb-12">
-          <motion.div 
-            className="bg-white p-8 rounded-2xl shadow-md text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          >
-            <div className="mb-6 text-red-500">
-              <X className="h-16 w-16 mx-auto" />
-            </div>
-            <h1 className="text-2xl font-bold mb-4">Error Loading Persona</h1>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link href="/dashboard">
-                <Button className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md hover:shadow-lg rounded-xl">
-                  <ArrowLeft className="h-4 w-4" />
-                  Return to Dashboard
-                </Button>
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-      </div>
-    )
-  }
-
-  if (!persona) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="rounded-lg bg-yellow-50 p-4 text-yellow-700">
-          No persona data available.
-        </div>
-        <div className="mt-4">
-          <Link href="/dashboard">
-            <Button>Back to Dashboard</Button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <DynamicNavbar />
-      
-      <main className="container max-w-7xl mx-auto px-4 py-8">
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <CircularSpinner size="lg" variant="default" />
-          </div>
-        ) : error ? (
-          <div className="text-center p-8 border rounded-lg shadow-sm bg-white">
-            <div className="text-red-500 font-medium mb-2">Error</div>
-            <div className="text-gray-700">{error}</div>
-            <Link href="/dashboard">
-              <Button variant="outline" className="mt-4">
-                Back to Dashboard
-              </Button>
-            </Link>
-          </div>
-        ) : persona ? (
+    <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Details and description */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <UserRound className="mr-2 h-5 w-5 text-pink-500" />
+          Persona Details
+        </h2>
+        
+        <div className="space-y-4">
           <div>
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  asChild
-                  className="h-9 w-9 shrink-0"
-                >
-                  <Link href="/dashboard">
-                    <ArrowLeft className="h-4 w-4" />
-                    <span className="sr-only">Back</span>
-                  </Link>
-                </Button>
-                <h1 className="text-2xl font-bold tracking-tight">Edit Persona</h1>
-              </div>
-              <SaveButton />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Basic Information Section */}
-              <motion.div 
-                className="md:col-span-2 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="border-b border-gray-100 bg-gradient-to-r from-white to-gray-50 px-6 py-4">
-                  <h2 className="text-lg font-medium">Basic Information</h2>
-                </div>
-                <div className="p-6 space-y-6">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                      Persona Name
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      value={persona.name}
-                      onChange={handleInputChange}
-                      placeholder="Enter a name for your persona"
-                      className="block w-full rounded-lg border border-gray-200 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              rows={3}
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              value={formData.description}
+              onChange={handleChange}
                       required
                     />
                   </div>
                   
-                  <div className="space-y-2">
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                      Description
-                    </label>
-                    <textarea
-                      id="description"
-                      name="description"
-                      value={persona.description}
-                      onChange={handleInputChange}
-                      placeholder="Describe your persona in a few sentences"
+          <div>
+            <label htmlFor="systemPrompt" className="block text-sm font-medium text-gray-700 mb-1">System Prompt</label>
+            <textarea
+              id="systemPrompt"
+              name="systemPrompt"
                       rows={3}
-                      className="block w-full rounded-lg border border-gray-200 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label htmlFor="systemPrompt" className="block text-sm font-medium text-gray-700">
-                      System Prompt
-                    </label>
-                    <textarea
-                      id="systemPrompt"
-                      name="systemPrompt"
-                      value={persona.systemPrompt || ""}
-                      onChange={handleInputChange}
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              value={formData.systemPrompt || ""}
+              onChange={handleChange}
                       placeholder="Instructions for how the AI should behave"
-                      rows={3}
-                      className="block w-full rounded-lg border border-gray-200 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
                   
-                  <div className="space-y-2">
-                    <label htmlFor="firstMessage" className="block text-sm font-medium text-gray-700">
-                      First Message
-                    </label>
-                    <textarea
-                      id="firstMessage"
+          <div>
+            <label htmlFor="firstMessage" className="block text-sm font-medium text-gray-700 mb-1">First Message</label>
+            <textarea
+              id="firstMessage"
                       name="firstMessage"
-                      value={persona.firstMessage || ""}
-                      onChange={handleInputChange}
-                      placeholder="The first message the AI will say to users"
-                      rows={3}
-                      className="block w-full rounded-lg border border-gray-200 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              rows={3}
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              value={formData.firstMessage || ""}
+              onChange={handleChange}
+              placeholder="The first message the AI will say to users"
                     />
                   </div>
                 </div>
-              </motion.div>
-
-              {/* Appearance & Voice Section */}
-              <motion.div 
-                className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <div className="border-b border-gray-100 bg-gradient-to-r from-white to-gray-50 px-6 py-4">
-                  <h2 className="text-lg font-medium">Appearance & Voice</h2>
-                </div>
-                <div className="p-6 space-y-6">
-                  <div className="space-y-4">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Avatar
-                    </label>
-                    
-                    {/* Image Upload */}
-                    <div className="flex flex-col items-center gap-4">
-                      {persona.faceId && !previewImage ? (
-                        <div className="relative rounded-xl overflow-hidden w-32 h-32 border border-gray-200">
-                          <img 
-                            src={`https://simli.ai/api/avatars/${persona.faceId}/image.jpg`} 
-                            alt="Avatar preview" 
-                            className="object-cover w-full h-full"
-                          />
-                        </div>
-                      ) : previewImage ? (
-                        <div className="relative rounded-xl overflow-hidden w-32 h-32 border border-gray-200">
-                          <img 
+              </div>
+            
+      {/* Appearance & Voice */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <ImageIcon className="mr-2 h-5 w-5 text-pink-500" />
+          Appearance & Voice
+        </h2>
+        
+        <div className="space-y-6">
+          {/* Avatar Section */}
+          <div className="space-y-4">
+            <label className="block text-sm font-medium text-gray-700">Avatar</label>
+            
+            <div className="flex flex-col items-center gap-4">
+              {formData.faceId && !previewImage ? (
+                <div className="relative rounded-xl overflow-hidden w-32 h-32 border border-gray-200">
+                  <img 
+                    src={`https://simli.ai/api/avatars/${formData.faceId}/image.jpg`} 
+                    alt="Avatar preview" 
+                    className="object-cover w-full h-full"
+                  />
+              </div>
+              ) : previewImage ? (
+                <div className="relative rounded-xl overflow-hidden w-32 h-32 border border-gray-200">
+                  <img 
                             src={previewImage} 
-                            alt="Upload preview" 
-                            className="object-cover w-full h-full"
-                          />
+                    alt="Upload preview" 
+                    className="object-cover w-full h-full"
+                  />
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl h-32 w-32">
-                          <UserRound className="h-12 w-12 text-gray-300" />
+                <div className="flex items-center justify-center border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl h-32 w-32">
+                  <UserRound className="h-12 w-12 text-gray-300" />
                         </div>
                       )}
                       
-                      <div className="flex gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          <Upload className="h-4 w-4 mr-2" />
-                          Upload
-                        </Button>
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          onChange={handleImageUpload}
-                          accept="image/*"
-                          className="hidden"
-                        />
-                        
-                        {previewImage && (
-                          <Button
-                            type="button"
-                            variant="default"
-                            size="sm"
-                            onClick={handleGenerateFaceId}
-                            disabled={isGeneratingFace}
-                          >
-                            {isGeneratingFace ? (
-                              <><Spinner className="mr-2" /> Processing...</>
-                            ) : (
-                              <><Sparkles className="h-4 w-4 mr-2" /> Generate</>
-                            )}
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Voice Selection */}
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Voice
-                    </label>
-                    <Select
-                      value={persona.voice || DEFAULT_VOICE}
-                      onValueChange={handleVoiceChange}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a voice" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {elevenLabsVoices.map((voice) => (
-                          <SelectItem key={voice.id} value={voice.id}>
-                            {voice.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Preview Generation */}
-                  <div className="space-y-2">
+              <div className="flex gap-2">
+                      <Button 
+                        type="button" 
+                        variant="outline"
+                  size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                  className="gap-1.5"
+                      >
+                  <Upload className="h-4 w-4" />
+                  Upload
+                      </Button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+                
+                {previewImage && (
                     <Button
                       type="button"
-                      variant="outline"
-                      className="w-full"
-                      onClick={handleGeneratePreview}
-                      disabled={isGeneratingPreview || !persona.faceId}
+                    variant="default"
+                    size="sm"
+                      onClick={handleGenerateFaceId}
+                    disabled={isGeneratingFace}
+                    className="gap-1.5 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white"
                     >
-                      {isGeneratingPreview ? (
-                        <><Spinner className="mr-2" /> Generating Preview...</>
-                      ) : (
-                        <><Play className="h-4 w-4 mr-2" /> Generate Preview</>
-                      )}
-                    </Button>
-                    
-                    {videoPreview && (
-                      <div className="mt-4">
-                        <div className="rounded-lg overflow-hidden">
-                          <video
-                            controls
-                            className="w-full"
-                            autoPlay
-                          >
-                            <source src={videoPreview.mp4Url} type="video/mp4" />
-                            Your browser does not support the video tag.
-                          </video>
-                        </div>
-                      </div>
+                      {isGeneratingFace ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-4 w-4" />
                     )}
+                    Generate Face
+                    </Button>
+                )}
+              </div>
                   </div>
                 </div>
-              </motion.div>
-            </div>
-
-            {/* QA Pairs Section */}
-            <motion.div 
-              className="mt-6 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+                
+          {/* Voice Selection */}
+                    <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Voice
+            </label>
+            <Select
+              value={formData.voice || DEFAULT_VOICE}
+              onValueChange={handleVoiceChange}
             >
-              <div className="border-b border-gray-100 bg-gradient-to-r from-white to-gray-50 px-6 py-4">
-                <h2 className="text-lg font-medium">Q&A Pairs</h2>
+              <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a voice" />
+                        </SelectTrigger>
+                        <SelectContent>
+                {elevenLabsVoices.map((voice) => (
+                  <SelectItem key={voice.id} value={voice.id}>
+                    {voice.name}
+                  </SelectItem>
+                ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+            
+          {/* Preview Generation */}
+          <div className="space-y-4">
+            <Button 
+              type="button"
+              className="gap-2 w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={handleGeneratePreview}
+              disabled={isGeneratingPreview || !formData.faceId}
+            >
+              {isGeneratingPreview ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
+              Generate Preview
+            </Button>
+            
+            {videoPreview && (
+              <div className="mt-4">
+                <div className="rounded-lg overflow-hidden">
+                  <video
+                    controls
+                    className="w-full"
+                    autoPlay
+                  >
+                    <source src={videoPreview.mp4Url} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
               </div>
-              <div className="p-6">
-                <QATable
-                  pairs={persona.qaPairs}
-                  onChange={handleQAPairsChange}
-                />
               </div>
-            </motion.div>
+            )}
           </div>
-        ) : null}
-      </main>
+        </div>
+      </div>
+      
+      {/* QA Pairs */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <MessageSquare className="mr-2 h-5 w-5 text-pink-500" />
+          Q&A Pairs
+        </h2>
+        
+        <div className="space-y-4">
+          <QATable
+            pairs={formData.qaPairs || []}
+            onChange={(qaPairs) => {
+              setFormData(prev => ({
+                ...prev,
+                qaPairs
+              }))
+            }}
+          />
+        </div>
+      </div>
+      
+      {/* Save Button */}
+      <div className="flex justify-end pt-4">
+        <motion.div
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+        >
+          <Button 
+            type="submit" 
+            className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg rounded-xl"
+            disabled={loading || !formData.name || !formData.description}
+          >
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
+            Save Changes
+          </Button>
+        </motion.div>
     </div>
+    </form>
   )
 } 

@@ -14,15 +14,26 @@ export function AnimatedText({
   words,
   typingSpeed = 100,
   deletingSpeed = 80,
-  delayBetweenWords = 1500,
+  delayBetweenWords = 2000,
   className = "",
 }: AnimatedTextProps) {
   const [displayText, setDisplayText] = useState("")
   const [wordIndex, setWordIndex] = useState(0)
   const [charIndex, setCharIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
 
   useEffect(() => {
+    if (isPaused) {
+      // If we're paused, wait for the specified delay before starting to delete
+      const pauseTimer = setTimeout(() => {
+        setIsPaused(false);
+        setIsDeleting(true);
+      }, delayBetweenWords);
+      
+      return () => clearTimeout(pauseTimer);
+    }
+    
     const timer = setTimeout(() => {
       // Current word we're processing
       const currentWord = words[wordIndex]
@@ -35,11 +46,7 @@ export function AnimatedText({
           setCharIndex(charIndex + 1)
         } else {
           // Finished typing the word - pause before deleting
-          setIsDeleting(true)
-          clearTimeout(timer)
-          setTimeout(() => {
-            setIsDeleting(true)
-          }, delayBetweenWords)
+          setIsPaused(true);
         }
       } else {
         // Removing characters
@@ -55,7 +62,7 @@ export function AnimatedText({
     }, isDeleting ? deletingSpeed : typingSpeed)
     
     return () => clearTimeout(timer)
-  }, [charIndex, delayBetweenWords, deletingSpeed, isDeleting, typingSpeed, wordIndex, words])
+  }, [charIndex, delayBetweenWords, deletingSpeed, isDeleting, isPaused, typingSpeed, wordIndex, words])
 
   return (
     <span className={className}>

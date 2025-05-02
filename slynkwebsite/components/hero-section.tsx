@@ -101,7 +101,12 @@ export function HeroSection() {
               Bring Your{" "}
               <span className="relative inline-block">
                 <span className="animate-pulse-glow bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-pink-600">
-                  <AnimatedText words={["Brand", "Ads", "Conference"]} typingSpeed={120} deletingSpeed={80} />
+                  <AnimatedText 
+                    words={["Brand", "Ads", "Conference"]} 
+                    typingSpeed={100} 
+                    deletingSpeed={60} 
+                    delayBetweenWords={2500} 
+                  />
                 </span>
                 <motion.span 
                   className="absolute -inset-1 bg-pink-400/20 blur-lg rounded-lg"
@@ -273,7 +278,7 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <div 
-              className="aspect-video rounded-2xl overflow-hidden relative"
+              className="aspect-video rounded-2xl overflow-hidden relative bg-gradient-to-r from-pink-100 to-purple-100"
               onMouseEnter={() => setIsVideoHovered(true)}
               onMouseLeave={() => setIsVideoHovered(false)}
             >
@@ -284,6 +289,16 @@ export function HeroSection() {
                 muted={isVideoMuted}
                 playsInline
                 className="w-full h-full object-cover rounded-2xl"
+                poster="/video-poster.jpg"
+                onError={(e) => {
+                  console.error("Video failed to load:", e);
+                  // Attempt to reload the video once if it fails
+                  const target = e.target as HTMLVideoElement;
+                  if (!target.dataset.retried) {
+                    target.dataset.retried = "true";
+                    target.load();
+                  }
+                }}
               >
                 <source src="/SlynkDemo.mp4" type="video/mp4" />
                 Your browser does not support the video tag.

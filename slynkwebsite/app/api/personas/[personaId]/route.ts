@@ -5,8 +5,10 @@ import { authOptions } from "@/lib/auth"
 import { mockApi } from "@/lib/mock-api"
 import { Prisma } from "@prisma/client"
 
-// Helper to determine if we should use mock API
-const useMockApi = process.env.USE_MOCK_API === "true" || process.env.NODE_ENV === "development";
+// Helper to determine if we should use mock API - only in development with missing database connection
+const useMockApi = process.env.USE_MOCK_API === "true" || 
+                  (process.env.NODE_ENV === "development" && 
+                  (!process.env.DATABASE_URL || !process.env.DIRECT_URL));
 
 export async function GET(
   request: NextRequest,
@@ -204,5 +206,103 @@ export async function DELETE(
       { error: "Failed to delete persona" },
       { status: 500 }
     )
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  context: { params: { personaId: string } }
+) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    return NextResponse.json(
+      { error: "You must be logged in to update personas" },
+      { status: 401 }
+    );
+  }
+
+  try {
+    const { personaId } = context.params;
+    const formData = await request.formData();
+    
+    // Convert FormData to an object
+    const data: Record<string, any> = {};
+    for (const [key, value] of formData.entries()) {
+      // Handle special cases
+      if (key === 'qaPairs' && typeof value === 'string') {
+        data[key] = JSON.parse(value);
+      } else {
+        data[key] = value;
+      }
+    }
+
+    // First check if persona belongs to this user
+    const persona = await prisma.aIPersona.findUnique({
+      where: {
+        id: personaId,
+        user: {
+          email: session.user.email
+        }
+      }
+    });
+
+    if (!persona) {
+      return NextResponse.json(
+        { error: "Persona not found or not authorized" },
+        { status: 404 }
+      );
+    }
+
+    // Prepare update data
+    const updateData: any = {};
+    
+    // Text fields
+    if (data.name) updateData.name = data.name;
+    if (data.description) updateData.description = data.description;
+    if (data.systemPrompt) updateData.systemPrompt = data.systemPrompt;
+    if (data.firstMessage) updateData.firstMessage = data.firstMessage;
+    if (data.faceId) updateData.faceId = data.faceId;
+    if (data.voice) updateData.voice = data.voice;
+
+    // Update the persona
+    const updatedPersona = await prisma.aIPersona.update({
+      where: {
+        id: personaId
+      },
+      data: updateData
+    });
+
+    // Handle QA pairs if provided
+    if (data.qaPairs && Array.isArray(data.qaPairs)) {
+      // Delete existing QA pairs
+      await prisma.qAPair.deleteMany({
+        where: {
+          personaId: personaId
+        }
+      });
+      
+      // Create new QA pairs
+      if (data.qaPairs.length > 0) {
+        await prisma.qAPair.createMany({
+          data: data.qaPairs.map((pair: any) => ({
+            question: pair.question,
+            answer: pair.answer,
+            personaId: personaId
+          }))
+        });
+      }
+    }
+
+    return NextResponse.json({ 
+      success: true,
+      persona: updatedPersona 
+    });
+  } catch (error) {
+    console.error("Error updating persona:", error);
+    return NextResponse.json(
+      { error: "Failed to update persona", details: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 }
+    );
   }
 } 

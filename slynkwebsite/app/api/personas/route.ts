@@ -6,8 +6,10 @@ import { revalidatePath } from "next/cache";
 import { mockApi } from "@/lib/mock-api";
 import { createSimliAgent } from "@/lib/simli-api";
 
-// Helper to determine if we should use mock API
-const useMockApi = process.env.USE_MOCK_API === "true" || process.env.NODE_ENV === "development" && !process.env.SIMLI_API_KEY;
+// Helper to determine if we should use mock API - only in development with missing DB
+const useMockApi = process.env.USE_MOCK_API === "true" || 
+                  (process.env.NODE_ENV === "development" && 
+                  (!process.env.DATABASE_URL || !process.env.DIRECT_URL));
 
 // Get all AI personas for the current user
 export async function GET() {

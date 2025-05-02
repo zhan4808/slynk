@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slynk Animated Logo Capture</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        .logo-container {
+            padding: 2rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .controls {
+            display: flex;
+            gap: 1rem;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            background: #ec4899;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        button:hover {
+            background: #db2777;
+        }
+        .frames {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .frame {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            background: white;
+            text-align: center;
+        }
+        .frame img {
+            max-width: 100%;
+        }
+        .frame-title {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Slynk Animated Logo for Favicon Extraction</h1>
+        
+        <div class="logo-container" id="logo-container">
+            <!-- The logo will be rendered here -->
+        </div>
+        
+        <div class="controls">
+            <button id="toggle-animation">Toggle Animation</button>
+            <button id="capture-frame">Capture Current Frame</button>
+        </div>
+        
+        <div class="frames" id="frames">
+            <!-- Captured frames will appear here -->
+        </div>
+    </div>
+    
+    <script type="text/babel">
+        const { motion } = window.FramerMotion;
+        const { useState, useEffect } = React;
+        
+        function AnimatedLogo({ isAnimating = true }) {
+            const [isHovered, setIsHovered] = useState(false);
+            const shouldAnimate = isHovered || isAnimating;
+          
+            return (
+                <div style={{ display: "inline-block" }}>
+                    <motion.div
+                        style={{ 
+                            display: "flex", 
+                            alignItems: "center", 
+                            gap: "0.5rem", 
+                            padding: "0.375rem 0.75rem", 
+                            borderRadius: "9999px",
+                            transition: "background-color 0.3s ease"
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                        whileHover={{ 
+                            backgroundColor: "rgba(243, 244, 246, 0.8)" 
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        {/* Logo mark */}
+                        <motion.div 
+                            style={{ position: "relative", width: "4rem", height: "4rem" }}
+                        >
+                            {/* Background glow */}
+                            <motion.div
+                                style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    borderRadius: "9999px",
+                                    background: "linear-gradient(to right, rgb(236, 72, 153), rgb(168, 85, 247))",
+                                    filter: "blur(0.5rem)"
+                                }}
+                                animate={shouldAnimate ? {
+                                    scale: [1, 1.2, 1],
+                                    opacity: [0.7, 1, 0.7],
+                                } : {}}
+                                transition={{
+                                    duration: 1.5,
+                                    repeat: shouldAnimate ? Infinity : 0,
+                                    ease: "easeInOut"
+                                }}
+                            />
+                            
+                            {/* Logo shape */}
+                            <motion.div
+                                style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    borderRadius: "9999px",
+                                    background: "white",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}
+                                animate={shouldAnimate ? { rotate: 360 } : {}}
+                                transition={{ duration: 10, repeat: shouldAnimate ? Infinity : 0, ease: "linear" }}
+                            >
+                                <motion.div
+                                    style={{
+                                        width: "3rem",
+                                        height: "3rem",
+                                        borderRadius: "9999px",
+                                        background: "linear-gradient(to bottom right, rgb(236, 72, 153), rgb(168, 85, 247), rgb(99, 102, 241))"
+                                    }}
+                                    animate={shouldAnimate ? {
+                                        background: [
+                                            "linear-gradient(to bottom right, rgb(236, 72, 153), rgb(168, 85, 247), rgb(99, 102, 241))",
+                                            "linear-gradient(to bottom right, rgb(99, 102, 241), rgb(236, 72, 153), rgb(168, 85, 247))",
+                                            "linear-gradient(to bottom right, rgb(168, 85, 247), rgb(99, 102, 241), rgb(236, 72, 153))",
+                                            "linear-gradient(to bottom right, rgb(236, 72, 153), rgb(168, 85, 247), rgb(99, 102, 241))"
+                                        ]
+                                    } : {}}
+                                    transition={{ duration: 3, repeat: shouldAnimate ? Infinity : 0, ease: "linear" }}
+                                >
+                                    <motion.div 
+                                        style={{
+                                            width: "2rem",
+                                            height: "2rem",
+                                            position: "absolute",
+                                            top: "0.5rem",
+                                            left: "0.5rem",
+                                            borderRadius: "9999px",
+                                            background: "rgba(255, 255, 255, 0.9)"
+                                        }}
+                                        animate={shouldAnimate ? { 
+                                            x: [0, 4, -4, 0],
+                                            y: [0, -4, 4, 0]
+                                        } : {}}
+                                        transition={{ 
+                                            duration: 2, 
+                                            repeat: shouldAnimate ? Infinity : 0,
+                                            ease: "easeInOut"
+                                        }}
+                                    />
+                                </motion.div>
+                            </motion.div>
+                        </motion.div>
+                    </motion.div>
+                </div>
+            );
+        }
+
+        // Main App component
+        function App() {
+            const [isAnimating, setIsAnimating] = useState(true);
+            
+            // Effect to set up event listeners
+            useEffect(() => {
+                const toggleBtn = document.getElementById('toggle-animation');
+                const toggleHandler = () => setIsAnimating(prev => !prev);
+                
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', toggleHandler);
+                }
+                
+                return () => {
+                    if (toggleBtn) {
+                        toggleBtn.removeEventListener('click', toggleHandler);
+                    }
+                };
+            }, []);
+            
+            return <AnimatedLogo isAnimating={isAnimating} />;
+        }
+
+        // Render the app
+        const domContainer = document.getElementById('logo-container');
+        ReactDOM.render(<App />, domContainer);
+    </script>
+    
+    <script>
+        document.getElementById('capture-frame').addEventListener('click', function() {
+            const logoContainer = document.getElementById('logo-container');
+            
+            html2canvas(logoContainer).then(canvas => {
+                const dataUrl = canvas.toDataURL('image/png');
+                
+                const framesContainer = document.getElementById('frames');
+                const frameDiv = document.createElement('div');
+                frameDiv.className = 'frame';
+                
+                const img = document.createElement('img');
+                img.src = dataUrl;
+                
+                const title = document.createElement('div');
+                title.className = 'frame-title';
+                title.textContent = `Frame ${new Date().toLocaleTimeString()}`;
+                
+                const downloadLink = document.createElement('a');
+                downloadLink.href = dataUrl;
+                downloadLink.download = `slynk-logo-frame-${Date.now()}.png`;
+                downloadLink.textContent = 'Download';
+                downloadLink.style.display = 'block';
+                downloadLink.style.marginTop = '0.5rem';
+                downloadLink.style.color = '#ec4899';
+                
+                frameDiv.appendChild(img);
+                frameDiv.appendChild(title);
+                frameDiv.appendChild(downloadLink);
+                framesContainer.appendChild(frameDiv);
+            });
+        });
+    </script>
+</body>
+</html> 

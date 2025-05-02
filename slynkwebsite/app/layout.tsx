@@ -4,17 +4,15 @@ import "./globals.css"
 import type React from "react"
 import { Providers } from "./providers"
 import { DynamicNavbar } from "@/components/dynamic-navbar"
-import { Footer } from "@/components/footer"
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata = {
-  title: "slynk",
-  description: "reinventing ads with live interaction",
+export const metadata: Metadata = {
+  title: "Slynk",
+  description:
+    "Bring your brand to life with a digital clone for personalized social media marketing and growth.",
   icons: {
-    icon: [
-      { url: "/slynkicon.svg", type: "image/x-icon" },
-    ],
+    icon: "/slynkfavicon.svg",
   },
 };
 
@@ -29,7 +27,6 @@ export default function RootLayout({
         <Providers>
           <DynamicNavbar />
           <main>{children}</main>
-          <Footer />
         </Providers>
       </body>
     </html>
