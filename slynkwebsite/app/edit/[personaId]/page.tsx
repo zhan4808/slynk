@@ -21,6 +21,7 @@ import { generateFaceId, generateVideoPreview } from "@/lib/simli-api"
 import { CircularSpinner } from "@/components/ui/circular-spinner"
 import { Spinner } from "@/components/ui/spinner"
 import { DynamicNavbar } from "@/components/dynamic-navbar"
+import { elevenLabsVoices, DEFAULT_VOICE } from '@/lib/voice-options'
 
 interface PersonaData {
   id: string
@@ -100,7 +101,7 @@ export default function EditPersonaPage() {
           faceId: data.faceId,
           systemPrompt: data.systemPrompt,
           firstMessage: data.firstMessage,
-          voice: data.voice || "en-US-Neural2-F",
+          voice: data.voice || DEFAULT_VOICE,
           qaPairs: data.qaPairs || []
         })
       } catch (error) {
@@ -148,10 +149,11 @@ export default function EditPersonaPage() {
     
     try {
       // Attempt to generate a face ID
-      let faceId
+      let faceId: string
       try {
         console.log("Generating face ID from uploaded image...")
-        faceId = await generateFaceId(image, persona?.name || "unnamed_persona")
+        const result = await generateFaceId(image, persona?.name || "unnamed_persona")
+        faceId = result.faceId
         console.log("Successfully generated face ID:", faceId)
       } catch (e) {
         console.error("Error generating face ID, using default:", e)
@@ -421,401 +423,271 @@ export default function EditPersonaPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <DynamicNavbar />
-      <div className="container mx-auto max-w-6xl px-4 pt-24 pb-16">
-        <div className="w-full max-w-5xl mx-auto p-6">
-          <div className="flex items-center justify-between mb-8">
-            <motion.h1 
-              className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-violet-500 bg-clip-text text-transparent"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              Edit AI Persona
-            </motion.h1>
-            
+      
+      <main className="container max-w-7xl mx-auto px-4 py-8">
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <CircularSpinner size="lg" variant="default" />
+          </div>
+        ) : error ? (
+          <div className="text-center p-8 border rounded-lg shadow-sm bg-white">
+            <div className="text-red-500 font-medium mb-2">Error</div>
+            <div className="text-gray-700">{error}</div>
             <Link href="/dashboard">
-              <Button variant="outline" className="rounded-full border-2 border-gray-200 hover:border-gray-300">
-                <ArrowLeft size={16} className="mr-2" />
+              <Button variant="outline" className="mt-4">
                 Back to Dashboard
               </Button>
             </Link>
           </div>
-          
-          <div className="space-y-8">
-            {/* Step 1: Basic Information */}
-            <motion.div 
-              className={`p-6 rounded-xl bg-white shadow-lg border-2 ${activeStep === 1 ? 'border-pink-400' : 'border-transparent'}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white font-bold">1</div>
-                <h2 className="text-2xl font-semibold">Basic Information</h2>
+        ) : persona ? (
+          <div>
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  asChild
+                  className="h-9 w-9 shrink-0"
+                >
+                  <Link href="/dashboard">
+                    <ArrowLeft className="h-4 w-4" />
+                    <span className="sr-only">Back</span>
+                  </Link>
+                </Button>
+                <h1 className="text-2xl font-bold tracking-tight">Edit Persona</h1>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
+              <SaveButton />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Basic Information Section */}
+              <motion.div 
+                className="md:col-span-2 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="border-b border-gray-100 bg-gradient-to-r from-white to-gray-50 px-6 py-4">
+                  <h2 className="text-lg font-medium">Basic Information</h2>
+                </div>
+                <div className="p-6 space-y-6">
                   <div className="space-y-2">
-                    <AnimatedInput
-                      label="Name"
-                      placeholder="Enter the name of your AI persona"
-                      required
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                      Persona Name
+                    </label>
+                    <input
+                      id="name"
                       name="name"
                       value={persona.name}
                       onChange={handleInputChange}
-                      className="border-2 focus:border-pink-400 p-3 text-base"
+                      placeholder="Enter a name for your persona"
+                      className="block w-full rounded-lg border border-gray-200 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      required
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <AnimatedInput
-                      label="Description"
-                      placeholder="Describe your AI persona"
-                      required
-                      multiline
-                      rows={3}
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                      Description
+                    </label>
+                    <textarea
+                      id="description"
                       name="description"
                       value={persona.description}
                       onChange={handleInputChange}
-                      className="border-2 focus:border-pink-400 p-3 text-base"
+                      placeholder="Describe your persona in a few sentences"
+                      rows={3}
+                      className="block w-full rounded-lg border border-gray-200 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      required
                     />
                   </div>
-                </div>
-                
-                <div className="space-y-4">
+                  
                   <div className="space-y-2">
-                    <AnimatedInput
-                      label="System Prompt"
-                      placeholder="Instructions for how the AI should behave"
-                      multiline
-                      rows={3}
+                    <label htmlFor="systemPrompt" className="block text-sm font-medium text-gray-700">
+                      System Prompt
+                    </label>
+                    <textarea
+                      id="systemPrompt"
                       name="systemPrompt"
                       value={persona.systemPrompt || ""}
                       onChange={handleInputChange}
-                      className="border-2 focus:border-pink-400 p-3 text-base"
+                      placeholder="Instructions for how the AI should behave"
+                      rows={3}
+                      className="block w-full rounded-lg border border-gray-200 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <AnimatedInput
-                      label="First Message (Optional)"
-                      placeholder="First message to send when starting a conversation"
-                      multiline
-                      rows={2}
+                    <label htmlFor="firstMessage" className="block text-sm font-medium text-gray-700">
+                      First Message
+                    </label>
+                    <textarea
+                      id="firstMessage"
                       name="firstMessage"
                       value={persona.firstMessage || ""}
                       onChange={handleInputChange}
-                      className="border-2 focus:border-pink-400 p-3 text-base"
+                      placeholder="The first message the AI will say to users"
+                      rows={3}
+                      className="block w-full rounded-lg border border-gray-200 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
                 </div>
-              </div>
-            </motion.div>
-            
-            {/* Step 2: Appearance */}
-            <motion.div 
-              className={`p-6 rounded-xl bg-white shadow-lg border-2 ${activeStep === 2 ? 'border-pink-400' : 'border-transparent'}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white font-bold">2</div>
-                <h2 className="text-2xl font-semibold">Appearance</h2>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Left column: Image upload */}
-                <div className="space-y-6">
-                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-5 rounded-lg">
-                    <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
-                      <ImageIcon className="h-5 w-5 text-pink-500" />
-                      Reference Image (Optional)
-                    </h3>
-                    <div className="flex flex-col items-center space-y-4">
-                      {previewImage ? (
-                        <div className="relative w-48 h-48 rounded-lg overflow-hidden border-2 border-pink-200 shadow-md group">
-                          <Image 
-                            src={previewImage} 
-                            alt="Preview" 
-                            fill
-                            className="object-cover transition-all group-hover:scale-105"
+              </motion.div>
+
+              {/* Appearance & Voice Section */}
+              <motion.div 
+                className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <div className="border-b border-gray-100 bg-gradient-to-r from-white to-gray-50 px-6 py-4">
+                  <h2 className="text-lg font-medium">Appearance & Voice</h2>
+                </div>
+                <div className="p-6 space-y-6">
+                  <div className="space-y-4">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Avatar
+                    </label>
+                    
+                    {/* Image Upload */}
+                    <div className="flex flex-col items-center gap-4">
+                      {persona.faceId && !previewImage ? (
+                        <div className="relative rounded-xl overflow-hidden w-32 h-32 border border-gray-200">
+                          <img 
+                            src={`https://simli.ai/api/avatars/${persona.faceId}/image.jpg`} 
+                            alt="Avatar preview" 
+                            className="object-cover w-full h-full"
                           />
-                          <button 
-                            type="button"
-                            onClick={() => {
-                              setImage(null)
-                              setPreviewImage(null)
-                            }}
-                            className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors duration-200"
-                          >
-                            <X size={16} />
-                          </button>
+                        </div>
+                      ) : previewImage ? (
+                        <div className="relative rounded-xl overflow-hidden w-32 h-32 border border-gray-200">
+                          <img 
+                            src={previewImage} 
+                            alt="Upload preview" 
+                            className="object-cover w-full h-full"
+                          />
                         </div>
                       ) : (
-                        <div 
-                          className="w-48 h-48 border-2 border-dashed border-pink-300 rounded-lg flex items-center justify-center bg-gradient-to-r from-pink-50 to-purple-50 cursor-pointer hover:border-pink-400 transition-all duration-300"
+                        <div className="flex items-center justify-center border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl h-32 w-32">
+                          <UserRound className="h-12 w-12 text-gray-300" />
+                        </div>
+                      )}
+                      
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
                           onClick={() => fileInputRef.current?.click()}
                         >
-                          <div className="text-center">
-                            <Upload className="mx-auto h-12 w-12 text-pink-400" />
-                            <p className="mt-2 text-sm text-gray-600">Upload an image</p>
-                          </div>
-                        </div>
-                      )}
-                      
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                      />
-                      
-                      <Button 
-                        type="button" 
-                        variant="outline"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="border-2 border-pink-300 hover:border-pink-500 hover:bg-pink-50 text-pink-600 transition-all duration-300"
-                      >
-                        {previewImage ? "Change Image" : "Upload Image"}
-                      </Button>
+                          <Upload className="h-4 w-4 mr-2" />
+                          Upload
+                        </Button>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          onChange={handleImageUpload}
+                          accept="image/*"
+                          className="hidden"
+                        />
+                        
+                        {previewImage && (
+                          <Button
+                            type="button"
+                            variant="default"
+                            size="sm"
+                            onClick={handleGenerateFaceId}
+                            disabled={isGeneratingFace}
+                          >
+                            {isGeneratingFace ? (
+                              <><Spinner className="mr-2" /> Processing...</>
+                            ) : (
+                              <><Sparkles className="h-4 w-4 mr-2" /> Generate</>
+                            )}
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                {/* Right column: Face ID and Avatar options */}
-                <div className="space-y-6">
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-lg">
-                    <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
-                      <UserRound className="h-5 w-5 text-blue-500" />
-                      Generate Face ID
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-4">
-                      Generate a realistic face for your AI based on your reference image.
-                    </p>
-                    
+
+                  {/* Voice Selection */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Voice
+                    </label>
+                    <Select
+                      value={persona.voice || DEFAULT_VOICE}
+                      onValueChange={handleVoiceChange}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a voice" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {elevenLabsVoices.map((voice) => (
+                          <SelectItem key={voice.id} value={voice.id}>
+                            {voice.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Preview Generation */}
+                  <div className="space-y-2">
                     <Button
                       type="button"
-                      disabled={!image || isGeneratingFace}
-                      onClick={handleGenerateFaceId}
-                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:opacity-90 transition-opacity"
+                      variant="outline"
+                      className="w-full"
+                      onClick={handleGeneratePreview}
+                      disabled={isGeneratingPreview || !persona.faceId}
                     >
-                      {isGeneratingFace ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Generating Face ID...
-                        </>
-                      ) : persona.faceId && image ? (
-                        <>
-                          <Check className="mr-2 h-4 w-4" />
-                          Face ID Generated
-                        </>
+                      {isGeneratingPreview ? (
+                        <><Spinner className="mr-2" /> Generating Preview...</>
                       ) : (
-                        <>
-                          <UserRound className="mr-2 h-4 w-4" />
-                          Generate Face ID
-                        </>
+                        <><Play className="h-4 w-4 mr-2" /> Generate Preview</>
                       )}
                     </Button>
-                  </div>
-                  
-                  <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-5 rounded-lg">
-                    <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
-                      <Sparkles className="h-5 w-5 text-purple-500" />
-                      Generate Avatar
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-4">
-                      Create an AI avatar without uploading a reference image.
-                    </p>
-                    
-                    <Button
-                      type="button"
-                      disabled={isGeneratingAvatar}
-                      onClick={handleGenerateAvatar}
-                      className="w-full bg-gradient-to-r from-purple-500 to-violet-500 hover:opacity-90 transition-opacity"
-                    >
-                      {isGeneratingAvatar ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Generating Avatar...
-                        </>
-                      ) : persona.faceId && !image ? (
-                        <>
-                          <Check className="mr-2 h-4 w-4" />
-                          Avatar Generated
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="mr-2 h-4 w-4" />
-                          Generate Avatar
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                  
-                  {persona.faceId && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded border border-gray-200">
-                      <Check className="text-green-500 h-4 w-4" />
-                      {image ? "Face ID" : "Avatar"} active: {persona.faceId.substring(0, 8)}...
-                    </div>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-            
-            {/* Step 3: Preview, Voice, and Q&A */}
-            <motion.div 
-              className={`p-6 rounded-xl bg-white shadow-lg border-2 ${activeStep === 3 ? 'border-pink-400' : 'border-transparent'}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white font-bold">3</div>
-                <h2 className="text-2xl font-semibold">Preview & Voice</h2>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Left: Preview */}
-                <div className="space-y-4">
-                  <div className="bg-gradient-to-r from-green-50 to-teal-50 p-5 rounded-lg">
-                    <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
-                      <Play className="h-5 w-5 text-green-500" />
-                      Generate Preview
-                    </h3>
-                    
-                    <GeneratePreviewButton />
                     
                     {videoPreview && (
                       <div className="mt-4">
-                        <video 
-                          src={videoPreview.mp4Url}
-                          controls
-                          className="w-full rounded-md border-2 border-green-200 shadow-md"
-                        />
+                        <div className="rounded-lg overflow-hidden">
+                          <video
+                            controls
+                            className="w-full"
+                            autoPlay
+                          >
+                            <source src={videoPreview.mp4Url} type="video/mp4" />
+                            Your browser does not support the video tag.
+                          </video>
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
-                
-                {/* Right: Voice Selection */}
-                <div className="space-y-4">
-                  <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-5 rounded-lg">
-                    <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
-                      <Mic className="h-5 w-5 text-amber-500" />
-                      Voice Selection
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-4">
-                      Choose the voice for your AI persona.
-                    </p>
-                    
-                    <div className="space-y-2">
-                      <label htmlFor="voice" className="text-base font-medium">Voice</label>
-                      <Select value={persona.voice || "en-US-Neural2-F"} onValueChange={handleVoiceChange}>
-                        <SelectTrigger className="w-full border-2 border-amber-200 focus:border-amber-400 bg-white">
-                          <SelectValue placeholder="Select a voice" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="en-US-Neural2-F">American Female</SelectItem>
-                          <SelectItem value="en-US-Neural2-M">American Male</SelectItem>
-                          <SelectItem value="en-GB-Neural2-F">British Female</SelectItem>
-                          <SelectItem value="en-GB-Neural2-M">British Male</SelectItem>
-                          <SelectItem value="en-AU-Neural2-F">Australian Female</SelectItem>
-                          <SelectItem value="en-AU-Neural2-M">Australian Male</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-            
-            {/* Step 4: Questions & Answers */}
-            <motion.div 
-              className="p-6 rounded-xl bg-white shadow-lg border-2 border-transparent"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white font-bold">4</div>
-                <h2 className="text-2xl font-semibold">Questions & Answers</h2>
-              </div>
-              
-              <div className="space-y-4">
-                <p className="text-sm text-gray-600">
-                  Add questions and answers that your AI persona should know.
-                </p>
-                <QATable pairs={persona.qaPairs} onChange={handleQAPairsChange} />
-              </div>
-            </motion.div>
-            
-            {/* Additional Resources */}
-            <motion.div 
-              className="p-6 rounded-xl bg-white shadow-lg border-2 border-transparent"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-white font-bold">5</div>
-                <h2 className="text-2xl font-semibold">Additional Resources</h2>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FileDropZone
-                  label="Advertisement Image or Reference (Optional)"
-                  accept="image/*"
-                  icon="image"
-                  onChange={(file) => handleFileChange("adImage", file)}
-                  value={persona.adImage || null}
-                  className="bg-gradient-to-r from-fuchsia-50 to-pink-50 border-2 border-fuchsia-100 rounded-lg p-4"
-                />
-                
-                <FileDropZone
-                  label="Voice Sample (Optional)"
-                  accept="audio/*"
-                  icon="audio"
-                  onChange={(file) => handleFileChange("voiceSample", file)}
-                  value={persona.voiceSample || null}
-                  className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-100 rounded-lg p-4"
-                />
-              </div>
-            </motion.div>
-            
-            {/* Error display */}
-            {error && (
-              <motion.div 
-                className="bg-red-50 border-2 border-red-200 text-red-600 p-4 rounded-lg"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                {error}
               </motion.div>
-            )}
-            
-            {/* Submit buttons */}
+            </div>
+
+            {/* QA Pairs Section */}
             <motion.div 
-              className="flex justify-end space-x-4 pt-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
+              className="mt-6 bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Button 
-                type="button" 
-                variant="outline"
-                onClick={() => router.push('/dashboard')}
-                className="border-2 border-gray-300 hover:bg-gray-50"
-              >
-                Cancel
-              </Button>
-              <SaveButton />
+              <div className="border-b border-gray-100 bg-gradient-to-r from-white to-gray-50 px-6 py-4">
+                <h2 className="text-lg font-medium">Q&A Pairs</h2>
+              </div>
+              <div className="p-6">
+                <QATable
+                  pairs={persona.qaPairs}
+                  onChange={handleQAPairsChange}
+                />
+              </div>
             </motion.div>
           </div>
-        </div>
-      </div>
+        ) : null}
+      </main>
     </div>
   )
 } 

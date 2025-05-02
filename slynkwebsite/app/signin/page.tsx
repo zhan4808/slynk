@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { FaGoogle } from "react-icons/fa"
 import { Mail } from "lucide-react"
 import Link from "next/link"
-import { Logo } from "@/components/logo"
+import { AnimatedLogo } from "@/components/animated-logo"
 import { motion } from "framer-motion"
 import { toast } from "@/components/ui/use-toast"
 import { CircularSpinner } from "@/components/ui/circular-spinner"
@@ -107,42 +107,21 @@ function SignInForm() {
     }
   }
 
-  // Card spring animation variants
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        type: "spring", 
-        stiffness: 300, 
-        damping: 24 
-      } 
-    }
-  }
-
-  // Button hover animation
-  const buttonVariants = {
-    hover: { 
-      scale: 1.03,
-      boxShadow: "0 10px 15px -3px rgba(236, 72, 153, 0.1), 0 4px 6px -2px rgba(236, 72, 153, 0.05)"
-    },
-    tap: { 
-      scale: 0.97 
-    }
-  }
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white via-purple-50 to-pink-50 py-12 px-4 sm:px-6 lg:px-8">
       <motion.div 
-        className="w-full max-w-md space-y-8"
-        initial="hidden"
-        animate="visible"
-        variants={cardVariants}
+        className="w-full max-w-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 24 
+        }}
       >
-        <div className="text-center">
+        <div className="text-center mb-8">
           <motion.div 
-            className="mx-auto h-12 w-auto"
+            className="mx-auto flex justify-center mb-6"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ 
@@ -152,8 +131,9 @@ function SignInForm() {
               delay: 0.2
             }}
           >
-            <Logo />
+            <AnimatedLogo isAnimating={true} />
           </motion.div>
+          
           <motion.h2 
             className="mt-6 text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-600"
             initial={{ opacity: 0, y: 5 }}
@@ -162,6 +142,7 @@ function SignInForm() {
           >
             Sign in to your account
           </motion.h2>
+          
           <motion.p 
             className="mt-2 text-sm text-gray-600"
             initial={{ opacity: 0, y: 5 }}
@@ -175,24 +156,22 @@ function SignInForm() {
           </motion.p>
         </div>
 
-        <div className="mt-8 space-y-6">
-          {/* Google Sign in */}
-          <motion.div 
-            className="relative"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <div className="absolute -inset-1.5 rounded-2xl bg-gradient-to-r from-pink-400 via-purple-500 to-blue-500 opacity-75 blur-sm group-hover:opacity-100 transition-all"></div>
+        <motion.div 
+          className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl border border-gray-100 p-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="space-y-6">
+            {/* Google Sign in */}
             <motion.div
-              whileHover="hover"
-              whileTap="tap"
-              variants={buttonVariants}
+              whileHover={{ y: -3, boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1)" }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <Button
                 onClick={handleGoogleSignIn}
                 disabled={loading}
-                className="relative w-full justify-center gap-2 bg-white text-gray-800 border-0 shadow-md hover:shadow-lg rounded-xl h-14"
+                className="w-full justify-center gap-2 bg-white text-gray-800 border border-gray-200 shadow-sm hover:shadow-md rounded-xl h-12"
               >
                 {loading ? (
                   <CircularSpinner size="sm" variant="default" />
@@ -202,33 +181,16 @@ function SignInForm() {
                 <span className="font-medium">{loading ? "Signing in..." : "Sign in with Google"}</span>
               </Button>
             </motion.div>
-          </motion.div>
 
-          <motion.div 
-            className="relative flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-          >
-            <div className="flex-grow border-t border-gray-200"></div>
-            <span className="flex-shrink mx-4 text-gray-500 text-sm bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 px-3 rounded-full">Or continue with</span>
-            <div className="flex-grow border-t border-gray-200"></div>
-          </motion.div>
+            <div className="relative flex items-center justify-center">
+              <div className="flex-grow border-t border-gray-200"></div>
+              <span className="flex-shrink mx-4 text-gray-500 text-sm px-3 rounded-full">Or continue with</span>
+              <div className="flex-grow border-t border-gray-200"></div>
+            </div>
 
-          {/* Email Sign in */}
-          <motion.div 
-            className="relative"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-          >
-            <div className="absolute -inset-1.5 rounded-2xl bg-gradient-to-r from-pink-400 via-purple-500 to-blue-500 opacity-75 blur-sm"></div>
-            <form onSubmit={handleEmailSignIn} className="relative bg-white rounded-xl p-6 shadow-md space-y-5">
-              <motion.div
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-              >
+            {/* Email Sign in */}
+            <form onSubmit={handleEmailSignIn} className="space-y-5">
+              <div>
                 <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
                   Email address
                 </Label>
@@ -246,49 +208,35 @@ function SignInForm() {
                     placeholder="Enter your email"
                   />
                 </div>
-              </motion.div>
+              </div>
 
               <motion.div
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9 }}
-                whileHover="hover"
-                whileTap="tap"
-                variants={buttonVariants}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full justify-center bg-gradient-to-r from-pink-400 to-pink-600 text-white hover:opacity-90 h-12 rounded-xl"
+                  className="w-full h-12 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all"
                 >
                   {loading ? (
-                    <div className="flex items-center justify-center">
-                      <CircularSpinner size="sm" variant="gradient" />
-                      <span className="ml-2">Processing...</span>
-                    </div>
+                    <CircularSpinner size="sm" variant="default" />
                   ) : (
-                    <span>Sign in with Email</span>
+                    "Sign in with Email"
                   )}
                 </Button>
               </motion.div>
             </form>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </motion.div>
     </div>
   )
 }
 
-// Main component with Suspense
 export default function SignInPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
-        <div className="w-full max-w-md text-center">
-          <CircularSpinner variant="gradient" label="Loading" />
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<div>Loading...</div>}>
       <SignInForm />
     </Suspense>
   )

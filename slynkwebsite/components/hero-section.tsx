@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { Mail, Sparkles, ArrowRight, MousePointer2 } from "lucide-react"
+import { Mail, Sparkles, ArrowRight, MousePointer2, Pause, Play, Volume2, VolumeX } from "lucide-react"
 import Image from "next/image"
 import { AnimatedText } from "@/components/animated-text"
 import { toast } from "@/components/ui/use-toast"
@@ -16,6 +16,10 @@ export function HeroSection() {
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isInputFocused, setIsInputFocused] = useState(false)
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true)
+  const [isVideoMuted, setIsVideoMuted] = useState(true)
+  const [isVideoHovered, setIsVideoHovered] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   const handleWaitlistSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -60,6 +64,25 @@ export function HeroSection() {
       })
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  const handlePlayPause = () => {
+    if (videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play()
+        setIsVideoPlaying(true)
+      } else {
+        videoRef.current.pause()
+        setIsVideoPlaying(false)
+      }
+    }
+  }
+
+  const handleMuteToggle = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted
+      setIsVideoMuted(videoRef.current.muted)
     }
   }
 
@@ -249,49 +272,44 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Hero%20image.jpg-mE5vAT4d864MlVhdkcrk1Vn2WcNONq.jpeg"
-              alt="Background Gradient"
-              width={1920}
-              height={1080}
-              className="w-full h-auto"
-              priority
-            />
-            <div className="absolute inset-0 flex items-end justify-center pb-16">
-              <motion.div 
-                className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl w-[90%] h-[70%] flex shadow-xl"
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.8 }}
+            <div 
+              className="aspect-video rounded-2xl overflow-hidden relative"
+              onMouseEnter={() => setIsVideoHovered(true)}
+              onMouseLeave={() => setIsVideoHovered(false)}
+            >
+              <video
+                ref={videoRef}
+                autoPlay
+                loop
+                muted={isVideoMuted}
+                playsInline
+                className="w-full h-full object-cover rounded-2xl"
               >
-                <motion.div 
-                  className="flex-1 pr-2"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                <source src="/SlynkDemo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              
+              {/* Video controls */}
+              <motion.div 
+                className="absolute bottom-4 right-4 flex gap-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isVideoHovered ? 1 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <button 
+                  onClick={handlePlayPause}
+                  className="w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm flex items-center justify-center text-white transition-all"
+                  aria-label={isVideoPlaying ? "Pause video" : "Play video"}
                 >
-                  <Image
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Browser-HZNDOssbyLixIa4lABR27yelWXveQ0.png"
-                    alt="Browser Preview"
-                    width={800}
-                    height={600}
-                    className="w-full h-full object-cover rounded-xl shadow-md"
-                    priority
-                  />
-                </motion.div>
-                <motion.div 
-                  className="flex-1 pl-2"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  {isVideoPlaying ? <Pause size={18} /> : <Play size={18} />}
+                </button>
+                <button 
+                  onClick={handleMuteToggle}
+                  className="w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm flex items-center justify-center text-white transition-all"
+                  aria-label={isVideoMuted ? "Unmute video" : "Mute video"}
                 >
-                  <Image
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Editor%20Window-sJ4sXlXpgDhv7gLvQylqH5VTb3L0rc.png"
-                    alt="Code Editor"
-                    width={800}
-                    height={600}
-                    className="w-full h-full object-cover rounded-xl shadow-md"
-                    priority
-                  />
-                </motion.div>
+                  {isVideoMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                </button>
               </motion.div>
             </div>
           </motion.div>

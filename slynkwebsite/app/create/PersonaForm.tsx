@@ -548,14 +548,6 @@ export default function PersonaForm() {
 
   return (
     <div className="w-full max-w-5xl mx-auto p-6 font-sans">
-      <motion.h1 
-        className="text-4xl font-bold mb-10 text-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      >
-        Create Your AI Persona
-      </motion.h1>
       
       {/* Instructions card - Framer style with shaded rounded bars */}
       <motion.div
