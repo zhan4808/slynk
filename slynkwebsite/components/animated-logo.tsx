@@ -5,11 +5,18 @@ import { motion } from 'framer-motion'
 
 interface AnimatedLogoProps {
   isAnimating?: boolean
+  scale?: number
 }
 
-export function AnimatedLogo({ isAnimating = false }: AnimatedLogoProps) {
+export function AnimatedLogo({ isAnimating = false, scale = 1 }: AnimatedLogoProps) {
   const [isHovered, setIsHovered] = useState(false)
   const shouldAnimate = isHovered || isAnimating
+  
+  // Calculate dimensions based on scale
+  const logoSize = `${8 * scale}px`
+  const innerSize = `${6 * scale}px`
+  const dotSize = `${4 * scale}px`
+  const fontSize = scale < 1 ? 'text-lg' : 'text-xl'
   
   return (
     <div className="inline-block">
@@ -21,10 +28,12 @@ export function AnimatedLogo({ isAnimating = false }: AnimatedLogoProps) {
           backgroundColor: "rgba(243, 244, 246, 0.8)" 
         }}
         whileTap={{ scale: 0.95 }}
+        style={{ scale }}
       >
         {/* Logo mark */}
         <motion.div 
-          className="relative w-8 h-8"
+          className="relative"
+          style={{ width: logoSize, height: logoSize }}
         >
           {/* Background glow */}
           <motion.div
@@ -47,7 +56,8 @@ export function AnimatedLogo({ isAnimating = false }: AnimatedLogoProps) {
             transition={{ duration: 10, repeat: shouldAnimate ? Infinity : 0, ease: "linear" }}
           >
             <motion.div
-              className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500"
+              className="rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500"
+              style={{ width: innerSize, height: innerSize }}
               animate={shouldAnimate ? {
                 background: [
                   "linear-gradient(to bottom right, rgb(236, 72, 153), rgb(168, 85, 247), rgb(99, 102, 241))",
@@ -59,10 +69,16 @@ export function AnimatedLogo({ isAnimating = false }: AnimatedLogoProps) {
               transition={{ duration: 3, repeat: shouldAnimate ? Infinity : 0, ease: "linear" }}
             >
               <motion.div 
-                className="w-4 h-4 absolute top-1 left-1 rounded-full bg-white/90"
+                className="absolute rounded-full bg-white/90"
+                style={{ 
+                  width: dotSize, 
+                  height: dotSize,
+                  top: `${1 * scale}px`, 
+                  left: `${1 * scale}px`
+                }}
                 animate={shouldAnimate ? { 
-                  x: [0, 2, -2, 0],
-                  y: [0, -2, 2, 0]
+                  x: [0, 2 * scale, -2 * scale, 0],
+                  y: [0, -2 * scale, 2 * scale, 0]
                 } : {}}
                 transition={{ 
                   duration: 2, 
@@ -75,7 +91,7 @@ export function AnimatedLogo({ isAnimating = false }: AnimatedLogoProps) {
         </motion.div>
         
         {/* Logo text */}
-        <div className="text-xl font-bold text-gray-900">
+        <div className={`${fontSize} font-bold text-gray-900`}>
           slynk
           <span className="text-pink-500 ml-[1px]">.</span>
         </div>

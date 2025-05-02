@@ -149,17 +149,17 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <DynamicNavbar />
-      <div className="flex-1 flex flex-col pt-16">
+      <div className="flex-1 flex flex-col pt-14 md:pt-16">
         <div className="container mx-auto max-w-6xl px-4 pb-10">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold text-gray-800">
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <h1 className="text-xl md:text-3xl font-bold text-gray-800">
               {persona.name}
             </h1>
             
             <Link href="/dashboard">
-              <Button variant="outline" className="rounded-full border border-gray-200 hover:border-gray-300">
-                <ArrowLeft size={16} className="mr-2" />
-                Back
+              <Button variant="outline" className="rounded-full border border-gray-200 hover:border-gray-300 h-9 md:h-10 px-3 md:px-4">
+                <ArrowLeft size={16} className="mr-1 md:mr-2" />
+                <span className="text-sm md:text-base">Back</span>
               </Button>
             </Link>
           </div>

@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/slynkfavicon.svg",
   },
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
 };
 
 export default function RootLayout({
@@ -24,10 +25,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-white text-gray-900 antialiased`}>
+      <body className={`${inter.className} bg-white text-gray-900 antialiased overflow-x-hidden`}>
         <Providers>
           <DynamicNavbar />
-          <main>{children}</main>
+          <main className="min-h-screen">{children}</main>
           <Footer />
         </Providers>
       </body>

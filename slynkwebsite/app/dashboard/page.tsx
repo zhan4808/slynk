@@ -152,9 +152,9 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-gray-50 to-purple-50/50">
       <DynamicNavbar />
-      <main className="container mx-auto max-w-6xl px-4 pt-24 pb-12">
+      <main className="container mx-auto max-w-6xl px-4 pt-20 md:pt-24 pb-12">
         <motion.div 
-          className="space-y-8"
+          className="space-y-6 md:space-y-8"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ 
@@ -165,15 +165,16 @@ export default function DashboardPage() {
         >
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">Your AI Personas</h1>
-              <p className="text-gray-500 mt-1">Manage your digital personas</p>
+              <h1 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">Your AI Personas</h1>
+              <p className="text-sm md:text-base text-gray-500 mt-1">Manage your digital personas</p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mt-4 md:mt-0">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                className="hidden md:block"
               >
                 <Button 
                   variant="outline" 
@@ -189,9 +190,10 @@ export default function DashboardPage() {
                 whileHover="hover"
                 whileTap="tap"
                 variants={buttonVariants}
+                className="w-full md:w-auto"
               >
-                <Link href="/create">
-                  <Button className="gap-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 border-0 text-white shadow-md hover:shadow-lg hover:from-pink-600 hover:to-purple-700 transition-all">
+                <Link href="/create" className="w-full md:w-auto block">
+                  <Button className="w-full md:w-auto gap-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 border-0 text-white shadow-md hover:shadow-lg hover:from-pink-600 hover:to-purple-700 transition-all">
                     <Plus className="h-4 w-4" />
                     Create New Persona
                   </Button>
@@ -202,7 +204,7 @@ export default function DashboardPage() {
 
           {personas.length === 0 ? (
             <motion.div 
-              className="flex flex-col items-center justify-center py-16 px-4 border border-dashed rounded-2xl bg-white shadow-sm"
+              className="flex flex-col items-center justify-center py-10 md:py-16 px-4 border border-dashed rounded-2xl bg-white shadow-sm"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ 
@@ -213,8 +215,8 @@ export default function DashboardPage() {
               }}
             >
               <div className="text-center mb-6">
-                <h2 className="text-xl font-medium text-gray-900 mb-2">No personas created yet</h2>
-                <p className="text-gray-500 max-w-md mx-auto">
+                <h2 className="text-lg md:text-xl font-medium text-gray-900 mb-2">No personas created yet</h2>
+                <p className="text-sm md:text-base text-gray-500 max-w-md mx-auto">
                   Create your first AI persona to start having conversations and engaging with your audience.
                 </p>
               </div>
@@ -233,7 +235,7 @@ export default function DashboardPage() {
               </motion.div>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {personas.map((persona, i) => (
                 <motion.div 
                   key={persona.id} 
@@ -305,38 +307,18 @@ export default function DashboardPage() {
               ))}
             </div>
           )}
-
-          <motion.div 
-            className="mt-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
-          >
-            <h2 className="text-xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">Personalized Ad Recommendations</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <AdRecommendation 
-                title="Beauty Brand Marketing"
-                description="Create a friendly beauty advisor to guide customers through your product catalog and offer personalized recommendations."
-                industry="Beauty & Cosmetics"
-                conversionRate="+32%"
-                index={0}
-              />
-              <AdRecommendation 
-                title="Financial Advisor Bot"
-                description="Deploy an AI financial advisor to help clients understand your services and products while answering common questions."
-                industry="Financial Services"
-                conversionRate="+24%"
-                index={1}
-              />
-              <AdRecommendation 
-                title="E-commerce Assistant"
-                description="Boost your sales with a shopping assistant that helps customers find products and complete purchases."
-                industry="E-commerce"
-                conversionRate="+28%"
-                index={2}
-              />
-            </div>
-          </motion.div>
+          
+          {/* Mobile-only Sign Out button */}
+          <div className="mt-8 flex justify-center md:hidden">
+            <Button 
+              variant="outline" 
+              className="gap-2 rounded-full border border-gray-300 bg-white hover:bg-pink-50 hover:border-pink-200 hover:text-pink-600 shadow-sm px-5"
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
         </motion.div>
       </main>
     </div>
