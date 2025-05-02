@@ -81,7 +81,26 @@ export async function POST(req: NextRequest) {
     }
     
     // Get JSON data
-    const data = await req.json();
+    let data;
+    try {
+      data = await req.json();
+      console.log("Received persona data:", JSON.stringify(data));
+    } catch (error) {
+      console.error("Error parsing request JSON:", error);
+      return NextResponse.json({ error: "Invalid JSON in request" }, { status: 400 });
+    }
+    
+    // Validate required fields
+    if (!data.name || !data.description || !data.faceId) {
+      return NextResponse.json({ 
+        error: "Missing required fields",
+        details: {
+          name: !data.name ? "Required" : undefined,
+          description: !data.description ? "Required" : undefined,
+          faceId: !data.faceId ? "Required" : undefined
+        }
+      }, { status: 400 });
+    }
     
     // Check if faceId is a UUID (character_uid format)
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.faceId);
@@ -147,6 +166,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    console.log("Successfully created persona with ID:", persona.id);
     return NextResponse.json({ id: persona.id });
   } catch (error) {
     console.error("Error creating AI persona:", error);

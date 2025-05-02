@@ -98,6 +98,8 @@ model ProductVideo {
   thumbnailUrl String?
   keywords    String?   @db.Text
   personaId   String
+  taskId      String?
+  status      String?   @default("completed") // pending, processing, completed, failed
   isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

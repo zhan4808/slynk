@@ -410,12 +410,25 @@ export default function PersonaForm() {
         throw new Error("Please generate a face for your persona")
       }
 
-      // Send form data to the API
-      const createdPersona = await createPersona({
+      // Prepare submission data, ensuring all required fields are present
+      const submissionData = {
         ...formData,
-        image: image || undefined,
-        voiceFile: formData.useCustomVoice ? voiceFile || undefined : undefined
-      })
+        // Make sure all required fields are explicitly set
+        name: formData.name,
+        description: formData.description,
+        systemPrompt: formData.systemPrompt || "",
+        firstMessage: formData.firstMessage || "Hi there! How can I help you today?",
+        faceId: formData.faceId,
+        voice: formData.voice || DEFAULT_VOICE,
+        useCustomVoice: formData.useCustomVoice || false,
+        // If this is a custom face in queue, pass that information
+        isCustomFaceInQueue: isCustomFaceInQueue
+      };
+
+      console.log("Submitting persona data:", submissionData);
+
+      // Send form data to the API
+      const createdPersona = await createPersona(submissionData);
 
       setSuccessMessage("Persona created successfully!")
       

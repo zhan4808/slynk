@@ -9,4 +9,6 @@ export interface ProductVideo {
   isActive: boolean
   createdAt: Date
   updatedAt: Date
+  taskId?: string
+  status?: "pending" | "processing" | "completed" | "failed"
 } 

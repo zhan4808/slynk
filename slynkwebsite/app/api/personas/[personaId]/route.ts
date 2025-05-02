@@ -142,6 +142,8 @@ export async function PATCH(
         faceId: data.faceId,
         voiceId: data.voiceId,
         settings: data.settings,
+        productDescription: data.productDescription,
+        productImageUrl: data.productImageUrl,
         // Only update fields that are provided
         ...Object.fromEntries(
           Object.entries(data).filter(([_, v]) => v !== undefined)

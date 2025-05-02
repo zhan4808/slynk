@@ -184,6 +184,8 @@ exports.Prisma.ProductVideoScalarFieldEnum = {
   thumbnailUrl: 'thumbnailUrl',
   keywords: 'keywords',
   personaId: 'personaId',
+  taskId: 'taskId',
+  status: 'status',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

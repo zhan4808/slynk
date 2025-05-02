@@ -21,51 +21,43 @@ export interface PersonaFormData {
   faceId: string;
   voice: string;
   useCustomVoice: boolean;
-}
-
-interface CreatePersonaParams extends PersonaFormData {
-  image?: File;
-  voiceFile?: File;
+  isCustomFaceInQueue?: boolean;
 }
 
 // Function to create a new persona
-export async function createPersona(params: CreatePersonaParams): Promise<Persona> {
-  const { image, voiceFile, ...formData } = params;
+export async function createPersona(params: PersonaFormData): Promise<Persona> {
+  console.log('Creating persona with data:', params);
   
-  // In a real implementation, this would send data to your backend API
-  console.log('Creating persona with data:', formData);
-  
-  // Create formData for file upload if we have any files
-  const apiFormData = new FormData();
-  
-  // Add all the form fields
-  Object.entries(formData).forEach(([key, value]) => {
-    if (value !== undefined) {
-      apiFormData.append(key, String(value));
+  try {
+    // Make the API call with JSON data
+    const response = await fetch('/api/personas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
+    });
+    
+    // Enhanced error handling
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorObj;
+      
+      try {
+        // Try to parse as JSON
+        errorObj = JSON.parse(errorText);
+      } catch (e) {
+        // If not JSON, use the raw text
+        console.error('Non-JSON error from server:', errorText);
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+      }
+      
+      throw new Error(errorObj.error || 'Failed to create AI persona');
     }
-  });
-  
-  // Add files if they exist
-  if (image) {
-    console.log('Image file uploaded:', image.name);
-    apiFormData.append('image', image);
+    
+    return response.json();
+  } catch (error) {
+    console.error('Error in createPersona:', error);
+    throw error;
   }
-  
-  if (voiceFile) {
-    console.log('Voice file uploaded:', voiceFile.name);
-    apiFormData.append('voiceFile', voiceFile);
-  }
-  
-  // Make the actual API call
-  const response = await fetch('/api/personas', {
-    method: 'POST',
-    body: apiFormData,
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to create persona');
-  }
-  
-  return response.json();
 } 

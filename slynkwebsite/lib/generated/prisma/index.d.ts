@@ -7529,6 +7529,8 @@ export namespace Prisma {
     thumbnailUrl: string | null
     keywords: string | null
     personaId: string | null
+    taskId: string | null
+    status: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -7542,6 +7544,8 @@ export namespace Prisma {
     thumbnailUrl: string | null
     keywords: string | null
     personaId: string | null
+    taskId: string | null
+    status: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -7555,6 +7559,8 @@ export namespace Prisma {
     thumbnailUrl: number
     keywords: number
     personaId: number
+    taskId: number
+    status: number
     isActive: number
     createdAt: number
     updatedAt: number
@@ -7570,6 +7576,8 @@ export namespace Prisma {
     thumbnailUrl?: true
     keywords?: true
     personaId?: true
+    taskId?: true
+    status?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -7583,6 +7591,8 @@ export namespace Prisma {
     thumbnailUrl?: true
     keywords?: true
     personaId?: true
+    taskId?: true
+    status?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -7596,6 +7606,8 @@ export namespace Prisma {
     thumbnailUrl?: true
     keywords?: true
     personaId?: true
+    taskId?: true
+    status?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -7682,6 +7694,8 @@ export namespace Prisma {
     thumbnailUrl: string | null
     keywords: string | null
     personaId: string
+    taskId: string | null
+    status: string | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -7712,6 +7726,8 @@ export namespace Prisma {
     thumbnailUrl?: boolean
     keywords?: boolean
     personaId?: boolean
+    taskId?: boolean
+    status?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7726,6 +7742,8 @@ export namespace Prisma {
     thumbnailUrl?: boolean
     keywords?: boolean
     personaId?: boolean
+    taskId?: boolean
+    status?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7740,6 +7758,8 @@ export namespace Prisma {
     thumbnailUrl?: boolean
     keywords?: boolean
     personaId?: boolean
+    taskId?: boolean
+    status?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -7754,12 +7774,14 @@ export namespace Prisma {
     thumbnailUrl?: boolean
     keywords?: boolean
     personaId?: boolean
+    taskId?: boolean
+    status?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProductVideoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "videoUrl" | "thumbnailUrl" | "keywords" | "personaId" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["productVideo"]>
+  export type ProductVideoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "videoUrl" | "thumbnailUrl" | "keywords" | "personaId" | "taskId" | "status" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["productVideo"]>
   export type ProductVideoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     persona?: boolean | AIPersonaDefaultArgs<ExtArgs>
   }
@@ -7783,6 +7805,8 @@ export namespace Prisma {
       thumbnailUrl: string | null
       keywords: string | null
       personaId: string
+      taskId: string | null
+      status: string | null
       isActive: boolean
       createdAt: Date
       updatedAt: Date
@@ -8217,6 +8241,8 @@ export namespace Prisma {
     readonly thumbnailUrl: FieldRef<"ProductVideo", 'String'>
     readonly keywords: FieldRef<"ProductVideo", 'String'>
     readonly personaId: FieldRef<"ProductVideo", 'String'>
+    readonly taskId: FieldRef<"ProductVideo", 'String'>
+    readonly status: FieldRef<"ProductVideo", 'String'>
     readonly isActive: FieldRef<"ProductVideo", 'Boolean'>
     readonly createdAt: FieldRef<"ProductVideo", 'DateTime'>
     readonly updatedAt: FieldRef<"ProductVideo", 'DateTime'>
@@ -13062,6 +13088,8 @@ export namespace Prisma {
     thumbnailUrl: 'thumbnailUrl',
     keywords: 'keywords',
     personaId: 'personaId',
+    taskId: 'taskId',
+    status: 'status',
     isActive: 'isActive',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -13643,6 +13671,8 @@ export namespace Prisma {
     thumbnailUrl?: StringNullableFilter<"ProductVideo"> | string | null
     keywords?: StringNullableFilter<"ProductVideo"> | string | null
     personaId?: StringFilter<"ProductVideo"> | string
+    taskId?: StringNullableFilter<"ProductVideo"> | string | null
+    status?: StringNullableFilter<"ProductVideo"> | string | null
     isActive?: BoolFilter<"ProductVideo"> | boolean
     createdAt?: DateTimeFilter<"ProductVideo"> | Date | string
     updatedAt?: DateTimeFilter<"ProductVideo"> | Date | string
@@ -13657,6 +13687,8 @@ export namespace Prisma {
     thumbnailUrl?: SortOrderInput | SortOrder
     keywords?: SortOrderInput | SortOrder
     personaId?: SortOrder
+    taskId?: SortOrderInput | SortOrder
+    status?: SortOrderInput | SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -13674,6 +13706,8 @@ export namespace Prisma {
     thumbnailUrl?: StringNullableFilter<"ProductVideo"> | string | null
     keywords?: StringNullableFilter<"ProductVideo"> | string | null
     personaId?: StringFilter<"ProductVideo"> | string
+    taskId?: StringNullableFilter<"ProductVideo"> | string | null
+    status?: StringNullableFilter<"ProductVideo"> | string | null
     isActive?: BoolFilter<"ProductVideo"> | boolean
     createdAt?: DateTimeFilter<"ProductVideo"> | Date | string
     updatedAt?: DateTimeFilter<"ProductVideo"> | Date | string
@@ -13688,6 +13722,8 @@ export namespace Prisma {
     thumbnailUrl?: SortOrderInput | SortOrder
     keywords?: SortOrderInput | SortOrder
     personaId?: SortOrder
+    taskId?: SortOrderInput | SortOrder
+    status?: SortOrderInput | SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -13707,6 +13743,8 @@ export namespace Prisma {
     thumbnailUrl?: StringNullableWithAggregatesFilter<"ProductVideo"> | string | null
     keywords?: StringNullableWithAggregatesFilter<"ProductVideo"> | string | null
     personaId?: StringWithAggregatesFilter<"ProductVideo"> | string
+    taskId?: StringNullableWithAggregatesFilter<"ProductVideo"> | string | null
+    status?: StringNullableWithAggregatesFilter<"ProductVideo"> | string | null
     isActive?: BoolWithAggregatesFilter<"ProductVideo"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"ProductVideo"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ProductVideo"> | Date | string
@@ -14401,6 +14439,8 @@ export namespace Prisma {
     videoUrl: string
     thumbnailUrl?: string | null
     keywords?: string | null
+    taskId?: string | null
+    status?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14415,6 +14455,8 @@ export namespace Prisma {
     thumbnailUrl?: string | null
     keywords?: string | null
     personaId: string
+    taskId?: string | null
+    status?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14427,6 +14469,8 @@ export namespace Prisma {
     videoUrl?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    taskId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14441,6 +14485,8 @@ export namespace Prisma {
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     personaId?: StringFieldUpdateOperationsInput | string
+    taskId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14454,6 +14500,8 @@ export namespace Prisma {
     thumbnailUrl?: string | null
     keywords?: string | null
     personaId: string
+    taskId?: string | null
+    status?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14466,6 +14514,8 @@ export namespace Prisma {
     videoUrl?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    taskId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14479,6 +14529,8 @@ export namespace Prisma {
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     personaId?: StringFieldUpdateOperationsInput | string
+    taskId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15213,6 +15265,8 @@ export namespace Prisma {
     thumbnailUrl?: SortOrder
     keywords?: SortOrder
     personaId?: SortOrder
+    taskId?: SortOrder
+    status?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15226,6 +15280,8 @@ export namespace Prisma {
     thumbnailUrl?: SortOrder
     keywords?: SortOrder
     personaId?: SortOrder
+    taskId?: SortOrder
+    status?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15239,6 +15295,8 @@ export namespace Prisma {
     thumbnailUrl?: SortOrder
     keywords?: SortOrder
     personaId?: SortOrder
+    taskId?: SortOrder
+    status?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16559,6 +16617,8 @@ export namespace Prisma {
     videoUrl: string
     thumbnailUrl?: string | null
     keywords?: string | null
+    taskId?: string | null
+    status?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16571,6 +16631,8 @@ export namespace Prisma {
     videoUrl: string
     thumbnailUrl?: string | null
     keywords?: string | null
+    taskId?: string | null
+    status?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16688,6 +16750,8 @@ export namespace Prisma {
     thumbnailUrl?: StringNullableFilter<"ProductVideo"> | string | null
     keywords?: StringNullableFilter<"ProductVideo"> | string | null
     personaId?: StringFilter<"ProductVideo"> | string
+    taskId?: StringNullableFilter<"ProductVideo"> | string | null
+    status?: StringNullableFilter<"ProductVideo"> | string | null
     isActive?: BoolFilter<"ProductVideo"> | boolean
     createdAt?: DateTimeFilter<"ProductVideo"> | Date | string
     updatedAt?: DateTimeFilter<"ProductVideo"> | Date | string
@@ -17543,6 +17607,8 @@ export namespace Prisma {
     videoUrl: string
     thumbnailUrl?: string | null
     keywords?: string | null
+    taskId?: string | null
+    status?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17604,6 +17670,8 @@ export namespace Prisma {
     videoUrl?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    taskId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17616,6 +17684,8 @@ export namespace Prisma {
     videoUrl?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    taskId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17628,6 +17698,8 @@ export namespace Prisma {
     videoUrl?: StringFieldUpdateOperationsInput | string
     thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    taskId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

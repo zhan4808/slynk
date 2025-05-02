@@ -4,6 +4,11 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { generateVideo } from "@/lib/kling-api"
 
+// Check if Kling API is configured
+const isKlingConfigured = () => {
+  return !!(process.env.KLING_API_KEY && process.env.KLING_API_KEY.length > 10);
+}
+
 // Mock video generation for demo purposes when Kling API keys aren't configured
 async function mockVideoGeneration(prompt: string, imageUrl?: string): Promise<{
   videoUrl: string
@@ -102,7 +107,7 @@ export async function POST(
     
     // Parse the request body
     const data = await request.json()
-    const { sceneDescriptions } = data
+    const { sceneDescriptions, productImageUrl } = data
     
     if (!sceneDescriptions || !Array.isArray(sceneDescriptions) || sceneDescriptions.length === 0) {
       return NextResponse.json(
@@ -111,6 +116,54 @@ export async function POST(
       )
     }
     
+    // Use provided image URL or fallback to the one stored with persona
+    const rawImageUrl = productImageUrl || persona.productImageUrl;
+    
+    if (!rawImageUrl) {
+      return NextResponse.json(
+        { error: "Product image URL is required" },
+        { status: 400 }
+      )
+    }
+    
+    // Ensure image URL is absolute for the Kling API
+    const imageUrl = rawImageUrl.startsWith('http') 
+      ? rawImageUrl 
+      : `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}${rawImageUrl}`;
+    
+    // Check if we should use mock videos to avoid duplicates
+    const forceMock = process.env.FORCE_MOCK_VIDEOS === 'true';
+    let useMockVideos = !isKlingConfigured() || forceMock;
+    
+    // If we're using mock videos, just generate one instead of duplicates
+    if (useMockVideos) {
+      // Choose the best scene description as the main one
+      const bestScene = sceneDescriptions[0];
+      
+      // Call the Kling API (which will return a mock video)
+      const videoResult = await generateVideo({
+        imageUrl,
+        voiceover: bestScene,
+        personaImageUrl: persona.adImageUrl
+      });
+      
+      // Save just one video in the database
+      const video = await prisma.productVideo.create({
+        data: {
+          title: `Product Video: ${persona.name}`,
+          description: bestScene,
+          videoUrl: videoResult.videoUrl,
+          thumbnailUrl: videoResult.thumbnailUrl || imageUrl,
+          personaId,
+          taskId: videoResult.taskId,
+          status: "completed"
+        }
+      });
+      
+      return NextResponse.json([video]);
+    }
+    
+    // For real videos, generate one for each scene
     // Generate videos for each scene
     const videoPromises = sceneDescriptions.map(async (scene, index) => {
       try {
@@ -119,7 +172,7 @@ export async function POST(
         
         // Call the Kling API to generate the video
         const videoResult = await generateVideo({
-          imageUrl: persona.productImageUrl!,
+          imageUrl,
           voiceover: scene,
           personaImageUrl: persona.adImageUrl, // Optional
         })
@@ -130,8 +183,10 @@ export async function POST(
             title,
             description: scene,
             videoUrl: videoResult.videoUrl,
-            thumbnailUrl: videoResult.thumbnailUrl || persona.productImageUrl,
+            thumbnailUrl: videoResult.thumbnailUrl || imageUrl,
             personaId,
+            taskId: videoResult.taskId,
+            status: videoResult.taskId ? "processing" : "completed"
           }
         })
         
