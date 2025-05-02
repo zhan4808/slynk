@@ -4,7 +4,7 @@ import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { Mail, Sparkles, ArrowRight, MousePointer2, Pause, Play, Volume2, VolumeX } from "lucide-react"
+import { Mail, Sparkles, ArrowRight, MousePointer2 } from "lucide-react"
 import Image from "next/image"
 import { AnimatedText } from "@/components/animated-text"
 import { toast } from "@/components/ui/use-toast"
@@ -16,10 +16,7 @@ export function HeroSection() {
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isInputFocused, setIsInputFocused] = useState(false)
-  const [isVideoPlaying, setIsVideoPlaying] = useState(true)
-  const [isVideoMuted, setIsVideoMuted] = useState(true)
   const [isVideoHovered, setIsVideoHovered] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
 
   const handleWaitlistSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -64,25 +61,6 @@ export function HeroSection() {
       })
     } finally {
       setIsSubmitting(false)
-    }
-  }
-
-  const handlePlayPause = () => {
-    if (videoRef.current) {
-      if (videoRef.current.paused) {
-        videoRef.current.play()
-        setIsVideoPlaying(true)
-      } else {
-        videoRef.current.pause()
-        setIsVideoPlaying(false)
-      }
-    }
-  }
-
-  const handleMuteToggle = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted
-      setIsVideoMuted(videoRef.current.muted)
     }
   }
 
@@ -282,50 +260,21 @@ export function HeroSection() {
               onMouseEnter={() => setIsVideoHovered(true)}
               onMouseLeave={() => setIsVideoHovered(false)}
             >
-              <video
-                ref={videoRef}
-                autoPlay
-                loop
-                muted={isVideoMuted}
-                playsInline
-                className="w-full h-full object-cover rounded-2xl"
-                poster="/video-poster.jpg"
-                onError={(e) => {
-                  console.error("Video failed to load:", e);
-                  // Attempt to reload the video once if it fails
-                  const target = e.target as HTMLVideoElement;
-                  if (!target.dataset.retried) {
-                    target.dataset.retried = "true";
-                    target.load();
-                  }
-                }}
-              >
-                <source src="/SlynkDemo.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+              {/* 
+                IMPORTANT: Replace YOUR_VIDEO_ID with your actual YouTube video ID
+                1. Upload SlynkDemo.mp4 to YouTube as unlisted video
+                2. From video URL like https://www.youtube.com/watch?v=abc123xyz, use 'abc123xyz' as YOUR_VIDEO_ID
+              */}
+              <iframe
+                src="https://www.youtube-nocookie.com/embed/ay2a3qXnbzo?autoplay=1&mute=1&loop=1&playlist=ay2a3qXnbzo&controls=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3"
+                title="Slynk Demo Video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full rounded-2xl"
+                style={{ border: 'none' }}
+              ></iframe>
               
-              {/* Video controls */}
-              <motion.div 
-                className="absolute bottom-4 right-4 flex gap-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isVideoHovered ? 1 : 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <button 
-                  onClick={handlePlayPause}
-                  className="w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm flex items-center justify-center text-white transition-all"
-                  aria-label={isVideoPlaying ? "Pause video" : "Play video"}
-                >
-                  {isVideoPlaying ? <Pause size={18} /> : <Play size={18} />}
-                </button>
-                <button 
-                  onClick={handleMuteToggle}
-                  className="w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-sm flex items-center justify-center text-white transition-all"
-                  aria-label={isVideoMuted ? "Unmute video" : "Mute video"}
-                >
-                  {isVideoMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                </button>
-              </motion.div>
+              {/* Optional custom overlay for play/pause if needed later */}
             </div>
           </motion.div>
         </ShineBorder>

@@ -8,9 +8,9 @@ import { DynamicNavbar } from "@/components/dynamic-navbar"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Slynk",
+  title: "slynk",
   description:
-    "Bring your brand to life with a digital clone for personalized social media marketing and growth.",
+    "reimagining ads with live interactive videos",
   icons: {
     icon: "/slynkfavicon.svg",
   },
