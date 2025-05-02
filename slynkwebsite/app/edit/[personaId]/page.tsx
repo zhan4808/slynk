@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/ui/navbar"
@@ -22,6 +22,8 @@ import { CircularSpinner } from "@/components/ui/circular-spinner"
 import { Spinner } from "@/components/ui/spinner"
 import { DynamicNavbar } from "@/components/dynamic-navbar"
 import { elevenLabsVoices, DEFAULT_VOICE } from '@/lib/voice-options'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ProductVideoManager } from "@/components/create/ProductVideoManager"
 
 interface PersonaData {
   id: string
@@ -34,6 +36,8 @@ interface PersonaData {
   firstMessage?: string
   faceId?: string
   voice?: string
+  productDescription?: string
+  productImageUrl?: string
   qaPairs: Array<{
     id: string
     question: string
@@ -44,10 +48,15 @@ interface PersonaData {
 export default function EditPersonaPage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { data: session, status } = useSession()
   const [loading, setLoading] = useState(true)
   const [persona, setPersona] = useState<PersonaData | null>(null)
   const [error, setError] = useState<string | null>(null)
+  
+  // Get the tab query parameter
+  const tabParam = searchParams.get('tab')
+  const defaultTab = tabParam === 'videos' || tabParam === 'qa' ? tabParam : 'persona'
 
   // If not authenticated, redirect to sign-in
   useEffect(() => {
@@ -83,6 +92,8 @@ export default function EditPersonaPage() {
           systemPrompt: data.systemPrompt,
           firstMessage: data.firstMessage,
           voice: data.voice || DEFAULT_VOICE,
+          productDescription: data.productDescription,
+          productImageUrl: data.productImageUrl,
           qaPairs: data.qaPairs || []
         })
       } catch (error) {
@@ -141,7 +152,39 @@ export default function EditPersonaPage() {
               {error}
             </div>
           ) : persona ? (
-            <EditPersonaForm persona={persona} personaId={params.personaId as string} />
+            <Tabs defaultValue={defaultTab} className="w-full">
+              <TabsList className="grid grid-cols-3 w-full max-w-md mb-8">
+                <TabsTrigger value="persona">Persona Details</TabsTrigger>
+                <TabsTrigger value="videos">Product Videos</TabsTrigger>
+                <TabsTrigger value="qa">Q&A Pairs</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="persona">
+                <EditPersonaForm persona={persona} personaId={params.personaId as string} />
+              </TabsContent>
+              
+              <TabsContent value="videos">
+                <ProductVideoManager 
+                  personaId={params.personaId as string}
+                  initialProductDescription={persona.productDescription || ""}
+                  initialProductImageUrl={persona.productImageUrl || ""}
+                />
+              </TabsContent>
+              
+              <TabsContent value="qa">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                  <QATable
+                    pairs={persona.qaPairs}
+                    onChange={(newQAPairs) => {
+                      setPersona(prev => {
+                        if (!prev) return prev;
+                        return { ...prev, qaPairs: newQAPairs }
+                      });
+                    }}
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
           ) : null}
         </div>
       </div>
@@ -530,26 +573,6 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
               </div>
             )}
           </div>
-        </div>
-      </div>
-      
-      {/* QA Pairs */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-          <MessageSquare className="mr-2 h-5 w-5 text-pink-500" />
-          Q&A Pairs
-        </h2>
-        
-        <div className="space-y-4">
-          <QATable
-            pairs={formData.qaPairs || []}
-            onChange={(qaPairs) => {
-              setFormData(prev => ({
-                ...prev,
-                qaPairs
-              }))
-            }}
-          />
         </div>
       </div>
       

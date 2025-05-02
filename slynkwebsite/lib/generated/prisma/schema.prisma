@@ -66,7 +66,7 @@ model User {
 }
 
 model AIPersona {
-  id                  String        @id @default(cuid())
+  id                  String         @id @default(cuid())
   name                String
   description         String
   pageLink            String?
@@ -77,24 +77,42 @@ model AIPersona {
   simliAgentId        String?
   systemPrompt        String?
   firstMessage        String?
-  isCustomFaceInQueue Boolean       @default(false)
+  isCustomFaceInQueue Boolean        @default(false)
+  productDescription  String?        @db.Text
+  productImageUrl     String?
   metadata            Json?
   userId              String
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
   qaPairs             QAPair[]
   sessions            ChatSession[]
-  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productVideos       ProductVideo[]
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ProductVideo {
+  id           String    @id @default(cuid())
+  title        String
+  description  String?   @db.Text
+  videoUrl     String
+  thumbnailUrl String?
+  keywords     String?   @db.Text
+  personaId    String
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  persona      AIPersona @relation(fields: [personaId], references: [id], onDelete: Cascade)
 }
 
 model QAPair {
-  id        String    @id @default(cuid())
-  question  String
-  answer    String
-  personaId String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  persona   AIPersona @relation(fields: [personaId], references: [id], onDelete: Cascade)
+  id                 String              @id @default(cuid())
+  question           String
+  answer             String
+  personaId          String
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  persona            AIPersona           @relation(fields: [personaId], references: [id], onDelete: Cascade)
+  videoGenerationJob VideoGenerationJob?
 }
 
 model ChatSession {
@@ -115,4 +133,18 @@ model ChatMessage {
   sessionId String
   createdAt DateTime    @default(now())
   session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model VideoGenerationJob {
+  id        String   @id @default(cuid())
+  syncJobId String?  @unique
+  status    String   @default("pending") // pending, processing, completed, failed
+  resultUrl String?
+  qaPairId  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  qaPair    QAPair   @relation(fields: [qaPairId], references: [id], onDelete: Cascade)
+
+  @@index([qaPairId])
+  @@index([status])
 }

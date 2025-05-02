@@ -23,25 +23,49 @@ export interface PersonaFormData {
   useCustomVoice: boolean;
 }
 
+interface CreatePersonaParams extends PersonaFormData {
+  image?: File;
+  voiceFile?: File;
+}
+
 // Function to create a new persona
-export async function createPersona(formData: PersonaFormData, voiceFile?: File): Promise<Persona> {
+export async function createPersona(params: CreatePersonaParams): Promise<Persona> {
+  const { image, voiceFile, ...formData } = params;
+  
   // In a real implementation, this would send data to your backend API
   console.log('Creating persona with data:', formData);
   
-  if (voiceFile) {
-    console.log('Voice file uploaded:', voiceFile.name);
-    // Here you would upload the voice file and get a reference to it
+  // Create formData for file upload if we have any files
+  const apiFormData = new FormData();
+  
+  // Add all the form fields
+  Object.entries(formData).forEach(([key, value]) => {
+    if (value !== undefined) {
+      apiFormData.append(key, String(value));
+    }
+  });
+  
+  // Add files if they exist
+  if (image) {
+    console.log('Image file uploaded:', image.name);
+    apiFormData.append('image', image);
   }
   
-  // Simulate API call with a delay
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id: `persona-${Date.now()}`,
-        ...formData,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      });
-    }, 1000);
+  if (voiceFile) {
+    console.log('Voice file uploaded:', voiceFile.name);
+    apiFormData.append('voiceFile', voiceFile);
+  }
+  
+  // Make the actual API call
+  const response = await fetch('/api/personas', {
+    method: 'POST',
+    body: apiFormData,
   });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to create persona');
+  }
+  
+  return response.json();
 } 

@@ -176,6 +176,34 @@ The application uses the following Simli API endpoints:
 3. The persona data is stored in the database along with the Simli face ID
 4. When interacting with a persona, the app uses the stored face ID to start a Simli session
 
+## Kling API Integration for Product Videos
+
+This project integrates with Kling AI for generating product videos from images. To use this feature:
+
+1. Get API credentials from [Kling AI](https://klingai.com)
+2. Add the following environment variables:
+
+```
+KLING_API_KEY=your_kling_access_key
+KLING_API_SECRET=your_kling_secret_key
+```
+
+3. The system will use multiple scenes to generate different videos from a single product image
+4. Videos are generated via the image-to-video API, which takes:
+   - A reference image
+   - A descriptive prompt
+   - Configuration parameters
+
+Without API keys, the system will fall back to using demo videos.
+
+## OpenAI Integration
+
+For generating scene descriptions, this project uses OpenAI. Add your API key:
+
+```
+OPENAI_API_KEY=your_openai_api_key
+```
+
 ## Documentation
 
 The project includes extensive documentation:

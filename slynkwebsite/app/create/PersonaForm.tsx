@@ -400,92 +400,33 @@ export default function PersonaForm() {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    
+
     try {
-      // Check if we have a face ID
+      if (!formData.name || !formData.description) {
+        throw new Error("Name and description are required")
+      }
+
       if (!formData.faceId) {
-        // Set default face ID if none exists
-        setFormData(prev => ({
-          ...prev,
-          faceId: DEFAULT_FACE_ID
-        }))
+        throw new Error("Please generate a face for your persona")
       }
-      
-      // Prepare prompt and first message
-      const systemPrompt = formData.systemPrompt || 
-        `You are a virtual assistant named ${formData.name}. ${formData.description} Keep your responses helpful, concise, and friendly.`
-      
-      const firstMessage = formData.firstMessage || 
-        `Hello, I'm ${formData.name}. How can I help you today?`
-      
-      // Create form data for file upload if we have a custom voice
-      let voiceDataUrl = null;
-      
-      if (formData.useCustomVoice && voiceFile) {
-        console.log("Using custom voice sample:", voiceFile.name);
-        
-        // Convert the audio file to a data URL for processing
-        try {
-          voiceDataUrl = await new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(voiceFile);
-          });
-        } catch (error) {
-          console.error("Error reading voice file:", error);
-          // If there's an error, continue without the custom voice
-          setError("Could not process voice file. Using default voice instead.");
-          // Wait 3 seconds to let user see the error message
-          await new Promise(resolve => setTimeout(resolve, 3000));
-        }
-      }
-      
-      console.log("Creating persona with settings:", {
-        name: formData.name,
-        description: formData.description,
-        faceId: formData.faceId,
-        originalCharacterId: isCustomFaceInQueue ? originalFaceResponse?.character_uid : undefined,
-        voice: formData.voice,
-        useCustomVoice: formData.useCustomVoice,
-        hasVoiceFile: !!voiceDataUrl,
-        systemPrompt: systemPrompt.substring(0, 50) + "...",
-        firstMessage: firstMessage
+
+      // Send form data to the API
+      const createdPersona = await createPersona({
+        ...formData,
+        image: image || undefined,
+        voiceFile: formData.useCustomVoice ? voiceFile || undefined : undefined
       })
+
+      setSuccessMessage("Persona created successfully!")
       
-      // Create the persona - our backend will handle Simli agent creation
-      const response = await fetch("/api/personas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          description: formData.description,
-          systemPrompt: systemPrompt,
-          firstMessage: firstMessage,
-          faceId: formData.faceId || DEFAULT_FACE_ID, // Include the Simli face ID with fallback
-          originalCharacterId: isCustomFaceInQueue ? originalFaceResponse?.character_uid : undefined,
-          voice: formData.voice,
-          useCustomVoice: formData.useCustomVoice,
-          voiceData: voiceDataUrl, // Include voice data URL if available
-          isCustomFaceInQueue: isCustomFaceInQueue
-        }),
-      })
-      
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || "Failed to create persona")
-      }
-      
-      const data = await response.json()
-      console.log("Persona created with ID:", data.id)
-      
-      // Navigate to the persona chat
-      router.push(`/chat/${data.id}`)
-    } catch (error) {
-      console.error("Error submitting form:", error)
-      setError(error instanceof Error ? error.message : "Failed to create persona")
+      // Redirect to the edit page for this persona where they can manage videos
+      setTimeout(() => {
+        router.push(`/edit/${createdPersona.id}?tab=videos`)
+      }, 1000)
+    } catch (err) {
+      console.error("Error creating persona:", err)
+      setError(err instanceof Error ? err.message : "An unknown error occurred")
+    } finally {
       setLoading(false)
     }
   }

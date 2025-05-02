@@ -39,6 +39,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type AIPersona = $Result.DefaultSelection<Prisma.$AIPersonaPayload>
 /**
+ * Model ProductVideo
+ * 
+ */
+export type ProductVideo = $Result.DefaultSelection<Prisma.$ProductVideoPayload>
+/**
  * Model QAPair
  * 
  */
@@ -53,6 +58,11 @@ export type ChatSession = $Result.DefaultSelection<Prisma.$ChatSessionPayload>
  * 
  */
 export type ChatMessage = $Result.DefaultSelection<Prisma.$ChatMessagePayload>
+/**
+ * Model VideoGenerationJob
+ * 
+ */
+export type VideoGenerationJob = $Result.DefaultSelection<Prisma.$VideoGenerationJobPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -230,6 +240,16 @@ export class PrismaClient<
   get aIPersona(): Prisma.AIPersonaDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.productVideo`: Exposes CRUD operations for the **ProductVideo** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProductVideos
+    * const productVideos = await prisma.productVideo.findMany()
+    * ```
+    */
+  get productVideo(): Prisma.ProductVideoDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.qAPair`: Exposes CRUD operations for the **QAPair** model.
     * Example usage:
     * ```ts
@@ -258,6 +278,16 @@ export class PrismaClient<
     * ```
     */
   get chatMessage(): Prisma.ChatMessageDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.videoGenerationJob`: Exposes CRUD operations for the **VideoGenerationJob** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more VideoGenerationJobs
+    * const videoGenerationJobs = await prisma.videoGenerationJob.findMany()
+    * ```
+    */
+  get videoGenerationJob(): Prisma.VideoGenerationJobDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -703,9 +733,11 @@ export namespace Prisma {
     VerificationToken: 'VerificationToken',
     User: 'User',
     AIPersona: 'AIPersona',
+    ProductVideo: 'ProductVideo',
     QAPair: 'QAPair',
     ChatSession: 'ChatSession',
-    ChatMessage: 'ChatMessage'
+    ChatMessage: 'ChatMessage',
+    VideoGenerationJob: 'VideoGenerationJob'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -724,7 +756,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "account" | "session" | "verificationToken" | "user" | "aIPersona" | "qAPair" | "chatSession" | "chatMessage"
+      modelProps: "account" | "session" | "verificationToken" | "user" | "aIPersona" | "productVideo" | "qAPair" | "chatSession" | "chatMessage" | "videoGenerationJob"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1098,6 +1130,80 @@ export namespace Prisma {
           }
         }
       }
+      ProductVideo: {
+        payload: Prisma.$ProductVideoPayload<ExtArgs>
+        fields: Prisma.ProductVideoFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProductVideoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductVideoPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProductVideoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductVideoPayload>
+          }
+          findFirst: {
+            args: Prisma.ProductVideoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductVideoPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProductVideoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductVideoPayload>
+          }
+          findMany: {
+            args: Prisma.ProductVideoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductVideoPayload>[]
+          }
+          create: {
+            args: Prisma.ProductVideoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductVideoPayload>
+          }
+          createMany: {
+            args: Prisma.ProductVideoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProductVideoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductVideoPayload>[]
+          }
+          delete: {
+            args: Prisma.ProductVideoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductVideoPayload>
+          }
+          update: {
+            args: Prisma.ProductVideoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductVideoPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProductVideoDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProductVideoUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProductVideoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductVideoPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProductVideoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductVideoPayload>
+          }
+          aggregate: {
+            args: Prisma.ProductVideoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProductVideo>
+          }
+          groupBy: {
+            args: Prisma.ProductVideoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProductVideoGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProductVideoCountArgs<ExtArgs>
+            result: $Utils.Optional<ProductVideoCountAggregateOutputType> | number
+          }
+        }
+      }
       QAPair: {
         payload: Prisma.$QAPairPayload<ExtArgs>
         fields: Prisma.QAPairFieldRefs
@@ -1320,6 +1426,80 @@ export namespace Prisma {
           }
         }
       }
+      VideoGenerationJob: {
+        payload: Prisma.$VideoGenerationJobPayload<ExtArgs>
+        fields: Prisma.VideoGenerationJobFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.VideoGenerationJobFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VideoGenerationJobPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.VideoGenerationJobFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VideoGenerationJobPayload>
+          }
+          findFirst: {
+            args: Prisma.VideoGenerationJobFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VideoGenerationJobPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.VideoGenerationJobFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VideoGenerationJobPayload>
+          }
+          findMany: {
+            args: Prisma.VideoGenerationJobFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VideoGenerationJobPayload>[]
+          }
+          create: {
+            args: Prisma.VideoGenerationJobCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VideoGenerationJobPayload>
+          }
+          createMany: {
+            args: Prisma.VideoGenerationJobCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.VideoGenerationJobCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VideoGenerationJobPayload>[]
+          }
+          delete: {
+            args: Prisma.VideoGenerationJobDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VideoGenerationJobPayload>
+          }
+          update: {
+            args: Prisma.VideoGenerationJobUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VideoGenerationJobPayload>
+          }
+          deleteMany: {
+            args: Prisma.VideoGenerationJobDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.VideoGenerationJobUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.VideoGenerationJobUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VideoGenerationJobPayload>[]
+          }
+          upsert: {
+            args: Prisma.VideoGenerationJobUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VideoGenerationJobPayload>
+          }
+          aggregate: {
+            args: Prisma.VideoGenerationJobAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateVideoGenerationJob>
+          }
+          groupBy: {
+            args: Prisma.VideoGenerationJobGroupByArgs<ExtArgs>
+            result: $Utils.Optional<VideoGenerationJobGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.VideoGenerationJobCountArgs<ExtArgs>
+            result: $Utils.Optional<VideoGenerationJobCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1409,9 +1589,11 @@ export namespace Prisma {
     verificationToken?: VerificationTokenOmit
     user?: UserOmit
     aIPersona?: AIPersonaOmit
+    productVideo?: ProductVideoOmit
     qAPair?: QAPairOmit
     chatSession?: ChatSessionOmit
     chatMessage?: ChatMessageOmit
+    videoGenerationJob?: VideoGenerationJobOmit
   }
 
   /* Types for Logging */
@@ -1566,11 +1748,13 @@ export namespace Prisma {
   export type AIPersonaCountOutputType = {
     qaPairs: number
     sessions: number
+    productVideos: number
   }
 
   export type AIPersonaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     qaPairs?: boolean | AIPersonaCountOutputTypeCountQaPairsArgs
     sessions?: boolean | AIPersonaCountOutputTypeCountSessionsArgs
+    productVideos?: boolean | AIPersonaCountOutputTypeCountProductVideosArgs
   }
 
   // Custom InputTypes
@@ -1596,6 +1780,13 @@ export namespace Prisma {
    */
   export type AIPersonaCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ChatSessionWhereInput
+  }
+
+  /**
+   * AIPersonaCountOutputType without action
+   */
+  export type AIPersonaCountOutputTypeCountProductVideosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductVideoWhereInput
   }
 
 
@@ -6034,6 +6225,8 @@ export namespace Prisma {
     systemPrompt: string | null
     firstMessage: string | null
     isCustomFaceInQueue: boolean | null
+    productDescription: string | null
+    productImageUrl: string | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6052,6 +6245,8 @@ export namespace Prisma {
     systemPrompt: string | null
     firstMessage: string | null
     isCustomFaceInQueue: boolean | null
+    productDescription: string | null
+    productImageUrl: string | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6070,6 +6265,8 @@ export namespace Prisma {
     systemPrompt: number
     firstMessage: number
     isCustomFaceInQueue: number
+    productDescription: number
+    productImageUrl: number
     metadata: number
     userId: number
     createdAt: number
@@ -6091,6 +6288,8 @@ export namespace Prisma {
     systemPrompt?: true
     firstMessage?: true
     isCustomFaceInQueue?: true
+    productDescription?: true
+    productImageUrl?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -6109,6 +6308,8 @@ export namespace Prisma {
     systemPrompt?: true
     firstMessage?: true
     isCustomFaceInQueue?: true
+    productDescription?: true
+    productImageUrl?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -6127,6 +6328,8 @@ export namespace Prisma {
     systemPrompt?: true
     firstMessage?: true
     isCustomFaceInQueue?: true
+    productDescription?: true
+    productImageUrl?: true
     metadata?: true
     userId?: true
     createdAt?: true
@@ -6219,6 +6422,8 @@ export namespace Prisma {
     systemPrompt: string | null
     firstMessage: string | null
     isCustomFaceInQueue: boolean
+    productDescription: string | null
+    productImageUrl: string | null
     metadata: JsonValue | null
     userId: string
     createdAt: Date
@@ -6255,12 +6460,15 @@ export namespace Prisma {
     systemPrompt?: boolean
     firstMessage?: boolean
     isCustomFaceInQueue?: boolean
+    productDescription?: boolean
+    productImageUrl?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     qaPairs?: boolean | AIPersona$qaPairsArgs<ExtArgs>
     sessions?: boolean | AIPersona$sessionsArgs<ExtArgs>
+    productVideos?: boolean | AIPersona$productVideosArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | AIPersonaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["aIPersona"]>
@@ -6278,6 +6486,8 @@ export namespace Prisma {
     systemPrompt?: boolean
     firstMessage?: boolean
     isCustomFaceInQueue?: boolean
+    productDescription?: boolean
+    productImageUrl?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -6298,6 +6508,8 @@ export namespace Prisma {
     systemPrompt?: boolean
     firstMessage?: boolean
     isCustomFaceInQueue?: boolean
+    productDescription?: boolean
+    productImageUrl?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -6318,16 +6530,19 @@ export namespace Prisma {
     systemPrompt?: boolean
     firstMessage?: boolean
     isCustomFaceInQueue?: boolean
+    productDescription?: boolean
+    productImageUrl?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AIPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "pageLink" | "adImageUrl" | "voiceSampleUrl" | "faceId" | "simliSessionId" | "simliAgentId" | "systemPrompt" | "firstMessage" | "isCustomFaceInQueue" | "metadata" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["aIPersona"]>
+  export type AIPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "pageLink" | "adImageUrl" | "voiceSampleUrl" | "faceId" | "simliSessionId" | "simliAgentId" | "systemPrompt" | "firstMessage" | "isCustomFaceInQueue" | "productDescription" | "productImageUrl" | "metadata" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["aIPersona"]>
   export type AIPersonaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     qaPairs?: boolean | AIPersona$qaPairsArgs<ExtArgs>
     sessions?: boolean | AIPersona$sessionsArgs<ExtArgs>
+    productVideos?: boolean | AIPersona$productVideosArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | AIPersonaCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -6343,6 +6558,7 @@ export namespace Prisma {
     objects: {
       qaPairs: Prisma.$QAPairPayload<ExtArgs>[]
       sessions: Prisma.$ChatSessionPayload<ExtArgs>[]
+      productVideos: Prisma.$ProductVideoPayload<ExtArgs>[]
       user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -6358,6 +6574,8 @@ export namespace Prisma {
       systemPrompt: string | null
       firstMessage: string | null
       isCustomFaceInQueue: boolean
+      productDescription: string | null
+      productImageUrl: string | null
       metadata: Prisma.JsonValue | null
       userId: string
       createdAt: Date
@@ -6758,6 +6976,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     qaPairs<T extends AIPersona$qaPairsArgs<ExtArgs> = {}>(args?: Subset<T, AIPersona$qaPairsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$QAPairPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends AIPersona$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, AIPersona$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    productVideos<T extends AIPersona$productVideosArgs<ExtArgs> = {}>(args?: Subset<T, AIPersona$productVideosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -6800,6 +7019,8 @@ export namespace Prisma {
     readonly systemPrompt: FieldRef<"AIPersona", 'String'>
     readonly firstMessage: FieldRef<"AIPersona", 'String'>
     readonly isCustomFaceInQueue: FieldRef<"AIPersona", 'Boolean'>
+    readonly productDescription: FieldRef<"AIPersona", 'String'>
+    readonly productImageUrl: FieldRef<"AIPersona", 'String'>
     readonly metadata: FieldRef<"AIPersona", 'Json'>
     readonly userId: FieldRef<"AIPersona", 'String'>
     readonly createdAt: FieldRef<"AIPersona", 'DateTime'>
@@ -7248,6 +7469,30 @@ export namespace Prisma {
   }
 
   /**
+   * AIPersona.productVideos
+   */
+  export type AIPersona$productVideosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoInclude<ExtArgs> | null
+    where?: ProductVideoWhereInput
+    orderBy?: ProductVideoOrderByWithRelationInput | ProductVideoOrderByWithRelationInput[]
+    cursor?: ProductVideoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProductVideoScalarFieldEnum | ProductVideoScalarFieldEnum[]
+  }
+
+  /**
    * AIPersona without action
    */
   export type AIPersonaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7263,6 +7508,1129 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: AIPersonaInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProductVideo
+   */
+
+  export type AggregateProductVideo = {
+    _count: ProductVideoCountAggregateOutputType | null
+    _min: ProductVideoMinAggregateOutputType | null
+    _max: ProductVideoMaxAggregateOutputType | null
+  }
+
+  export type ProductVideoMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    videoUrl: string | null
+    thumbnailUrl: string | null
+    keywords: string | null
+    personaId: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProductVideoMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    videoUrl: string | null
+    thumbnailUrl: string | null
+    keywords: string | null
+    personaId: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProductVideoCountAggregateOutputType = {
+    id: number
+    title: number
+    description: number
+    videoUrl: number
+    thumbnailUrl: number
+    keywords: number
+    personaId: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ProductVideoMinAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    videoUrl?: true
+    thumbnailUrl?: true
+    keywords?: true
+    personaId?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProductVideoMaxAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    videoUrl?: true
+    thumbnailUrl?: true
+    keywords?: true
+    personaId?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProductVideoCountAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    videoUrl?: true
+    thumbnailUrl?: true
+    keywords?: true
+    personaId?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ProductVideoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProductVideo to aggregate.
+     */
+    where?: ProductVideoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductVideos to fetch.
+     */
+    orderBy?: ProductVideoOrderByWithRelationInput | ProductVideoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProductVideoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductVideos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductVideos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProductVideos
+    **/
+    _count?: true | ProductVideoCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProductVideoMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProductVideoMaxAggregateInputType
+  }
+
+  export type GetProductVideoAggregateType<T extends ProductVideoAggregateArgs> = {
+        [P in keyof T & keyof AggregateProductVideo]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProductVideo[P]>
+      : GetScalarType<T[P], AggregateProductVideo[P]>
+  }
+
+
+
+
+  export type ProductVideoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductVideoWhereInput
+    orderBy?: ProductVideoOrderByWithAggregationInput | ProductVideoOrderByWithAggregationInput[]
+    by: ProductVideoScalarFieldEnum[] | ProductVideoScalarFieldEnum
+    having?: ProductVideoScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProductVideoCountAggregateInputType | true
+    _min?: ProductVideoMinAggregateInputType
+    _max?: ProductVideoMaxAggregateInputType
+  }
+
+  export type ProductVideoGroupByOutputType = {
+    id: string
+    title: string
+    description: string | null
+    videoUrl: string
+    thumbnailUrl: string | null
+    keywords: string | null
+    personaId: string
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: ProductVideoCountAggregateOutputType | null
+    _min: ProductVideoMinAggregateOutputType | null
+    _max: ProductVideoMaxAggregateOutputType | null
+  }
+
+  type GetProductVideoGroupByPayload<T extends ProductVideoGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProductVideoGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProductVideoGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProductVideoGroupByOutputType[P]>
+            : GetScalarType<T[P], ProductVideoGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProductVideoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    videoUrl?: boolean
+    thumbnailUrl?: boolean
+    keywords?: boolean
+    personaId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    persona?: boolean | AIPersonaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["productVideo"]>
+
+  export type ProductVideoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    videoUrl?: boolean
+    thumbnailUrl?: boolean
+    keywords?: boolean
+    personaId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    persona?: boolean | AIPersonaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["productVideo"]>
+
+  export type ProductVideoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    videoUrl?: boolean
+    thumbnailUrl?: boolean
+    keywords?: boolean
+    personaId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    persona?: boolean | AIPersonaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["productVideo"]>
+
+  export type ProductVideoSelectScalar = {
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    videoUrl?: boolean
+    thumbnailUrl?: boolean
+    keywords?: boolean
+    personaId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ProductVideoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "videoUrl" | "thumbnailUrl" | "keywords" | "personaId" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["productVideo"]>
+  export type ProductVideoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    persona?: boolean | AIPersonaDefaultArgs<ExtArgs>
+  }
+  export type ProductVideoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    persona?: boolean | AIPersonaDefaultArgs<ExtArgs>
+  }
+  export type ProductVideoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    persona?: boolean | AIPersonaDefaultArgs<ExtArgs>
+  }
+
+  export type $ProductVideoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProductVideo"
+    objects: {
+      persona: Prisma.$AIPersonaPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      description: string | null
+      videoUrl: string
+      thumbnailUrl: string | null
+      keywords: string | null
+      personaId: string
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["productVideo"]>
+    composites: {}
+  }
+
+  type ProductVideoGetPayload<S extends boolean | null | undefined | ProductVideoDefaultArgs> = $Result.GetResult<Prisma.$ProductVideoPayload, S>
+
+  type ProductVideoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProductVideoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProductVideoCountAggregateInputType | true
+    }
+
+  export interface ProductVideoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProductVideo'], meta: { name: 'ProductVideo' } }
+    /**
+     * Find zero or one ProductVideo that matches the filter.
+     * @param {ProductVideoFindUniqueArgs} args - Arguments to find a ProductVideo
+     * @example
+     * // Get one ProductVideo
+     * const productVideo = await prisma.productVideo.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProductVideoFindUniqueArgs>(args: SelectSubset<T, ProductVideoFindUniqueArgs<ExtArgs>>): Prisma__ProductVideoClient<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProductVideo that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProductVideoFindUniqueOrThrowArgs} args - Arguments to find a ProductVideo
+     * @example
+     * // Get one ProductVideo
+     * const productVideo = await prisma.productVideo.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProductVideoFindUniqueOrThrowArgs>(args: SelectSubset<T, ProductVideoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProductVideoClient<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProductVideo that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductVideoFindFirstArgs} args - Arguments to find a ProductVideo
+     * @example
+     * // Get one ProductVideo
+     * const productVideo = await prisma.productVideo.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProductVideoFindFirstArgs>(args?: SelectSubset<T, ProductVideoFindFirstArgs<ExtArgs>>): Prisma__ProductVideoClient<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProductVideo that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductVideoFindFirstOrThrowArgs} args - Arguments to find a ProductVideo
+     * @example
+     * // Get one ProductVideo
+     * const productVideo = await prisma.productVideo.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProductVideoFindFirstOrThrowArgs>(args?: SelectSubset<T, ProductVideoFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProductVideoClient<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProductVideos that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductVideoFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProductVideos
+     * const productVideos = await prisma.productVideo.findMany()
+     * 
+     * // Get first 10 ProductVideos
+     * const productVideos = await prisma.productVideo.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const productVideoWithIdOnly = await prisma.productVideo.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProductVideoFindManyArgs>(args?: SelectSubset<T, ProductVideoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProductVideo.
+     * @param {ProductVideoCreateArgs} args - Arguments to create a ProductVideo.
+     * @example
+     * // Create one ProductVideo
+     * const ProductVideo = await prisma.productVideo.create({
+     *   data: {
+     *     // ... data to create a ProductVideo
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProductVideoCreateArgs>(args: SelectSubset<T, ProductVideoCreateArgs<ExtArgs>>): Prisma__ProductVideoClient<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProductVideos.
+     * @param {ProductVideoCreateManyArgs} args - Arguments to create many ProductVideos.
+     * @example
+     * // Create many ProductVideos
+     * const productVideo = await prisma.productVideo.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProductVideoCreateManyArgs>(args?: SelectSubset<T, ProductVideoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProductVideos and returns the data saved in the database.
+     * @param {ProductVideoCreateManyAndReturnArgs} args - Arguments to create many ProductVideos.
+     * @example
+     * // Create many ProductVideos
+     * const productVideo = await prisma.productVideo.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProductVideos and only return the `id`
+     * const productVideoWithIdOnly = await prisma.productVideo.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProductVideoCreateManyAndReturnArgs>(args?: SelectSubset<T, ProductVideoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProductVideo.
+     * @param {ProductVideoDeleteArgs} args - Arguments to delete one ProductVideo.
+     * @example
+     * // Delete one ProductVideo
+     * const ProductVideo = await prisma.productVideo.delete({
+     *   where: {
+     *     // ... filter to delete one ProductVideo
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProductVideoDeleteArgs>(args: SelectSubset<T, ProductVideoDeleteArgs<ExtArgs>>): Prisma__ProductVideoClient<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProductVideo.
+     * @param {ProductVideoUpdateArgs} args - Arguments to update one ProductVideo.
+     * @example
+     * // Update one ProductVideo
+     * const productVideo = await prisma.productVideo.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProductVideoUpdateArgs>(args: SelectSubset<T, ProductVideoUpdateArgs<ExtArgs>>): Prisma__ProductVideoClient<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProductVideos.
+     * @param {ProductVideoDeleteManyArgs} args - Arguments to filter ProductVideos to delete.
+     * @example
+     * // Delete a few ProductVideos
+     * const { count } = await prisma.productVideo.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProductVideoDeleteManyArgs>(args?: SelectSubset<T, ProductVideoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProductVideos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductVideoUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProductVideos
+     * const productVideo = await prisma.productVideo.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProductVideoUpdateManyArgs>(args: SelectSubset<T, ProductVideoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProductVideos and returns the data updated in the database.
+     * @param {ProductVideoUpdateManyAndReturnArgs} args - Arguments to update many ProductVideos.
+     * @example
+     * // Update many ProductVideos
+     * const productVideo = await prisma.productVideo.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProductVideos and only return the `id`
+     * const productVideoWithIdOnly = await prisma.productVideo.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProductVideoUpdateManyAndReturnArgs>(args: SelectSubset<T, ProductVideoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProductVideo.
+     * @param {ProductVideoUpsertArgs} args - Arguments to update or create a ProductVideo.
+     * @example
+     * // Update or create a ProductVideo
+     * const productVideo = await prisma.productVideo.upsert({
+     *   create: {
+     *     // ... data to create a ProductVideo
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProductVideo we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProductVideoUpsertArgs>(args: SelectSubset<T, ProductVideoUpsertArgs<ExtArgs>>): Prisma__ProductVideoClient<$Result.GetResult<Prisma.$ProductVideoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProductVideos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductVideoCountArgs} args - Arguments to filter ProductVideos to count.
+     * @example
+     * // Count the number of ProductVideos
+     * const count = await prisma.productVideo.count({
+     *   where: {
+     *     // ... the filter for the ProductVideos we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProductVideoCountArgs>(
+      args?: Subset<T, ProductVideoCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProductVideoCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProductVideo.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductVideoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProductVideoAggregateArgs>(args: Subset<T, ProductVideoAggregateArgs>): Prisma.PrismaPromise<GetProductVideoAggregateType<T>>
+
+    /**
+     * Group by ProductVideo.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductVideoGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProductVideoGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProductVideoGroupByArgs['orderBy'] }
+        : { orderBy?: ProductVideoGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProductVideoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProductVideoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProductVideo model
+   */
+  readonly fields: ProductVideoFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProductVideo.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProductVideoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    persona<T extends AIPersonaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AIPersonaDefaultArgs<ExtArgs>>): Prisma__AIPersonaClient<$Result.GetResult<Prisma.$AIPersonaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProductVideo model
+   */
+  interface ProductVideoFieldRefs {
+    readonly id: FieldRef<"ProductVideo", 'String'>
+    readonly title: FieldRef<"ProductVideo", 'String'>
+    readonly description: FieldRef<"ProductVideo", 'String'>
+    readonly videoUrl: FieldRef<"ProductVideo", 'String'>
+    readonly thumbnailUrl: FieldRef<"ProductVideo", 'String'>
+    readonly keywords: FieldRef<"ProductVideo", 'String'>
+    readonly personaId: FieldRef<"ProductVideo", 'String'>
+    readonly isActive: FieldRef<"ProductVideo", 'Boolean'>
+    readonly createdAt: FieldRef<"ProductVideo", 'DateTime'>
+    readonly updatedAt: FieldRef<"ProductVideo", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProductVideo findUnique
+   */
+  export type ProductVideoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductVideo to fetch.
+     */
+    where: ProductVideoWhereUniqueInput
+  }
+
+  /**
+   * ProductVideo findUniqueOrThrow
+   */
+  export type ProductVideoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductVideo to fetch.
+     */
+    where: ProductVideoWhereUniqueInput
+  }
+
+  /**
+   * ProductVideo findFirst
+   */
+  export type ProductVideoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductVideo to fetch.
+     */
+    where?: ProductVideoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductVideos to fetch.
+     */
+    orderBy?: ProductVideoOrderByWithRelationInput | ProductVideoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProductVideos.
+     */
+    cursor?: ProductVideoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductVideos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductVideos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProductVideos.
+     */
+    distinct?: ProductVideoScalarFieldEnum | ProductVideoScalarFieldEnum[]
+  }
+
+  /**
+   * ProductVideo findFirstOrThrow
+   */
+  export type ProductVideoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductVideo to fetch.
+     */
+    where?: ProductVideoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductVideos to fetch.
+     */
+    orderBy?: ProductVideoOrderByWithRelationInput | ProductVideoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProductVideos.
+     */
+    cursor?: ProductVideoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductVideos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductVideos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProductVideos.
+     */
+    distinct?: ProductVideoScalarFieldEnum | ProductVideoScalarFieldEnum[]
+  }
+
+  /**
+   * ProductVideo findMany
+   */
+  export type ProductVideoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoInclude<ExtArgs> | null
+    /**
+     * Filter, which ProductVideos to fetch.
+     */
+    where?: ProductVideoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductVideos to fetch.
+     */
+    orderBy?: ProductVideoOrderByWithRelationInput | ProductVideoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProductVideos.
+     */
+    cursor?: ProductVideoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductVideos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductVideos.
+     */
+    skip?: number
+    distinct?: ProductVideoScalarFieldEnum | ProductVideoScalarFieldEnum[]
+  }
+
+  /**
+   * ProductVideo create
+   */
+  export type ProductVideoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProductVideo.
+     */
+    data: XOR<ProductVideoCreateInput, ProductVideoUncheckedCreateInput>
+  }
+
+  /**
+   * ProductVideo createMany
+   */
+  export type ProductVideoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProductVideos.
+     */
+    data: ProductVideoCreateManyInput | ProductVideoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProductVideo createManyAndReturn
+   */
+  export type ProductVideoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProductVideos.
+     */
+    data: ProductVideoCreateManyInput | ProductVideoCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProductVideo update
+   */
+  export type ProductVideoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProductVideo.
+     */
+    data: XOR<ProductVideoUpdateInput, ProductVideoUncheckedUpdateInput>
+    /**
+     * Choose, which ProductVideo to update.
+     */
+    where: ProductVideoWhereUniqueInput
+  }
+
+  /**
+   * ProductVideo updateMany
+   */
+  export type ProductVideoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProductVideos.
+     */
+    data: XOR<ProductVideoUpdateManyMutationInput, ProductVideoUncheckedUpdateManyInput>
+    /**
+     * Filter which ProductVideos to update
+     */
+    where?: ProductVideoWhereInput
+    /**
+     * Limit how many ProductVideos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProductVideo updateManyAndReturn
+   */
+  export type ProductVideoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * The data used to update ProductVideos.
+     */
+    data: XOR<ProductVideoUpdateManyMutationInput, ProductVideoUncheckedUpdateManyInput>
+    /**
+     * Filter which ProductVideos to update
+     */
+    where?: ProductVideoWhereInput
+    /**
+     * Limit how many ProductVideos to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProductVideo upsert
+   */
+  export type ProductVideoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProductVideo to update in case it exists.
+     */
+    where: ProductVideoWhereUniqueInput
+    /**
+     * In case the ProductVideo found by the `where` argument doesn't exist, create a new ProductVideo with this data.
+     */
+    create: XOR<ProductVideoCreateInput, ProductVideoUncheckedCreateInput>
+    /**
+     * In case the ProductVideo was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProductVideoUpdateInput, ProductVideoUncheckedUpdateInput>
+  }
+
+  /**
+   * ProductVideo delete
+   */
+  export type ProductVideoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoInclude<ExtArgs> | null
+    /**
+     * Filter which ProductVideo to delete.
+     */
+    where: ProductVideoWhereUniqueInput
+  }
+
+  /**
+   * ProductVideo deleteMany
+   */
+  export type ProductVideoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProductVideos to delete
+     */
+    where?: ProductVideoWhereInput
+    /**
+     * Limit how many ProductVideos to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProductVideo without action
+   */
+  export type ProductVideoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductVideo
+     */
+    select?: ProductVideoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductVideo
+     */
+    omit?: ProductVideoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductVideoInclude<ExtArgs> | null
   }
 
 
@@ -7439,6 +8807,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     persona?: boolean | AIPersonaDefaultArgs<ExtArgs>
+    videoGenerationJob?: boolean | QAPair$videoGenerationJobArgs<ExtArgs>
   }, ExtArgs["result"]["qAPair"]>
 
   export type QAPairSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7473,6 +8842,7 @@ export namespace Prisma {
   export type QAPairOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "answer" | "personaId" | "createdAt" | "updatedAt", ExtArgs["result"]["qAPair"]>
   export type QAPairInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     persona?: boolean | AIPersonaDefaultArgs<ExtArgs>
+    videoGenerationJob?: boolean | QAPair$videoGenerationJobArgs<ExtArgs>
   }
   export type QAPairIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     persona?: boolean | AIPersonaDefaultArgs<ExtArgs>
@@ -7485,6 +8855,7 @@ export namespace Prisma {
     name: "QAPair"
     objects: {
       persona: Prisma.$AIPersonaPayload<ExtArgs>
+      videoGenerationJob: Prisma.$VideoGenerationJobPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7888,6 +9259,7 @@ export namespace Prisma {
   export interface Prisma__QAPairClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     persona<T extends AIPersonaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AIPersonaDefaultArgs<ExtArgs>>): Prisma__AIPersonaClient<$Result.GetResult<Prisma.$AIPersonaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    videoGenerationJob<T extends QAPair$videoGenerationJobArgs<ExtArgs> = {}>(args?: Subset<T, QAPair$videoGenerationJobArgs<ExtArgs>>): Prisma__VideoGenerationJobClient<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8316,6 +9688,25 @@ export namespace Prisma {
      * Limit how many QAPairs to delete.
      */
     limit?: number
+  }
+
+  /**
+   * QAPair.videoGenerationJob
+   */
+  export type QAPair$videoGenerationJobArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobInclude<ExtArgs> | null
+    where?: VideoGenerationJobWhereInput
   }
 
   /**
@@ -10492,6 +11883,1090 @@ export namespace Prisma {
 
 
   /**
+   * Model VideoGenerationJob
+   */
+
+  export type AggregateVideoGenerationJob = {
+    _count: VideoGenerationJobCountAggregateOutputType | null
+    _min: VideoGenerationJobMinAggregateOutputType | null
+    _max: VideoGenerationJobMaxAggregateOutputType | null
+  }
+
+  export type VideoGenerationJobMinAggregateOutputType = {
+    id: string | null
+    syncJobId: string | null
+    status: string | null
+    resultUrl: string | null
+    qaPairId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type VideoGenerationJobMaxAggregateOutputType = {
+    id: string | null
+    syncJobId: string | null
+    status: string | null
+    resultUrl: string | null
+    qaPairId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type VideoGenerationJobCountAggregateOutputType = {
+    id: number
+    syncJobId: number
+    status: number
+    resultUrl: number
+    qaPairId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type VideoGenerationJobMinAggregateInputType = {
+    id?: true
+    syncJobId?: true
+    status?: true
+    resultUrl?: true
+    qaPairId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type VideoGenerationJobMaxAggregateInputType = {
+    id?: true
+    syncJobId?: true
+    status?: true
+    resultUrl?: true
+    qaPairId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type VideoGenerationJobCountAggregateInputType = {
+    id?: true
+    syncJobId?: true
+    status?: true
+    resultUrl?: true
+    qaPairId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type VideoGenerationJobAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VideoGenerationJob to aggregate.
+     */
+    where?: VideoGenerationJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VideoGenerationJobs to fetch.
+     */
+    orderBy?: VideoGenerationJobOrderByWithRelationInput | VideoGenerationJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: VideoGenerationJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VideoGenerationJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VideoGenerationJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned VideoGenerationJobs
+    **/
+    _count?: true | VideoGenerationJobCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: VideoGenerationJobMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: VideoGenerationJobMaxAggregateInputType
+  }
+
+  export type GetVideoGenerationJobAggregateType<T extends VideoGenerationJobAggregateArgs> = {
+        [P in keyof T & keyof AggregateVideoGenerationJob]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateVideoGenerationJob[P]>
+      : GetScalarType<T[P], AggregateVideoGenerationJob[P]>
+  }
+
+
+
+
+  export type VideoGenerationJobGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VideoGenerationJobWhereInput
+    orderBy?: VideoGenerationJobOrderByWithAggregationInput | VideoGenerationJobOrderByWithAggregationInput[]
+    by: VideoGenerationJobScalarFieldEnum[] | VideoGenerationJobScalarFieldEnum
+    having?: VideoGenerationJobScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: VideoGenerationJobCountAggregateInputType | true
+    _min?: VideoGenerationJobMinAggregateInputType
+    _max?: VideoGenerationJobMaxAggregateInputType
+  }
+
+  export type VideoGenerationJobGroupByOutputType = {
+    id: string
+    syncJobId: string | null
+    status: string
+    resultUrl: string | null
+    qaPairId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: VideoGenerationJobCountAggregateOutputType | null
+    _min: VideoGenerationJobMinAggregateOutputType | null
+    _max: VideoGenerationJobMaxAggregateOutputType | null
+  }
+
+  type GetVideoGenerationJobGroupByPayload<T extends VideoGenerationJobGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<VideoGenerationJobGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof VideoGenerationJobGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], VideoGenerationJobGroupByOutputType[P]>
+            : GetScalarType<T[P], VideoGenerationJobGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type VideoGenerationJobSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    syncJobId?: boolean
+    status?: boolean
+    resultUrl?: boolean
+    qaPairId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    qaPair?: boolean | QAPairDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["videoGenerationJob"]>
+
+  export type VideoGenerationJobSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    syncJobId?: boolean
+    status?: boolean
+    resultUrl?: boolean
+    qaPairId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    qaPair?: boolean | QAPairDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["videoGenerationJob"]>
+
+  export type VideoGenerationJobSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    syncJobId?: boolean
+    status?: boolean
+    resultUrl?: boolean
+    qaPairId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    qaPair?: boolean | QAPairDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["videoGenerationJob"]>
+
+  export type VideoGenerationJobSelectScalar = {
+    id?: boolean
+    syncJobId?: boolean
+    status?: boolean
+    resultUrl?: boolean
+    qaPairId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type VideoGenerationJobOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "syncJobId" | "status" | "resultUrl" | "qaPairId" | "createdAt" | "updatedAt", ExtArgs["result"]["videoGenerationJob"]>
+  export type VideoGenerationJobInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    qaPair?: boolean | QAPairDefaultArgs<ExtArgs>
+  }
+  export type VideoGenerationJobIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    qaPair?: boolean | QAPairDefaultArgs<ExtArgs>
+  }
+  export type VideoGenerationJobIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    qaPair?: boolean | QAPairDefaultArgs<ExtArgs>
+  }
+
+  export type $VideoGenerationJobPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "VideoGenerationJob"
+    objects: {
+      qaPair: Prisma.$QAPairPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      syncJobId: string | null
+      status: string
+      resultUrl: string | null
+      qaPairId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["videoGenerationJob"]>
+    composites: {}
+  }
+
+  type VideoGenerationJobGetPayload<S extends boolean | null | undefined | VideoGenerationJobDefaultArgs> = $Result.GetResult<Prisma.$VideoGenerationJobPayload, S>
+
+  type VideoGenerationJobCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<VideoGenerationJobFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: VideoGenerationJobCountAggregateInputType | true
+    }
+
+  export interface VideoGenerationJobDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['VideoGenerationJob'], meta: { name: 'VideoGenerationJob' } }
+    /**
+     * Find zero or one VideoGenerationJob that matches the filter.
+     * @param {VideoGenerationJobFindUniqueArgs} args - Arguments to find a VideoGenerationJob
+     * @example
+     * // Get one VideoGenerationJob
+     * const videoGenerationJob = await prisma.videoGenerationJob.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends VideoGenerationJobFindUniqueArgs>(args: SelectSubset<T, VideoGenerationJobFindUniqueArgs<ExtArgs>>): Prisma__VideoGenerationJobClient<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one VideoGenerationJob that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {VideoGenerationJobFindUniqueOrThrowArgs} args - Arguments to find a VideoGenerationJob
+     * @example
+     * // Get one VideoGenerationJob
+     * const videoGenerationJob = await prisma.videoGenerationJob.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends VideoGenerationJobFindUniqueOrThrowArgs>(args: SelectSubset<T, VideoGenerationJobFindUniqueOrThrowArgs<ExtArgs>>): Prisma__VideoGenerationJobClient<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first VideoGenerationJob that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VideoGenerationJobFindFirstArgs} args - Arguments to find a VideoGenerationJob
+     * @example
+     * // Get one VideoGenerationJob
+     * const videoGenerationJob = await prisma.videoGenerationJob.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends VideoGenerationJobFindFirstArgs>(args?: SelectSubset<T, VideoGenerationJobFindFirstArgs<ExtArgs>>): Prisma__VideoGenerationJobClient<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first VideoGenerationJob that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VideoGenerationJobFindFirstOrThrowArgs} args - Arguments to find a VideoGenerationJob
+     * @example
+     * // Get one VideoGenerationJob
+     * const videoGenerationJob = await prisma.videoGenerationJob.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends VideoGenerationJobFindFirstOrThrowArgs>(args?: SelectSubset<T, VideoGenerationJobFindFirstOrThrowArgs<ExtArgs>>): Prisma__VideoGenerationJobClient<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more VideoGenerationJobs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VideoGenerationJobFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all VideoGenerationJobs
+     * const videoGenerationJobs = await prisma.videoGenerationJob.findMany()
+     * 
+     * // Get first 10 VideoGenerationJobs
+     * const videoGenerationJobs = await prisma.videoGenerationJob.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const videoGenerationJobWithIdOnly = await prisma.videoGenerationJob.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends VideoGenerationJobFindManyArgs>(args?: SelectSubset<T, VideoGenerationJobFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a VideoGenerationJob.
+     * @param {VideoGenerationJobCreateArgs} args - Arguments to create a VideoGenerationJob.
+     * @example
+     * // Create one VideoGenerationJob
+     * const VideoGenerationJob = await prisma.videoGenerationJob.create({
+     *   data: {
+     *     // ... data to create a VideoGenerationJob
+     *   }
+     * })
+     * 
+     */
+    create<T extends VideoGenerationJobCreateArgs>(args: SelectSubset<T, VideoGenerationJobCreateArgs<ExtArgs>>): Prisma__VideoGenerationJobClient<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many VideoGenerationJobs.
+     * @param {VideoGenerationJobCreateManyArgs} args - Arguments to create many VideoGenerationJobs.
+     * @example
+     * // Create many VideoGenerationJobs
+     * const videoGenerationJob = await prisma.videoGenerationJob.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends VideoGenerationJobCreateManyArgs>(args?: SelectSubset<T, VideoGenerationJobCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many VideoGenerationJobs and returns the data saved in the database.
+     * @param {VideoGenerationJobCreateManyAndReturnArgs} args - Arguments to create many VideoGenerationJobs.
+     * @example
+     * // Create many VideoGenerationJobs
+     * const videoGenerationJob = await prisma.videoGenerationJob.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many VideoGenerationJobs and only return the `id`
+     * const videoGenerationJobWithIdOnly = await prisma.videoGenerationJob.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends VideoGenerationJobCreateManyAndReturnArgs>(args?: SelectSubset<T, VideoGenerationJobCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a VideoGenerationJob.
+     * @param {VideoGenerationJobDeleteArgs} args - Arguments to delete one VideoGenerationJob.
+     * @example
+     * // Delete one VideoGenerationJob
+     * const VideoGenerationJob = await prisma.videoGenerationJob.delete({
+     *   where: {
+     *     // ... filter to delete one VideoGenerationJob
+     *   }
+     * })
+     * 
+     */
+    delete<T extends VideoGenerationJobDeleteArgs>(args: SelectSubset<T, VideoGenerationJobDeleteArgs<ExtArgs>>): Prisma__VideoGenerationJobClient<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one VideoGenerationJob.
+     * @param {VideoGenerationJobUpdateArgs} args - Arguments to update one VideoGenerationJob.
+     * @example
+     * // Update one VideoGenerationJob
+     * const videoGenerationJob = await prisma.videoGenerationJob.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends VideoGenerationJobUpdateArgs>(args: SelectSubset<T, VideoGenerationJobUpdateArgs<ExtArgs>>): Prisma__VideoGenerationJobClient<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more VideoGenerationJobs.
+     * @param {VideoGenerationJobDeleteManyArgs} args - Arguments to filter VideoGenerationJobs to delete.
+     * @example
+     * // Delete a few VideoGenerationJobs
+     * const { count } = await prisma.videoGenerationJob.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends VideoGenerationJobDeleteManyArgs>(args?: SelectSubset<T, VideoGenerationJobDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more VideoGenerationJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VideoGenerationJobUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many VideoGenerationJobs
+     * const videoGenerationJob = await prisma.videoGenerationJob.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends VideoGenerationJobUpdateManyArgs>(args: SelectSubset<T, VideoGenerationJobUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more VideoGenerationJobs and returns the data updated in the database.
+     * @param {VideoGenerationJobUpdateManyAndReturnArgs} args - Arguments to update many VideoGenerationJobs.
+     * @example
+     * // Update many VideoGenerationJobs
+     * const videoGenerationJob = await prisma.videoGenerationJob.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more VideoGenerationJobs and only return the `id`
+     * const videoGenerationJobWithIdOnly = await prisma.videoGenerationJob.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends VideoGenerationJobUpdateManyAndReturnArgs>(args: SelectSubset<T, VideoGenerationJobUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one VideoGenerationJob.
+     * @param {VideoGenerationJobUpsertArgs} args - Arguments to update or create a VideoGenerationJob.
+     * @example
+     * // Update or create a VideoGenerationJob
+     * const videoGenerationJob = await prisma.videoGenerationJob.upsert({
+     *   create: {
+     *     // ... data to create a VideoGenerationJob
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the VideoGenerationJob we want to update
+     *   }
+     * })
+     */
+    upsert<T extends VideoGenerationJobUpsertArgs>(args: SelectSubset<T, VideoGenerationJobUpsertArgs<ExtArgs>>): Prisma__VideoGenerationJobClient<$Result.GetResult<Prisma.$VideoGenerationJobPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of VideoGenerationJobs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VideoGenerationJobCountArgs} args - Arguments to filter VideoGenerationJobs to count.
+     * @example
+     * // Count the number of VideoGenerationJobs
+     * const count = await prisma.videoGenerationJob.count({
+     *   where: {
+     *     // ... the filter for the VideoGenerationJobs we want to count
+     *   }
+     * })
+    **/
+    count<T extends VideoGenerationJobCountArgs>(
+      args?: Subset<T, VideoGenerationJobCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], VideoGenerationJobCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a VideoGenerationJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VideoGenerationJobAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends VideoGenerationJobAggregateArgs>(args: Subset<T, VideoGenerationJobAggregateArgs>): Prisma.PrismaPromise<GetVideoGenerationJobAggregateType<T>>
+
+    /**
+     * Group by VideoGenerationJob.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VideoGenerationJobGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends VideoGenerationJobGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: VideoGenerationJobGroupByArgs['orderBy'] }
+        : { orderBy?: VideoGenerationJobGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, VideoGenerationJobGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVideoGenerationJobGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the VideoGenerationJob model
+   */
+  readonly fields: VideoGenerationJobFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for VideoGenerationJob.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__VideoGenerationJobClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    qaPair<T extends QAPairDefaultArgs<ExtArgs> = {}>(args?: Subset<T, QAPairDefaultArgs<ExtArgs>>): Prisma__QAPairClient<$Result.GetResult<Prisma.$QAPairPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the VideoGenerationJob model
+   */
+  interface VideoGenerationJobFieldRefs {
+    readonly id: FieldRef<"VideoGenerationJob", 'String'>
+    readonly syncJobId: FieldRef<"VideoGenerationJob", 'String'>
+    readonly status: FieldRef<"VideoGenerationJob", 'String'>
+    readonly resultUrl: FieldRef<"VideoGenerationJob", 'String'>
+    readonly qaPairId: FieldRef<"VideoGenerationJob", 'String'>
+    readonly createdAt: FieldRef<"VideoGenerationJob", 'DateTime'>
+    readonly updatedAt: FieldRef<"VideoGenerationJob", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * VideoGenerationJob findUnique
+   */
+  export type VideoGenerationJobFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobInclude<ExtArgs> | null
+    /**
+     * Filter, which VideoGenerationJob to fetch.
+     */
+    where: VideoGenerationJobWhereUniqueInput
+  }
+
+  /**
+   * VideoGenerationJob findUniqueOrThrow
+   */
+  export type VideoGenerationJobFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobInclude<ExtArgs> | null
+    /**
+     * Filter, which VideoGenerationJob to fetch.
+     */
+    where: VideoGenerationJobWhereUniqueInput
+  }
+
+  /**
+   * VideoGenerationJob findFirst
+   */
+  export type VideoGenerationJobFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobInclude<ExtArgs> | null
+    /**
+     * Filter, which VideoGenerationJob to fetch.
+     */
+    where?: VideoGenerationJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VideoGenerationJobs to fetch.
+     */
+    orderBy?: VideoGenerationJobOrderByWithRelationInput | VideoGenerationJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VideoGenerationJobs.
+     */
+    cursor?: VideoGenerationJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VideoGenerationJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VideoGenerationJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VideoGenerationJobs.
+     */
+    distinct?: VideoGenerationJobScalarFieldEnum | VideoGenerationJobScalarFieldEnum[]
+  }
+
+  /**
+   * VideoGenerationJob findFirstOrThrow
+   */
+  export type VideoGenerationJobFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobInclude<ExtArgs> | null
+    /**
+     * Filter, which VideoGenerationJob to fetch.
+     */
+    where?: VideoGenerationJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VideoGenerationJobs to fetch.
+     */
+    orderBy?: VideoGenerationJobOrderByWithRelationInput | VideoGenerationJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VideoGenerationJobs.
+     */
+    cursor?: VideoGenerationJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VideoGenerationJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VideoGenerationJobs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VideoGenerationJobs.
+     */
+    distinct?: VideoGenerationJobScalarFieldEnum | VideoGenerationJobScalarFieldEnum[]
+  }
+
+  /**
+   * VideoGenerationJob findMany
+   */
+  export type VideoGenerationJobFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobInclude<ExtArgs> | null
+    /**
+     * Filter, which VideoGenerationJobs to fetch.
+     */
+    where?: VideoGenerationJobWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VideoGenerationJobs to fetch.
+     */
+    orderBy?: VideoGenerationJobOrderByWithRelationInput | VideoGenerationJobOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing VideoGenerationJobs.
+     */
+    cursor?: VideoGenerationJobWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VideoGenerationJobs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VideoGenerationJobs.
+     */
+    skip?: number
+    distinct?: VideoGenerationJobScalarFieldEnum | VideoGenerationJobScalarFieldEnum[]
+  }
+
+  /**
+   * VideoGenerationJob create
+   */
+  export type VideoGenerationJobCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobInclude<ExtArgs> | null
+    /**
+     * The data needed to create a VideoGenerationJob.
+     */
+    data: XOR<VideoGenerationJobCreateInput, VideoGenerationJobUncheckedCreateInput>
+  }
+
+  /**
+   * VideoGenerationJob createMany
+   */
+  export type VideoGenerationJobCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many VideoGenerationJobs.
+     */
+    data: VideoGenerationJobCreateManyInput | VideoGenerationJobCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * VideoGenerationJob createManyAndReturn
+   */
+  export type VideoGenerationJobCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * The data used to create many VideoGenerationJobs.
+     */
+    data: VideoGenerationJobCreateManyInput | VideoGenerationJobCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * VideoGenerationJob update
+   */
+  export type VideoGenerationJobUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobInclude<ExtArgs> | null
+    /**
+     * The data needed to update a VideoGenerationJob.
+     */
+    data: XOR<VideoGenerationJobUpdateInput, VideoGenerationJobUncheckedUpdateInput>
+    /**
+     * Choose, which VideoGenerationJob to update.
+     */
+    where: VideoGenerationJobWhereUniqueInput
+  }
+
+  /**
+   * VideoGenerationJob updateMany
+   */
+  export type VideoGenerationJobUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update VideoGenerationJobs.
+     */
+    data: XOR<VideoGenerationJobUpdateManyMutationInput, VideoGenerationJobUncheckedUpdateManyInput>
+    /**
+     * Filter which VideoGenerationJobs to update
+     */
+    where?: VideoGenerationJobWhereInput
+    /**
+     * Limit how many VideoGenerationJobs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * VideoGenerationJob updateManyAndReturn
+   */
+  export type VideoGenerationJobUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * The data used to update VideoGenerationJobs.
+     */
+    data: XOR<VideoGenerationJobUpdateManyMutationInput, VideoGenerationJobUncheckedUpdateManyInput>
+    /**
+     * Filter which VideoGenerationJobs to update
+     */
+    where?: VideoGenerationJobWhereInput
+    /**
+     * Limit how many VideoGenerationJobs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * VideoGenerationJob upsert
+   */
+  export type VideoGenerationJobUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobInclude<ExtArgs> | null
+    /**
+     * The filter to search for the VideoGenerationJob to update in case it exists.
+     */
+    where: VideoGenerationJobWhereUniqueInput
+    /**
+     * In case the VideoGenerationJob found by the `where` argument doesn't exist, create a new VideoGenerationJob with this data.
+     */
+    create: XOR<VideoGenerationJobCreateInput, VideoGenerationJobUncheckedCreateInput>
+    /**
+     * In case the VideoGenerationJob was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<VideoGenerationJobUpdateInput, VideoGenerationJobUncheckedUpdateInput>
+  }
+
+  /**
+   * VideoGenerationJob delete
+   */
+  export type VideoGenerationJobDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobInclude<ExtArgs> | null
+    /**
+     * Filter which VideoGenerationJob to delete.
+     */
+    where: VideoGenerationJobWhereUniqueInput
+  }
+
+  /**
+   * VideoGenerationJob deleteMany
+   */
+  export type VideoGenerationJobDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VideoGenerationJobs to delete
+     */
+    where?: VideoGenerationJobWhereInput
+    /**
+     * Limit how many VideoGenerationJobs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * VideoGenerationJob without action
+   */
+  export type VideoGenerationJobDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VideoGenerationJob
+     */
+    select?: VideoGenerationJobSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VideoGenerationJob
+     */
+    omit?: VideoGenerationJobOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VideoGenerationJobInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -10568,6 +13043,8 @@ export namespace Prisma {
     systemPrompt: 'systemPrompt',
     firstMessage: 'firstMessage',
     isCustomFaceInQueue: 'isCustomFaceInQueue',
+    productDescription: 'productDescription',
+    productImageUrl: 'productImageUrl',
     metadata: 'metadata',
     userId: 'userId',
     createdAt: 'createdAt',
@@ -10575,6 +13052,22 @@ export namespace Prisma {
   };
 
   export type AIPersonaScalarFieldEnum = (typeof AIPersonaScalarFieldEnum)[keyof typeof AIPersonaScalarFieldEnum]
+
+
+  export const ProductVideoScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    description: 'description',
+    videoUrl: 'videoUrl',
+    thumbnailUrl: 'thumbnailUrl',
+    keywords: 'keywords',
+    personaId: 'personaId',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ProductVideoScalarFieldEnum = (typeof ProductVideoScalarFieldEnum)[keyof typeof ProductVideoScalarFieldEnum]
 
 
   export const QAPairScalarFieldEnum: {
@@ -10609,6 +13102,19 @@ export namespace Prisma {
   };
 
   export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
+
+
+  export const VideoGenerationJobScalarFieldEnum: {
+    id: 'id',
+    syncJobId: 'syncJobId',
+    status: 'status',
+    resultUrl: 'resultUrl',
+    qaPairId: 'qaPairId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type VideoGenerationJobScalarFieldEnum = (typeof VideoGenerationJobScalarFieldEnum)[keyof typeof VideoGenerationJobScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -11013,12 +13519,15 @@ export namespace Prisma {
     systemPrompt?: StringNullableFilter<"AIPersona"> | string | null
     firstMessage?: StringNullableFilter<"AIPersona"> | string | null
     isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
+    productDescription?: StringNullableFilter<"AIPersona"> | string | null
+    productImageUrl?: StringNullableFilter<"AIPersona"> | string | null
     metadata?: JsonNullableFilter<"AIPersona">
     userId?: StringFilter<"AIPersona"> | string
     createdAt?: DateTimeFilter<"AIPersona"> | Date | string
     updatedAt?: DateTimeFilter<"AIPersona"> | Date | string
     qaPairs?: QAPairListRelationFilter
     sessions?: ChatSessionListRelationFilter
+    productVideos?: ProductVideoListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -11035,12 +13544,15 @@ export namespace Prisma {
     systemPrompt?: SortOrderInput | SortOrder
     firstMessage?: SortOrderInput | SortOrder
     isCustomFaceInQueue?: SortOrder
+    productDescription?: SortOrderInput | SortOrder
+    productImageUrl?: SortOrderInput | SortOrder
     metadata?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     qaPairs?: QAPairOrderByRelationAggregateInput
     sessions?: ChatSessionOrderByRelationAggregateInput
+    productVideos?: ProductVideoOrderByRelationAggregateInput
     user?: UserOrderByWithRelationInput
   }
 
@@ -11060,12 +13572,15 @@ export namespace Prisma {
     systemPrompt?: StringNullableFilter<"AIPersona"> | string | null
     firstMessage?: StringNullableFilter<"AIPersona"> | string | null
     isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
+    productDescription?: StringNullableFilter<"AIPersona"> | string | null
+    productImageUrl?: StringNullableFilter<"AIPersona"> | string | null
     metadata?: JsonNullableFilter<"AIPersona">
     userId?: StringFilter<"AIPersona"> | string
     createdAt?: DateTimeFilter<"AIPersona"> | Date | string
     updatedAt?: DateTimeFilter<"AIPersona"> | Date | string
     qaPairs?: QAPairListRelationFilter
     sessions?: ChatSessionListRelationFilter
+    productVideos?: ProductVideoListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
@@ -11082,6 +13597,8 @@ export namespace Prisma {
     systemPrompt?: SortOrderInput | SortOrder
     firstMessage?: SortOrderInput | SortOrder
     isCustomFaceInQueue?: SortOrder
+    productDescription?: SortOrderInput | SortOrder
+    productImageUrl?: SortOrderInput | SortOrder
     metadata?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -11107,10 +13624,92 @@ export namespace Prisma {
     systemPrompt?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
     firstMessage?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
     isCustomFaceInQueue?: BoolWithAggregatesFilter<"AIPersona"> | boolean
+    productDescription?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
+    productImageUrl?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
     metadata?: JsonNullableWithAggregatesFilter<"AIPersona">
     userId?: StringWithAggregatesFilter<"AIPersona"> | string
     createdAt?: DateTimeWithAggregatesFilter<"AIPersona"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"AIPersona"> | Date | string
+  }
+
+  export type ProductVideoWhereInput = {
+    AND?: ProductVideoWhereInput | ProductVideoWhereInput[]
+    OR?: ProductVideoWhereInput[]
+    NOT?: ProductVideoWhereInput | ProductVideoWhereInput[]
+    id?: StringFilter<"ProductVideo"> | string
+    title?: StringFilter<"ProductVideo"> | string
+    description?: StringNullableFilter<"ProductVideo"> | string | null
+    videoUrl?: StringFilter<"ProductVideo"> | string
+    thumbnailUrl?: StringNullableFilter<"ProductVideo"> | string | null
+    keywords?: StringNullableFilter<"ProductVideo"> | string | null
+    personaId?: StringFilter<"ProductVideo"> | string
+    isActive?: BoolFilter<"ProductVideo"> | boolean
+    createdAt?: DateTimeFilter<"ProductVideo"> | Date | string
+    updatedAt?: DateTimeFilter<"ProductVideo"> | Date | string
+    persona?: XOR<AIPersonaScalarRelationFilter, AIPersonaWhereInput>
+  }
+
+  export type ProductVideoOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    videoUrl?: SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    keywords?: SortOrderInput | SortOrder
+    personaId?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    persona?: AIPersonaOrderByWithRelationInput
+  }
+
+  export type ProductVideoWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProductVideoWhereInput | ProductVideoWhereInput[]
+    OR?: ProductVideoWhereInput[]
+    NOT?: ProductVideoWhereInput | ProductVideoWhereInput[]
+    title?: StringFilter<"ProductVideo"> | string
+    description?: StringNullableFilter<"ProductVideo"> | string | null
+    videoUrl?: StringFilter<"ProductVideo"> | string
+    thumbnailUrl?: StringNullableFilter<"ProductVideo"> | string | null
+    keywords?: StringNullableFilter<"ProductVideo"> | string | null
+    personaId?: StringFilter<"ProductVideo"> | string
+    isActive?: BoolFilter<"ProductVideo"> | boolean
+    createdAt?: DateTimeFilter<"ProductVideo"> | Date | string
+    updatedAt?: DateTimeFilter<"ProductVideo"> | Date | string
+    persona?: XOR<AIPersonaScalarRelationFilter, AIPersonaWhereInput>
+  }, "id">
+
+  export type ProductVideoOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    videoUrl?: SortOrder
+    thumbnailUrl?: SortOrderInput | SortOrder
+    keywords?: SortOrderInput | SortOrder
+    personaId?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ProductVideoCountOrderByAggregateInput
+    _max?: ProductVideoMaxOrderByAggregateInput
+    _min?: ProductVideoMinOrderByAggregateInput
+  }
+
+  export type ProductVideoScalarWhereWithAggregatesInput = {
+    AND?: ProductVideoScalarWhereWithAggregatesInput | ProductVideoScalarWhereWithAggregatesInput[]
+    OR?: ProductVideoScalarWhereWithAggregatesInput[]
+    NOT?: ProductVideoScalarWhereWithAggregatesInput | ProductVideoScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProductVideo"> | string
+    title?: StringWithAggregatesFilter<"ProductVideo"> | string
+    description?: StringNullableWithAggregatesFilter<"ProductVideo"> | string | null
+    videoUrl?: StringWithAggregatesFilter<"ProductVideo"> | string
+    thumbnailUrl?: StringNullableWithAggregatesFilter<"ProductVideo"> | string | null
+    keywords?: StringNullableWithAggregatesFilter<"ProductVideo"> | string | null
+    personaId?: StringWithAggregatesFilter<"ProductVideo"> | string
+    isActive?: BoolWithAggregatesFilter<"ProductVideo"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"ProductVideo"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ProductVideo"> | Date | string
   }
 
   export type QAPairWhereInput = {
@@ -11124,6 +13723,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"QAPair"> | Date | string
     updatedAt?: DateTimeFilter<"QAPair"> | Date | string
     persona?: XOR<AIPersonaScalarRelationFilter, AIPersonaWhereInput>
+    videoGenerationJob?: XOR<VideoGenerationJobNullableScalarRelationFilter, VideoGenerationJobWhereInput> | null
   }
 
   export type QAPairOrderByWithRelationInput = {
@@ -11134,6 +13734,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     persona?: AIPersonaOrderByWithRelationInput
+    videoGenerationJob?: VideoGenerationJobOrderByWithRelationInput
   }
 
   export type QAPairWhereUniqueInput = Prisma.AtLeast<{
@@ -11147,6 +13748,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"QAPair"> | Date | string
     updatedAt?: DateTimeFilter<"QAPair"> | Date | string
     persona?: XOR<AIPersonaScalarRelationFilter, AIPersonaWhereInput>
+    videoGenerationJob?: XOR<VideoGenerationJobNullableScalarRelationFilter, VideoGenerationJobWhereInput> | null
   }, "id">
 
   export type QAPairOrderByWithAggregationInput = {
@@ -11287,6 +13889,71 @@ export namespace Prisma {
     isUser?: BoolWithAggregatesFilter<"ChatMessage"> | boolean
     sessionId?: StringWithAggregatesFilter<"ChatMessage"> | string
     createdAt?: DateTimeWithAggregatesFilter<"ChatMessage"> | Date | string
+  }
+
+  export type VideoGenerationJobWhereInput = {
+    AND?: VideoGenerationJobWhereInput | VideoGenerationJobWhereInput[]
+    OR?: VideoGenerationJobWhereInput[]
+    NOT?: VideoGenerationJobWhereInput | VideoGenerationJobWhereInput[]
+    id?: StringFilter<"VideoGenerationJob"> | string
+    syncJobId?: StringNullableFilter<"VideoGenerationJob"> | string | null
+    status?: StringFilter<"VideoGenerationJob"> | string
+    resultUrl?: StringNullableFilter<"VideoGenerationJob"> | string | null
+    qaPairId?: StringFilter<"VideoGenerationJob"> | string
+    createdAt?: DateTimeFilter<"VideoGenerationJob"> | Date | string
+    updatedAt?: DateTimeFilter<"VideoGenerationJob"> | Date | string
+    qaPair?: XOR<QAPairScalarRelationFilter, QAPairWhereInput>
+  }
+
+  export type VideoGenerationJobOrderByWithRelationInput = {
+    id?: SortOrder
+    syncJobId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    resultUrl?: SortOrderInput | SortOrder
+    qaPairId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    qaPair?: QAPairOrderByWithRelationInput
+  }
+
+  export type VideoGenerationJobWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    syncJobId?: string
+    qaPairId?: string
+    AND?: VideoGenerationJobWhereInput | VideoGenerationJobWhereInput[]
+    OR?: VideoGenerationJobWhereInput[]
+    NOT?: VideoGenerationJobWhereInput | VideoGenerationJobWhereInput[]
+    status?: StringFilter<"VideoGenerationJob"> | string
+    resultUrl?: StringNullableFilter<"VideoGenerationJob"> | string | null
+    createdAt?: DateTimeFilter<"VideoGenerationJob"> | Date | string
+    updatedAt?: DateTimeFilter<"VideoGenerationJob"> | Date | string
+    qaPair?: XOR<QAPairScalarRelationFilter, QAPairWhereInput>
+  }, "id" | "syncJobId" | "qaPairId">
+
+  export type VideoGenerationJobOrderByWithAggregationInput = {
+    id?: SortOrder
+    syncJobId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    resultUrl?: SortOrderInput | SortOrder
+    qaPairId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: VideoGenerationJobCountOrderByAggregateInput
+    _max?: VideoGenerationJobMaxOrderByAggregateInput
+    _min?: VideoGenerationJobMinOrderByAggregateInput
+  }
+
+  export type VideoGenerationJobScalarWhereWithAggregatesInput = {
+    AND?: VideoGenerationJobScalarWhereWithAggregatesInput | VideoGenerationJobScalarWhereWithAggregatesInput[]
+    OR?: VideoGenerationJobScalarWhereWithAggregatesInput[]
+    NOT?: VideoGenerationJobScalarWhereWithAggregatesInput | VideoGenerationJobScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"VideoGenerationJob"> | string
+    syncJobId?: StringNullableWithAggregatesFilter<"VideoGenerationJob"> | string | null
+    status?: StringWithAggregatesFilter<"VideoGenerationJob"> | string
+    resultUrl?: StringNullableWithAggregatesFilter<"VideoGenerationJob"> | string | null
+    qaPairId?: StringWithAggregatesFilter<"VideoGenerationJob"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"VideoGenerationJob"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"VideoGenerationJob"> | Date | string
   }
 
   export type AccountCreateInput = {
@@ -11582,11 +14249,14 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     qaPairs?: QAPairCreateNestedManyWithoutPersonaInput
     sessions?: ChatSessionCreateNestedManyWithoutPersonaInput
+    productVideos?: ProductVideoCreateNestedManyWithoutPersonaInput
     user: UserCreateNestedOneWithoutPersonasInput
   }
 
@@ -11603,12 +14273,15 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
     qaPairs?: QAPairUncheckedCreateNestedManyWithoutPersonaInput
     sessions?: ChatSessionUncheckedCreateNestedManyWithoutPersonaInput
+    productVideos?: ProductVideoUncheckedCreateNestedManyWithoutPersonaInput
   }
 
   export type AIPersonaUpdateInput = {
@@ -11624,11 +14297,14 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     qaPairs?: QAPairUpdateManyWithoutPersonaNestedInput
     sessions?: ChatSessionUpdateManyWithoutPersonaNestedInput
+    productVideos?: ProductVideoUpdateManyWithoutPersonaNestedInput
     user?: UserUpdateOneRequiredWithoutPersonasNestedInput
   }
 
@@ -11645,12 +14321,15 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     qaPairs?: QAPairUncheckedUpdateManyWithoutPersonaNestedInput
     sessions?: ChatSessionUncheckedUpdateManyWithoutPersonaNestedInput
+    productVideos?: ProductVideoUncheckedUpdateManyWithoutPersonaNestedInput
   }
 
   export type AIPersonaCreateManyInput = {
@@ -11666,6 +14345,8 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
@@ -11685,6 +14366,8 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11703,8 +14386,100 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductVideoCreateInput = {
+    id?: string
+    title: string
+    description?: string | null
+    videoUrl: string
+    thumbnailUrl?: string | null
+    keywords?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    persona: AIPersonaCreateNestedOneWithoutProductVideosInput
+  }
+
+  export type ProductVideoUncheckedCreateInput = {
+    id?: string
+    title: string
+    description?: string | null
+    videoUrl: string
+    thumbnailUrl?: string | null
+    keywords?: string | null
+    personaId: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProductVideoUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    persona?: AIPersonaUpdateOneRequiredWithoutProductVideosNestedInput
+  }
+
+  export type ProductVideoUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    personaId?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductVideoCreateManyInput = {
+    id?: string
+    title: string
+    description?: string | null
+    videoUrl: string
+    thumbnailUrl?: string | null
+    keywords?: string | null
+    personaId: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProductVideoUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductVideoUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    personaId?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11716,6 +14491,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     persona: AIPersonaCreateNestedOneWithoutQaPairsInput
+    videoGenerationJob?: VideoGenerationJobCreateNestedOneWithoutQaPairInput
   }
 
   export type QAPairUncheckedCreateInput = {
@@ -11725,6 +14501,7 @@ export namespace Prisma {
     personaId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    videoGenerationJob?: VideoGenerationJobUncheckedCreateNestedOneWithoutQaPairInput
   }
 
   export type QAPairUpdateInput = {
@@ -11734,6 +14511,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     persona?: AIPersonaUpdateOneRequiredWithoutQaPairsNestedInput
+    videoGenerationJob?: VideoGenerationJobUpdateOneWithoutQaPairNestedInput
   }
 
   export type QAPairUncheckedUpdateInput = {
@@ -11743,6 +14521,7 @@ export namespace Prisma {
     personaId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    videoGenerationJob?: VideoGenerationJobUncheckedUpdateOneWithoutQaPairNestedInput
   }
 
   export type QAPairCreateManyInput = {
@@ -11882,6 +14661,75 @@ export namespace Prisma {
     isUser?: BoolFieldUpdateOperationsInput | boolean
     sessionId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VideoGenerationJobCreateInput = {
+    id?: string
+    syncJobId?: string | null
+    status?: string
+    resultUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    qaPair: QAPairCreateNestedOneWithoutVideoGenerationJobInput
+  }
+
+  export type VideoGenerationJobUncheckedCreateInput = {
+    id?: string
+    syncJobId?: string | null
+    status?: string
+    resultUrl?: string | null
+    qaPairId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VideoGenerationJobUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    syncJobId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    resultUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    qaPair?: QAPairUpdateOneRequiredWithoutVideoGenerationJobNestedInput
+  }
+
+  export type VideoGenerationJobUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    syncJobId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    resultUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    qaPairId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VideoGenerationJobCreateManyInput = {
+    id?: string
+    syncJobId?: string | null
+    status?: string
+    resultUrl?: string | null
+    qaPairId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VideoGenerationJobUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    syncJobId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    resultUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VideoGenerationJobUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    syncJobId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    resultUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    qaPairId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -12243,7 +15091,17 @@ export namespace Prisma {
     none?: QAPairWhereInput
   }
 
+  export type ProductVideoListRelationFilter = {
+    every?: ProductVideoWhereInput
+    some?: ProductVideoWhereInput
+    none?: ProductVideoWhereInput
+  }
+
   export type QAPairOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProductVideoOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12260,6 +15118,8 @@ export namespace Prisma {
     systemPrompt?: SortOrder
     firstMessage?: SortOrder
     isCustomFaceInQueue?: SortOrder
+    productDescription?: SortOrder
+    productImageUrl?: SortOrder
     metadata?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -12279,6 +15139,8 @@ export namespace Prisma {
     systemPrompt?: SortOrder
     firstMessage?: SortOrder
     isCustomFaceInQueue?: SortOrder
+    productDescription?: SortOrder
+    productImageUrl?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -12297,6 +15159,8 @@ export namespace Prisma {
     systemPrompt?: SortOrder
     firstMessage?: SortOrder
     isCustomFaceInQueue?: SortOrder
+    productDescription?: SortOrder
+    productImageUrl?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -12339,6 +15203,50 @@ export namespace Prisma {
   export type AIPersonaScalarRelationFilter = {
     is?: AIPersonaWhereInput
     isNot?: AIPersonaWhereInput
+  }
+
+  export type ProductVideoCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    videoUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    keywords?: SortOrder
+    personaId?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProductVideoMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    videoUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    keywords?: SortOrder
+    personaId?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProductVideoMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    videoUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    keywords?: SortOrder
+    personaId?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VideoGenerationJobNullableScalarRelationFilter = {
+    is?: VideoGenerationJobWhereInput | null
+    isNot?: VideoGenerationJobWhereInput | null
   }
 
   export type QAPairCountOrderByAggregateInput = {
@@ -12429,6 +15337,41 @@ export namespace Prisma {
     isUser?: SortOrder
     sessionId?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type QAPairScalarRelationFilter = {
+    is?: QAPairWhereInput
+    isNot?: QAPairWhereInput
+  }
+
+  export type VideoGenerationJobCountOrderByAggregateInput = {
+    id?: SortOrder
+    syncJobId?: SortOrder
+    status?: SortOrder
+    resultUrl?: SortOrder
+    qaPairId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VideoGenerationJobMaxOrderByAggregateInput = {
+    id?: SortOrder
+    syncJobId?: SortOrder
+    status?: SortOrder
+    resultUrl?: SortOrder
+    qaPairId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VideoGenerationJobMinOrderByAggregateInput = {
+    id?: SortOrder
+    syncJobId?: SortOrder
+    status?: SortOrder
+    resultUrl?: SortOrder
+    qaPairId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -12665,6 +15608,13 @@ export namespace Prisma {
     connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
   }
 
+  export type ProductVideoCreateNestedManyWithoutPersonaInput = {
+    create?: XOR<ProductVideoCreateWithoutPersonaInput, ProductVideoUncheckedCreateWithoutPersonaInput> | ProductVideoCreateWithoutPersonaInput[] | ProductVideoUncheckedCreateWithoutPersonaInput[]
+    connectOrCreate?: ProductVideoCreateOrConnectWithoutPersonaInput | ProductVideoCreateOrConnectWithoutPersonaInput[]
+    createMany?: ProductVideoCreateManyPersonaInputEnvelope
+    connect?: ProductVideoWhereUniqueInput | ProductVideoWhereUniqueInput[]
+  }
+
   export type UserCreateNestedOneWithoutPersonasInput = {
     create?: XOR<UserCreateWithoutPersonasInput, UserUncheckedCreateWithoutPersonasInput>
     connectOrCreate?: UserCreateOrConnectWithoutPersonasInput
@@ -12683,6 +15633,13 @@ export namespace Prisma {
     connectOrCreate?: ChatSessionCreateOrConnectWithoutPersonaInput | ChatSessionCreateOrConnectWithoutPersonaInput[]
     createMany?: ChatSessionCreateManyPersonaInputEnvelope
     connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+  }
+
+  export type ProductVideoUncheckedCreateNestedManyWithoutPersonaInput = {
+    create?: XOR<ProductVideoCreateWithoutPersonaInput, ProductVideoUncheckedCreateWithoutPersonaInput> | ProductVideoCreateWithoutPersonaInput[] | ProductVideoUncheckedCreateWithoutPersonaInput[]
+    connectOrCreate?: ProductVideoCreateOrConnectWithoutPersonaInput | ProductVideoCreateOrConnectWithoutPersonaInput[]
+    createMany?: ProductVideoCreateManyPersonaInputEnvelope
+    connect?: ProductVideoWhereUniqueInput | ProductVideoWhereUniqueInput[]
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -12715,6 +15672,20 @@ export namespace Prisma {
     update?: ChatSessionUpdateWithWhereUniqueWithoutPersonaInput | ChatSessionUpdateWithWhereUniqueWithoutPersonaInput[]
     updateMany?: ChatSessionUpdateManyWithWhereWithoutPersonaInput | ChatSessionUpdateManyWithWhereWithoutPersonaInput[]
     deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
+  }
+
+  export type ProductVideoUpdateManyWithoutPersonaNestedInput = {
+    create?: XOR<ProductVideoCreateWithoutPersonaInput, ProductVideoUncheckedCreateWithoutPersonaInput> | ProductVideoCreateWithoutPersonaInput[] | ProductVideoUncheckedCreateWithoutPersonaInput[]
+    connectOrCreate?: ProductVideoCreateOrConnectWithoutPersonaInput | ProductVideoCreateOrConnectWithoutPersonaInput[]
+    upsert?: ProductVideoUpsertWithWhereUniqueWithoutPersonaInput | ProductVideoUpsertWithWhereUniqueWithoutPersonaInput[]
+    createMany?: ProductVideoCreateManyPersonaInputEnvelope
+    set?: ProductVideoWhereUniqueInput | ProductVideoWhereUniqueInput[]
+    disconnect?: ProductVideoWhereUniqueInput | ProductVideoWhereUniqueInput[]
+    delete?: ProductVideoWhereUniqueInput | ProductVideoWhereUniqueInput[]
+    connect?: ProductVideoWhereUniqueInput | ProductVideoWhereUniqueInput[]
+    update?: ProductVideoUpdateWithWhereUniqueWithoutPersonaInput | ProductVideoUpdateWithWhereUniqueWithoutPersonaInput[]
+    updateMany?: ProductVideoUpdateManyWithWhereWithoutPersonaInput | ProductVideoUpdateManyWithWhereWithoutPersonaInput[]
+    deleteMany?: ProductVideoScalarWhereInput | ProductVideoScalarWhereInput[]
   }
 
   export type UserUpdateOneRequiredWithoutPersonasNestedInput = {
@@ -12753,10 +15724,50 @@ export namespace Prisma {
     deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
   }
 
+  export type ProductVideoUncheckedUpdateManyWithoutPersonaNestedInput = {
+    create?: XOR<ProductVideoCreateWithoutPersonaInput, ProductVideoUncheckedCreateWithoutPersonaInput> | ProductVideoCreateWithoutPersonaInput[] | ProductVideoUncheckedCreateWithoutPersonaInput[]
+    connectOrCreate?: ProductVideoCreateOrConnectWithoutPersonaInput | ProductVideoCreateOrConnectWithoutPersonaInput[]
+    upsert?: ProductVideoUpsertWithWhereUniqueWithoutPersonaInput | ProductVideoUpsertWithWhereUniqueWithoutPersonaInput[]
+    createMany?: ProductVideoCreateManyPersonaInputEnvelope
+    set?: ProductVideoWhereUniqueInput | ProductVideoWhereUniqueInput[]
+    disconnect?: ProductVideoWhereUniqueInput | ProductVideoWhereUniqueInput[]
+    delete?: ProductVideoWhereUniqueInput | ProductVideoWhereUniqueInput[]
+    connect?: ProductVideoWhereUniqueInput | ProductVideoWhereUniqueInput[]
+    update?: ProductVideoUpdateWithWhereUniqueWithoutPersonaInput | ProductVideoUpdateWithWhereUniqueWithoutPersonaInput[]
+    updateMany?: ProductVideoUpdateManyWithWhereWithoutPersonaInput | ProductVideoUpdateManyWithWhereWithoutPersonaInput[]
+    deleteMany?: ProductVideoScalarWhereInput | ProductVideoScalarWhereInput[]
+  }
+
+  export type AIPersonaCreateNestedOneWithoutProductVideosInput = {
+    create?: XOR<AIPersonaCreateWithoutProductVideosInput, AIPersonaUncheckedCreateWithoutProductVideosInput>
+    connectOrCreate?: AIPersonaCreateOrConnectWithoutProductVideosInput
+    connect?: AIPersonaWhereUniqueInput
+  }
+
+  export type AIPersonaUpdateOneRequiredWithoutProductVideosNestedInput = {
+    create?: XOR<AIPersonaCreateWithoutProductVideosInput, AIPersonaUncheckedCreateWithoutProductVideosInput>
+    connectOrCreate?: AIPersonaCreateOrConnectWithoutProductVideosInput
+    upsert?: AIPersonaUpsertWithoutProductVideosInput
+    connect?: AIPersonaWhereUniqueInput
+    update?: XOR<XOR<AIPersonaUpdateToOneWithWhereWithoutProductVideosInput, AIPersonaUpdateWithoutProductVideosInput>, AIPersonaUncheckedUpdateWithoutProductVideosInput>
+  }
+
   export type AIPersonaCreateNestedOneWithoutQaPairsInput = {
     create?: XOR<AIPersonaCreateWithoutQaPairsInput, AIPersonaUncheckedCreateWithoutQaPairsInput>
     connectOrCreate?: AIPersonaCreateOrConnectWithoutQaPairsInput
     connect?: AIPersonaWhereUniqueInput
+  }
+
+  export type VideoGenerationJobCreateNestedOneWithoutQaPairInput = {
+    create?: XOR<VideoGenerationJobCreateWithoutQaPairInput, VideoGenerationJobUncheckedCreateWithoutQaPairInput>
+    connectOrCreate?: VideoGenerationJobCreateOrConnectWithoutQaPairInput
+    connect?: VideoGenerationJobWhereUniqueInput
+  }
+
+  export type VideoGenerationJobUncheckedCreateNestedOneWithoutQaPairInput = {
+    create?: XOR<VideoGenerationJobCreateWithoutQaPairInput, VideoGenerationJobUncheckedCreateWithoutQaPairInput>
+    connectOrCreate?: VideoGenerationJobCreateOrConnectWithoutQaPairInput
+    connect?: VideoGenerationJobWhereUniqueInput
   }
 
   export type AIPersonaUpdateOneRequiredWithoutQaPairsNestedInput = {
@@ -12765,6 +15776,26 @@ export namespace Prisma {
     upsert?: AIPersonaUpsertWithoutQaPairsInput
     connect?: AIPersonaWhereUniqueInput
     update?: XOR<XOR<AIPersonaUpdateToOneWithWhereWithoutQaPairsInput, AIPersonaUpdateWithoutQaPairsInput>, AIPersonaUncheckedUpdateWithoutQaPairsInput>
+  }
+
+  export type VideoGenerationJobUpdateOneWithoutQaPairNestedInput = {
+    create?: XOR<VideoGenerationJobCreateWithoutQaPairInput, VideoGenerationJobUncheckedCreateWithoutQaPairInput>
+    connectOrCreate?: VideoGenerationJobCreateOrConnectWithoutQaPairInput
+    upsert?: VideoGenerationJobUpsertWithoutQaPairInput
+    disconnect?: VideoGenerationJobWhereInput | boolean
+    delete?: VideoGenerationJobWhereInput | boolean
+    connect?: VideoGenerationJobWhereUniqueInput
+    update?: XOR<XOR<VideoGenerationJobUpdateToOneWithWhereWithoutQaPairInput, VideoGenerationJobUpdateWithoutQaPairInput>, VideoGenerationJobUncheckedUpdateWithoutQaPairInput>
+  }
+
+  export type VideoGenerationJobUncheckedUpdateOneWithoutQaPairNestedInput = {
+    create?: XOR<VideoGenerationJobCreateWithoutQaPairInput, VideoGenerationJobUncheckedCreateWithoutQaPairInput>
+    connectOrCreate?: VideoGenerationJobCreateOrConnectWithoutQaPairInput
+    upsert?: VideoGenerationJobUpsertWithoutQaPairInput
+    disconnect?: VideoGenerationJobWhereInput | boolean
+    delete?: VideoGenerationJobWhereInput | boolean
+    connect?: VideoGenerationJobWhereUniqueInput
+    update?: XOR<XOR<VideoGenerationJobUpdateToOneWithWhereWithoutQaPairInput, VideoGenerationJobUpdateWithoutQaPairInput>, VideoGenerationJobUncheckedUpdateWithoutQaPairInput>
   }
 
   export type ChatMessageCreateNestedManyWithoutSessionInput = {
@@ -12849,6 +15880,20 @@ export namespace Prisma {
     upsert?: ChatSessionUpsertWithoutMessagesInput
     connect?: ChatSessionWhereUniqueInput
     update?: XOR<XOR<ChatSessionUpdateToOneWithWhereWithoutMessagesInput, ChatSessionUpdateWithoutMessagesInput>, ChatSessionUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type QAPairCreateNestedOneWithoutVideoGenerationJobInput = {
+    create?: XOR<QAPairCreateWithoutVideoGenerationJobInput, QAPairUncheckedCreateWithoutVideoGenerationJobInput>
+    connectOrCreate?: QAPairCreateOrConnectWithoutVideoGenerationJobInput
+    connect?: QAPairWhereUniqueInput
+  }
+
+  export type QAPairUpdateOneRequiredWithoutVideoGenerationJobNestedInput = {
+    create?: XOR<QAPairCreateWithoutVideoGenerationJobInput, QAPairUncheckedCreateWithoutVideoGenerationJobInput>
+    connectOrCreate?: QAPairCreateOrConnectWithoutVideoGenerationJobInput
+    upsert?: QAPairUpsertWithoutVideoGenerationJobInput
+    connect?: QAPairWhereUniqueInput
+    update?: XOR<XOR<QAPairUpdateToOneWithWhereWithoutVideoGenerationJobInput, QAPairUpdateWithoutVideoGenerationJobInput>, QAPairUncheckedUpdateWithoutVideoGenerationJobInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -13257,11 +16302,14 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     qaPairs?: QAPairCreateNestedManyWithoutPersonaInput
     sessions?: ChatSessionCreateNestedManyWithoutPersonaInput
+    productVideos?: ProductVideoCreateNestedManyWithoutPersonaInput
   }
 
   export type AIPersonaUncheckedCreateWithoutUserInput = {
@@ -13277,11 +16325,14 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     qaPairs?: QAPairUncheckedCreateNestedManyWithoutPersonaInput
     sessions?: ChatSessionUncheckedCreateNestedManyWithoutPersonaInput
+    productVideos?: ProductVideoUncheckedCreateNestedManyWithoutPersonaInput
   }
 
   export type AIPersonaCreateOrConnectWithoutUserInput = {
@@ -13412,6 +16463,8 @@ export namespace Prisma {
     systemPrompt?: StringNullableFilter<"AIPersona"> | string | null
     firstMessage?: StringNullableFilter<"AIPersona"> | string | null
     isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
+    productDescription?: StringNullableFilter<"AIPersona"> | string | null
+    productImageUrl?: StringNullableFilter<"AIPersona"> | string | null
     metadata?: JsonNullableFilter<"AIPersona">
     userId?: StringFilter<"AIPersona"> | string
     createdAt?: DateTimeFilter<"AIPersona"> | Date | string
@@ -13451,6 +16504,7 @@ export namespace Prisma {
     answer: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    videoGenerationJob?: VideoGenerationJobCreateNestedOneWithoutQaPairInput
   }
 
   export type QAPairUncheckedCreateWithoutPersonaInput = {
@@ -13459,6 +16513,7 @@ export namespace Prisma {
     answer: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    videoGenerationJob?: VideoGenerationJobUncheckedCreateNestedOneWithoutQaPairInput
   }
 
   export type QAPairCreateOrConnectWithoutPersonaInput = {
@@ -13494,6 +16549,40 @@ export namespace Prisma {
 
   export type ChatSessionCreateManyPersonaInputEnvelope = {
     data: ChatSessionCreateManyPersonaInput | ChatSessionCreateManyPersonaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProductVideoCreateWithoutPersonaInput = {
+    id?: string
+    title: string
+    description?: string | null
+    videoUrl: string
+    thumbnailUrl?: string | null
+    keywords?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProductVideoUncheckedCreateWithoutPersonaInput = {
+    id?: string
+    title: string
+    description?: string | null
+    videoUrl: string
+    thumbnailUrl?: string | null
+    keywords?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProductVideoCreateOrConnectWithoutPersonaInput = {
+    where: ProductVideoWhereUniqueInput
+    create: XOR<ProductVideoCreateWithoutPersonaInput, ProductVideoUncheckedCreateWithoutPersonaInput>
+  }
+
+  export type ProductVideoCreateManyPersonaInputEnvelope = {
+    data: ProductVideoCreateManyPersonaInput | ProductVideoCreateManyPersonaInput[]
     skipDuplicates?: boolean
   }
 
@@ -13572,6 +16661,38 @@ export namespace Prisma {
     data: XOR<ChatSessionUpdateManyMutationInput, ChatSessionUncheckedUpdateManyWithoutPersonaInput>
   }
 
+  export type ProductVideoUpsertWithWhereUniqueWithoutPersonaInput = {
+    where: ProductVideoWhereUniqueInput
+    update: XOR<ProductVideoUpdateWithoutPersonaInput, ProductVideoUncheckedUpdateWithoutPersonaInput>
+    create: XOR<ProductVideoCreateWithoutPersonaInput, ProductVideoUncheckedCreateWithoutPersonaInput>
+  }
+
+  export type ProductVideoUpdateWithWhereUniqueWithoutPersonaInput = {
+    where: ProductVideoWhereUniqueInput
+    data: XOR<ProductVideoUpdateWithoutPersonaInput, ProductVideoUncheckedUpdateWithoutPersonaInput>
+  }
+
+  export type ProductVideoUpdateManyWithWhereWithoutPersonaInput = {
+    where: ProductVideoScalarWhereInput
+    data: XOR<ProductVideoUpdateManyMutationInput, ProductVideoUncheckedUpdateManyWithoutPersonaInput>
+  }
+
+  export type ProductVideoScalarWhereInput = {
+    AND?: ProductVideoScalarWhereInput | ProductVideoScalarWhereInput[]
+    OR?: ProductVideoScalarWhereInput[]
+    NOT?: ProductVideoScalarWhereInput | ProductVideoScalarWhereInput[]
+    id?: StringFilter<"ProductVideo"> | string
+    title?: StringFilter<"ProductVideo"> | string
+    description?: StringNullableFilter<"ProductVideo"> | string | null
+    videoUrl?: StringFilter<"ProductVideo"> | string
+    thumbnailUrl?: StringNullableFilter<"ProductVideo"> | string | null
+    keywords?: StringNullableFilter<"ProductVideo"> | string | null
+    personaId?: StringFilter<"ProductVideo"> | string
+    isActive?: BoolFilter<"ProductVideo"> | boolean
+    createdAt?: DateTimeFilter<"ProductVideo"> | Date | string
+    updatedAt?: DateTimeFilter<"ProductVideo"> | Date | string
+  }
+
   export type UserUpsertWithoutPersonasInput = {
     update: XOR<UserUpdateWithoutPersonasInput, UserUncheckedUpdateWithoutPersonasInput>
     create: XOR<UserCreateWithoutPersonasInput, UserUncheckedCreateWithoutPersonasInput>
@@ -13609,6 +16730,114 @@ export namespace Prisma {
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type AIPersonaCreateWithoutProductVideosInput = {
+    id?: string
+    name: string
+    description: string
+    pageLink?: string | null
+    adImageUrl?: string | null
+    voiceSampleUrl?: string | null
+    faceId?: string | null
+    simliSessionId?: string | null
+    simliAgentId?: string | null
+    systemPrompt?: string | null
+    firstMessage?: string | null
+    isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    qaPairs?: QAPairCreateNestedManyWithoutPersonaInput
+    sessions?: ChatSessionCreateNestedManyWithoutPersonaInput
+    user: UserCreateNestedOneWithoutPersonasInput
+  }
+
+  export type AIPersonaUncheckedCreateWithoutProductVideosInput = {
+    id?: string
+    name: string
+    description: string
+    pageLink?: string | null
+    adImageUrl?: string | null
+    voiceSampleUrl?: string | null
+    faceId?: string | null
+    simliSessionId?: string | null
+    simliAgentId?: string | null
+    systemPrompt?: string | null
+    firstMessage?: string | null
+    isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    qaPairs?: QAPairUncheckedCreateNestedManyWithoutPersonaInput
+    sessions?: ChatSessionUncheckedCreateNestedManyWithoutPersonaInput
+  }
+
+  export type AIPersonaCreateOrConnectWithoutProductVideosInput = {
+    where: AIPersonaWhereUniqueInput
+    create: XOR<AIPersonaCreateWithoutProductVideosInput, AIPersonaUncheckedCreateWithoutProductVideosInput>
+  }
+
+  export type AIPersonaUpsertWithoutProductVideosInput = {
+    update: XOR<AIPersonaUpdateWithoutProductVideosInput, AIPersonaUncheckedUpdateWithoutProductVideosInput>
+    create: XOR<AIPersonaCreateWithoutProductVideosInput, AIPersonaUncheckedCreateWithoutProductVideosInput>
+    where?: AIPersonaWhereInput
+  }
+
+  export type AIPersonaUpdateToOneWithWhereWithoutProductVideosInput = {
+    where?: AIPersonaWhereInput
+    data: XOR<AIPersonaUpdateWithoutProductVideosInput, AIPersonaUncheckedUpdateWithoutProductVideosInput>
+  }
+
+  export type AIPersonaUpdateWithoutProductVideosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    pageLink?: NullableStringFieldUpdateOperationsInput | string | null
+    adImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    voiceSampleUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faceId?: NullableStringFieldUpdateOperationsInput | string | null
+    simliSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    simliAgentId?: NullableStringFieldUpdateOperationsInput | string | null
+    systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
+    firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    qaPairs?: QAPairUpdateManyWithoutPersonaNestedInput
+    sessions?: ChatSessionUpdateManyWithoutPersonaNestedInput
+    user?: UserUpdateOneRequiredWithoutPersonasNestedInput
+  }
+
+  export type AIPersonaUncheckedUpdateWithoutProductVideosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    pageLink?: NullableStringFieldUpdateOperationsInput | string | null
+    adImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    voiceSampleUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faceId?: NullableStringFieldUpdateOperationsInput | string | null
+    simliSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    simliAgentId?: NullableStringFieldUpdateOperationsInput | string | null
+    systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
+    firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    qaPairs?: QAPairUncheckedUpdateManyWithoutPersonaNestedInput
+    sessions?: ChatSessionUncheckedUpdateManyWithoutPersonaNestedInput
+  }
+
   export type AIPersonaCreateWithoutQaPairsInput = {
     id?: string
     name: string
@@ -13622,10 +16851,13 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: ChatSessionCreateNestedManyWithoutPersonaInput
+    productVideos?: ProductVideoCreateNestedManyWithoutPersonaInput
     user: UserCreateNestedOneWithoutPersonasInput
   }
 
@@ -13642,16 +16874,42 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: ChatSessionUncheckedCreateNestedManyWithoutPersonaInput
+    productVideos?: ProductVideoUncheckedCreateNestedManyWithoutPersonaInput
   }
 
   export type AIPersonaCreateOrConnectWithoutQaPairsInput = {
     where: AIPersonaWhereUniqueInput
     create: XOR<AIPersonaCreateWithoutQaPairsInput, AIPersonaUncheckedCreateWithoutQaPairsInput>
+  }
+
+  export type VideoGenerationJobCreateWithoutQaPairInput = {
+    id?: string
+    syncJobId?: string | null
+    status?: string
+    resultUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VideoGenerationJobUncheckedCreateWithoutQaPairInput = {
+    id?: string
+    syncJobId?: string | null
+    status?: string
+    resultUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VideoGenerationJobCreateOrConnectWithoutQaPairInput = {
+    where: VideoGenerationJobWhereUniqueInput
+    create: XOR<VideoGenerationJobCreateWithoutQaPairInput, VideoGenerationJobUncheckedCreateWithoutQaPairInput>
   }
 
   export type AIPersonaUpsertWithoutQaPairsInput = {
@@ -13678,10 +16936,13 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: ChatSessionUpdateManyWithoutPersonaNestedInput
+    productVideos?: ProductVideoUpdateManyWithoutPersonaNestedInput
     user?: UserUpdateOneRequiredWithoutPersonasNestedInput
   }
 
@@ -13698,11 +16959,43 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: ChatSessionUncheckedUpdateManyWithoutPersonaNestedInput
+    productVideos?: ProductVideoUncheckedUpdateManyWithoutPersonaNestedInput
+  }
+
+  export type VideoGenerationJobUpsertWithoutQaPairInput = {
+    update: XOR<VideoGenerationJobUpdateWithoutQaPairInput, VideoGenerationJobUncheckedUpdateWithoutQaPairInput>
+    create: XOR<VideoGenerationJobCreateWithoutQaPairInput, VideoGenerationJobUncheckedCreateWithoutQaPairInput>
+    where?: VideoGenerationJobWhereInput
+  }
+
+  export type VideoGenerationJobUpdateToOneWithWhereWithoutQaPairInput = {
+    where?: VideoGenerationJobWhereInput
+    data: XOR<VideoGenerationJobUpdateWithoutQaPairInput, VideoGenerationJobUncheckedUpdateWithoutQaPairInput>
+  }
+
+  export type VideoGenerationJobUpdateWithoutQaPairInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    syncJobId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    resultUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VideoGenerationJobUncheckedUpdateWithoutQaPairInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    syncJobId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    resultUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChatMessageCreateWithoutSessionInput = {
@@ -13742,10 +17035,13 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     qaPairs?: QAPairCreateNestedManyWithoutPersonaInput
+    productVideos?: ProductVideoCreateNestedManyWithoutPersonaInput
     user: UserCreateNestedOneWithoutPersonasInput
   }
 
@@ -13762,11 +17058,14 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
     qaPairs?: QAPairUncheckedCreateNestedManyWithoutPersonaInput
+    productVideos?: ProductVideoUncheckedCreateNestedManyWithoutPersonaInput
   }
 
   export type AIPersonaCreateOrConnectWithoutSessionsInput = {
@@ -13856,10 +17155,13 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     qaPairs?: QAPairUpdateManyWithoutPersonaNestedInput
+    productVideos?: ProductVideoUpdateManyWithoutPersonaNestedInput
     user?: UserUpdateOneRequiredWithoutPersonasNestedInput
   }
 
@@ -13876,11 +17178,14 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     qaPairs?: QAPairUncheckedUpdateManyWithoutPersonaNestedInput
+    productVideos?: ProductVideoUncheckedUpdateManyWithoutPersonaNestedInput
   }
 
   export type UserUpsertWithoutChatSessionsInput = {
@@ -13968,6 +17273,58 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type QAPairCreateWithoutVideoGenerationJobInput = {
+    id?: string
+    question: string
+    answer: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    persona: AIPersonaCreateNestedOneWithoutQaPairsInput
+  }
+
+  export type QAPairUncheckedCreateWithoutVideoGenerationJobInput = {
+    id?: string
+    question: string
+    answer: string
+    personaId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type QAPairCreateOrConnectWithoutVideoGenerationJobInput = {
+    where: QAPairWhereUniqueInput
+    create: XOR<QAPairCreateWithoutVideoGenerationJobInput, QAPairUncheckedCreateWithoutVideoGenerationJobInput>
+  }
+
+  export type QAPairUpsertWithoutVideoGenerationJobInput = {
+    update: XOR<QAPairUpdateWithoutVideoGenerationJobInput, QAPairUncheckedUpdateWithoutVideoGenerationJobInput>
+    create: XOR<QAPairCreateWithoutVideoGenerationJobInput, QAPairUncheckedCreateWithoutVideoGenerationJobInput>
+    where?: QAPairWhereInput
+  }
+
+  export type QAPairUpdateToOneWithWhereWithoutVideoGenerationJobInput = {
+    where?: QAPairWhereInput
+    data: XOR<QAPairUpdateWithoutVideoGenerationJobInput, QAPairUncheckedUpdateWithoutVideoGenerationJobInput>
+  }
+
+  export type QAPairUpdateWithoutVideoGenerationJobInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    persona?: AIPersonaUpdateOneRequiredWithoutQaPairsNestedInput
+  }
+
+  export type QAPairUncheckedUpdateWithoutVideoGenerationJobInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    personaId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type AccountCreateManyUserInput = {
     id?: string
     type: string
@@ -14001,6 +17358,8 @@ export namespace Prisma {
     systemPrompt?: string | null
     firstMessage?: string | null
     isCustomFaceInQueue?: boolean
+    productDescription?: string | null
+    productImageUrl?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14086,11 +17445,14 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     qaPairs?: QAPairUpdateManyWithoutPersonaNestedInput
     sessions?: ChatSessionUpdateManyWithoutPersonaNestedInput
+    productVideos?: ProductVideoUpdateManyWithoutPersonaNestedInput
   }
 
   export type AIPersonaUncheckedUpdateWithoutUserInput = {
@@ -14106,11 +17468,14 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     qaPairs?: QAPairUncheckedUpdateManyWithoutPersonaNestedInput
     sessions?: ChatSessionUncheckedUpdateManyWithoutPersonaNestedInput
+    productVideos?: ProductVideoUncheckedUpdateManyWithoutPersonaNestedInput
   }
 
   export type AIPersonaUncheckedUpdateManyWithoutUserInput = {
@@ -14126,6 +17491,8 @@ export namespace Prisma {
     systemPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     firstMessage?: NullableStringFieldUpdateOperationsInput | string | null
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14169,12 +17536,25 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type ProductVideoCreateManyPersonaInput = {
+    id?: string
+    title: string
+    description?: string | null
+    videoUrl: string
+    thumbnailUrl?: string | null
+    keywords?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type QAPairUpdateWithoutPersonaInput = {
     id?: StringFieldUpdateOperationsInput | string
     question?: StringFieldUpdateOperationsInput | string
     answer?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    videoGenerationJob?: VideoGenerationJobUpdateOneWithoutQaPairNestedInput
   }
 
   export type QAPairUncheckedUpdateWithoutPersonaInput = {
@@ -14183,6 +17563,7 @@ export namespace Prisma {
     answer?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    videoGenerationJob?: VideoGenerationJobUncheckedUpdateOneWithoutQaPairNestedInput
   }
 
   export type QAPairUncheckedUpdateManyWithoutPersonaInput = {
@@ -14212,6 +17593,42 @@ export namespace Prisma {
   export type ChatSessionUncheckedUpdateManyWithoutPersonaInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductVideoUpdateWithoutPersonaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductVideoUncheckedUpdateWithoutPersonaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductVideoUncheckedUpdateManyWithoutPersonaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    keywords?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

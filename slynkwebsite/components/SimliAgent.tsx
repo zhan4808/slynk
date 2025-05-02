@@ -103,6 +103,8 @@ interface SimliAgentProps {
   };
   onStart?: () => void;
   onClose?: () => void;
+  onMessageSent?: (message: string) => void; // Add callback for when messages are sent
+  onTranscriptUpdate?: (transcript: {speaker: string, text: string}[]) => void; // Add callback for transcript updates
 }
 
 // Component to handle video rendering with Daily context
@@ -216,7 +218,9 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
   personaId, 
   personaData, 
   onStart = () => {}, 
-  onClose = () => {} 
+  onClose = () => {}, 
+  onMessageSent = () => {}, 
+  onTranscriptUpdate = () => {}
 }) => {
   // State management
   const [isLoading, setIsLoading] = useState(false);
@@ -661,7 +665,7 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
         addDebugInfo(`Adding actual avatar transcript: ${text.substring(0, 30)}...`);
         
         setTranscript(prev => {
-          // Skip if already in transcript
+          // Avoid duplicate messages
           if (prev.length > 0 && 
               prev[prev.length - 1].speaker === speaker && 
               prev[prev.length - 1].text === text) {
@@ -673,7 +677,12 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
           setIsProcessing(false);
           setWaitingForSimliResponse(false);
           
-          return [...prev, { speaker, text }];
+          const newTranscript = [...prev, { speaker, text }];
+          // Call onTranscriptUpdate if provided
+          if (onTranscriptUpdate) {
+            onTranscriptUpdate(newTranscript);
+          }
+          return newTranscript;
         });
         
         // Clear pending transcript
@@ -787,11 +796,21 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
             prev[prev.length - 1].text === message) {
           return prev;
         }
-        return [...prev, userMessage];
+        const newTranscript = [...prev, userMessage];
+        // Call onTranscriptUpdate if provided
+        if (onTranscriptUpdate) {
+          onTranscriptUpdate(newTranscript);
+        }
+        return newTranscript;
       });
       
       // Send message to chatbot
       addDebugInfo(`Sending message to chatbot: ${message}`);
+      
+      // Call the onMessageSent callback if provided
+      if (onMessageSent) {
+        onMessageSent(message);
+      }
       
       // Custom app message to Simli backend
       callObject.sendAppMessage({
@@ -850,7 +869,12 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
               return prev;
             }
             
-            return [...prev, { speaker, text }];
+            const newTranscript = [...prev, { speaker, text }];
+            // Call onTranscriptUpdate if provided
+            if (onTranscriptUpdate) {
+              onTranscriptUpdate(newTranscript);
+            }
+            return newTranscript;
           });
         }
       }
@@ -1000,7 +1024,12 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
                       prev[prev.length - 1].text === text) {
                     return prev;
                   }
-                  return [...prev, { speaker, text }];
+                  const newTranscript = [...prev, { speaker, text }];
+                  // Call onTranscriptUpdate if provided
+                  if (onTranscriptUpdate) {
+                    onTranscriptUpdate(newTranscript);
+                  }
+                  return newTranscript;
                 });
                 
                 // If we're processing the user's message, consider the next response to be processing
@@ -1038,7 +1067,12 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
                       prev[prev.length - 1].text === text) {
                     return prev;
                   }
-                  return [...prev, { speaker, text }];
+                  const newTranscript = [...prev, { speaker, text }];
+                  // Call onTranscriptUpdate if provided
+                  if (onTranscriptUpdate) {
+                    onTranscriptUpdate(newTranscript);
+                  }
+                  return newTranscript;
                 });
                 setIsProcessing(false);
                 setWaitingForSimliResponse(false);
@@ -1067,7 +1101,12 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
                         prev[prev.length - 1].text === potentialText) {
                       return prev;
                     }
-                    return [...prev, { speaker, text: potentialText }];
+                    const newTranscript = [...prev, { speaker, text: potentialText }];
+                    // Call onTranscriptUpdate if provided
+                    if (onTranscriptUpdate) {
+                      onTranscriptUpdate(newTranscript);
+                    }
+                    return newTranscript;
                   });
                   setIsProcessing(false);
                   setWaitingForSimliResponse(false);
@@ -1562,7 +1601,12 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
                 prev[prev.length - 1].text === transcript) {
               return prev;
             }
-            return [...prev, { speaker, text: transcript }];
+            const newTranscript = [...prev, { speaker, text: transcript }];
+            // Call onTranscriptUpdate if provided
+            if (onTranscriptUpdate) {
+              onTranscriptUpdate(newTranscript);
+            }
+            return newTranscript;
           });
         }
       };

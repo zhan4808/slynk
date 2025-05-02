@@ -168,8 +168,23 @@ exports.Prisma.AIPersonaScalarFieldEnum = {
   systemPrompt: 'systemPrompt',
   firstMessage: 'firstMessage',
   isCustomFaceInQueue: 'isCustomFaceInQueue',
+  productDescription: 'productDescription',
+  productImageUrl: 'productImageUrl',
   metadata: 'metadata',
   userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProductVideoScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  videoUrl: 'videoUrl',
+  thumbnailUrl: 'thumbnailUrl',
+  keywords: 'keywords',
+  personaId: 'personaId',
+  isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -197,6 +212,16 @@ exports.Prisma.ChatMessageScalarFieldEnum = {
   isUser: 'isUser',
   sessionId: 'sessionId',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.VideoGenerationJobScalarFieldEnum = {
+  id: 'id',
+  syncJobId: 'syncJobId',
+  status: 'status',
+  resultUrl: 'resultUrl',
+  qaPairId: 'qaPairId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -232,9 +257,11 @@ exports.Prisma.ModelName = {
   VerificationToken: 'VerificationToken',
   User: 'User',
   AIPersona: 'AIPersona',
+  ProductVideo: 'ProductVideo',
   QAPair: 'QAPair',
   ChatSession: 'ChatSession',
-  ChatMessage: 'ChatMessage'
+  ChatMessage: 'ChatMessage',
+  VideoGenerationJob: 'VideoGenerationJob'
 };
 
 /**

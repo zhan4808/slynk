@@ -78,13 +78,30 @@ model AIPersona {
   systemPrompt    String?
   firstMessage    String?
   isCustomFaceInQueue Boolean @default(false)
+  productDescription String? @db.Text
+  productImageUrl  String?
   metadata        Json?
   userId          String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   qaPairs         QAPair[]
   sessions        ChatSession[]
+  productVideos   ProductVideo[]
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ProductVideo {
+  id          String    @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  videoUrl    String
+  thumbnailUrl String?
+  keywords    String?   @db.Text
+  personaId   String
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  persona     AIPersona @relation(fields: [personaId], references: [id], onDelete: Cascade)
 }
 
 model QAPair {
@@ -95,6 +112,7 @@ model QAPair {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   persona    AIPersona @relation(fields: [personaId], references: [id], onDelete: Cascade)
+  videoGenerationJob VideoGenerationJob?
 }
 
 model ChatSession {
@@ -115,4 +133,18 @@ model ChatMessage {
   sessionId String
   createdAt DateTime @default(now())
   session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model VideoGenerationJob {
+  id          String    @id @default(cuid())
+  syncJobId   String?   @unique
+  status      String    @default("pending") // pending, processing, completed, failed
+  resultUrl   String?
+  qaPairId    String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  qaPair      QAPair    @relation(fields: [qaPairId], references: [id], onDelete: Cascade)
+
+  @@index([qaPairId])
+  @@index([status])
 }
