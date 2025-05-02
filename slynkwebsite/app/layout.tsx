@@ -4,6 +4,7 @@ import "./globals.css"
 import type React from "react"
 import { Providers } from "./providers"
 import { DynamicNavbar } from "@/components/dynamic-navbar"
+import { Footer } from "@/components/footer"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -27,6 +28,7 @@ export default function RootLayout({
         <Providers>
           <DynamicNavbar />
           <main>{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>
