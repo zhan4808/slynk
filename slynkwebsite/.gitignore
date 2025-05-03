@@ -18,6 +18,7 @@ yarn-error.log*
 
 # env files
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -25,3 +26,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+
+# Logs
+logs/
+*.log

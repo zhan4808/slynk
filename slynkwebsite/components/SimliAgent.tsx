@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, useState, useEffect, KeyboardEvent, useCallback } from "react";
 import { DailyProvider, useDaily } from "@daily-co/daily-react";
 import Daily, { DailyCall } from "@daily-co/daily-js";
@@ -8,131 +10,20 @@ import { DEFAULT_FACE_ID, startE2ESession } from "@/lib/simli-api";
 import { Mic, MicOff, Send, Volume2, VolumeX, RefreshCw } from "lucide-react";
 import { CircularSpinner } from "@/components/ui/circular-spinner";
 import { motion } from "framer-motion";
+import { isMobile, isIOS, isSafari } from "@/lib/browser-detection";
+import { createAudioMonitor } from "@/lib/audio-monitoring";
+import { SimliAgentProps, VideoComponentProps } from "@/lib/types";
 
-// Add type definition for window.audioContext
-declare global {
-  interface Window {
-    audioContext?: AudioContext;
-  }
-}
-
-// Browser/Device detection for audio handling
-const isMobile = () => {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator?.userAgent || '');
-};
-
-const isIOS = () => {
-  return /iPad|iPhone|iPod/.test(navigator?.userAgent || '') || 
-    (navigator?.platform === 'MacIntel' && navigator?.maxTouchPoints > 1);
-};
-
-const isSafari = () => {
-  return /^((?!chrome|android).)*safari/i.test(navigator?.userAgent || '');
-};
+// Setup Speech Recognition with browser compatibility - using type assertions to avoid TypeScript errors
+const isBrowser = typeof window !== 'undefined';
+const SpeechRecognitionAPI = isBrowser ? ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition) : null;
+const SpeechGrammarListAPI = isBrowser ? ((window as any).SpeechGrammarList || (window as any).webkitSpeechGrammarList) : null;
 
 // Global reference to prevent duplicate instances
 let globalCallObject: DailyCall | null = null;
 
-// Setup Speech Recognition with browser compatibility - using type assertions to avoid TypeScript errors
-const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-const SpeechGrammarListAPI = (window as any).SpeechGrammarList || (window as any).webkitSpeechGrammarList;
-
-// Add this Hark audio detection library (inlined to avoid dependencies)
-const hark = function(stream: MediaStream, options: any) {
-  const analyser = (window as any).audioContext.createAnalyser();
-  const streamNode = (window as any).audioContext.createMediaStreamSource(stream);
-  streamNode.connect(analyser);
-  
-  options = options || {};
-  
-  const harker = {
-    speaking: false,
-    state: 'stopped',
-    threshold: options.threshold || -65,
-    interval: options.interval || 100,
-    events: {},
-    speakingHistory: [],
-    start: function() {
-      harker.state = 'running';
-      harker.looper();
-      return harker;
-    },
-    stop: function() {
-      harker.state = 'stopped';
-      return harker;
-    },
-    on: function(event: string, callback: Function) {
-      harker.events[event] = callback;
-      return harker;
-    },
-    off: function(event: string) {
-      delete harker.events[event];
-      return harker;
-    },
-    looper: function() {
-      if (harker.state === 'stopped') return;
-      
-      setTimeout(() => {
-        const bufferLength = analyser.fftSize;
-        const dataArray = new Uint8Array(bufferLength);
-        analyser.getByteTimeDomainData(dataArray);
-        
-        let sumSquares = 0;
-        for (let i = 0; i < bufferLength; i++) {
-          const val = (dataArray[i] - 128) / 128;
-          sumSquares += val * val;
-        }
-        
-        const rms = Math.sqrt(sumSquares / bufferLength);
-        const db = 20 * Math.log10(rms);
-        
-        // Update speaking history
-        harker.speakingHistory.push(db);
-        if (harker.speakingHistory.length > 10) {
-          harker.speakingHistory.shift();
-        }
-        
-        // Get average volume
-        const avgDb = harker.speakingHistory.reduce((a, b) => a + b, 0) / harker.speakingHistory.length;
-        
-        // Check if speaking
-        const speaking = avgDb > harker.threshold;
-        
-        if (speaking && !harker.speaking) {
-          harker.speaking = true;
-          if (harker.events.speaking) harker.events.speaking(stream, avgDb);
-        } else if (!speaking && harker.speaking) {
-          harker.speaking = false;
-          if (harker.events.stopped_speaking) harker.events.stopped_speaking(stream, avgDb);
-        }
-        
-        if (harker.events.volume_change) harker.events.volume_change(avgDb, harker.threshold);
-        
-        harker.looper();
-      }, harker.interval);
-    }
-  };
-  
-  return harker.start();
-};
-
-interface SimliAgentProps {
-  personaId: string;
-  personaData: {
-    name: string;
-    systemPrompt: string;
-    firstMessage: string;
-    faceId?: string; // Optional face ID from the persona
-    voice?: string; // Voice ID
-    useCustomVoice?: boolean; // Whether to use a custom voice
-    productName?: string; // Optional product name
-  };
-  onStart?: () => void;
-  onClose?: () => void;
-}
-
 // Component to handle video rendering with Daily context
-const VideoComponent = ({ id, name }: { id: string; name: string }) => {
+const VideoComponent = ({ id, name }: VideoComponentProps) => {
   const daily = useDaily();
   const [retryCount, setRetryCount] = useState(0);
   const [videoError, setVideoError] = useState<string | null>(null);
@@ -154,7 +45,7 @@ const VideoComponent = ({ id, name }: { id: string; name: string }) => {
         daily.updateParticipant(id, {
           setSubscribedTracks: true
         });
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error updating participant:", err);
       }
       
@@ -204,44 +95,36 @@ const VideoComponent = ({ id, name }: { id: string; name: string }) => {
       // Initial check
       checkVideoState();
       
-      // Set up periodic checking for video issues
-      const intervalId = setInterval(checkVideoState, 5000);
+      // Set up interval for periodic checking
+      const videoCheckInterval = setInterval(checkVideoState, 5000);
       
       return () => {
-        clearInterval(intervalId);
+        clearInterval(videoCheckInterval);
       };
     }
   }, [daily, id]);
   
   return (
-    <div className="rounded-xl overflow-hidden h-[400px] w-full bg-gradient-to-b from-gray-900 to-black relative shadow-inner flex items-center justify-center">
-      <div className="absolute inset-0 w-full h-full">
+    <div className="relative w-full h-full">
       <VideoBox id={id} />
-      </div>
-      <div className="absolute top-3 left-3 flex items-center space-x-2 z-10">
-        <div className="bg-black/50 text-white px-3 py-1 text-xs rounded-full backdrop-blur-sm">
-        {name}
-        </div>
-      </div>
       
       {videoError && (
-        <div className="absolute bottom-3 left-0 right-0 mx-auto text-center z-10">
-          <div className="inline-flex items-center gap-2 bg-black/70 text-white px-4 py-2 rounded-full text-sm backdrop-blur-sm">
-            <span>Video {videoError}</span>
-            <button 
-              onClick={retryVideoConnection}
-              className="bg-pink-500 hover:bg-pink-600 rounded-full p-1 transition-colors"
-              title="Retry video connection"
-            >
-              <RefreshCw size={14} className={retryCount > 0 ? "animate-spin" : ""} />
-            </button>
-          </div>
+        <div className="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center text-white p-4">
+          <p className="text-center mb-4">Video connection issue: {videoError}</p>
+          <button
+            onClick={retryVideoConnection}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg"
+          >
+            <RefreshCw size={16} />
+            Retry Video ({retryCount})
+          </button>
         </div>
       )}
     </div>
   );
 };
 
+// Main SimliAgent component
 const SimliAgent: React.FC<SimliAgentProps> = ({ 
   personaId, 
   personaData, 
@@ -267,6 +150,7 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
   
   // Audio setup
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const audioIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
@@ -314,113 +198,116 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
     "action:"
   ];
 
-  // Init audio context on first interaction
-  const initAudio = () => {
-    if (!audioContext) {
+  // Utility function to safely initialize audio context
+  const initAudioContext = () => {
+    if (!audioContextRef.current) {
       try {
         // Create audio context
         const newAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioContextRef.current = newAudioContext;
         setAudioContext(newAudioContext);
-        addDebugInfo(`Audio context initialized: ${newAudioContext.state}`);
         
-        // Create audio element if it doesn't exist
-        if (!audioElementRef.current) {
-          const audioEl = new Audio();
-          audioEl.autoplay = true;
-          audioEl.controls = false;
-          audioEl.volume = 1.0;
-          audioEl.muted = false;
-          
-          // Add to DOM to ensure it works in some browsers
-          audioEl.style.display = 'none';
-          document.body.appendChild(audioEl);
-          
-          // Create a dummy buffer to play to initialize audio
-          const buffer = newAudioContext.createBuffer(1, 1, 22050);
-          const source = newAudioContext.createBufferSource();
-          source.buffer = buffer;
-          source.connect(newAudioContext.destination);
-          
-          // On iOS/Safari, audio playback must be triggered by user interaction
-          if (isIOS() || isSafari()) {
-            addDebugInfo("iOS/Safari detected, deferring audio start until user interaction");
-            
-            // We'll start the source later when user interacts
-            audioElementRef.current = audioEl;
-            
-            // Set up one-time click listener to initialize audio
-            const initAudioOnInteraction = () => {
-              source.start();
-              addDebugInfo("Audio initialized via user interaction");
-              document.removeEventListener('click', initAudioOnInteraction);
-              document.removeEventListener('touchstart', initAudioOnInteraction);
-            };
-            
-            document.addEventListener('click', initAudioOnInteraction, { once: true });
-            document.addEventListener('touchstart', initAudioOnInteraction, { once: true });
-          } else {
-            // Start immediately on other browsers
-            source.start();
-            audioElementRef.current = audioEl;
-            addDebugInfo("Audio element created and initialized");
-          }
+        // Set global window.audioContext for other utilities
+        if (!window.audioContext) {
+          window.audioContext = newAudioContext;
         }
         
-        // Resume audio context to allow audio playback
+        addDebugInfo(`Audio context initialized: ${newAudioContext.state}`);
+        
+        // Resume audio context if suspended
         if (newAudioContext.state === 'suspended') {
-          // Try to resume immediately
           newAudioContext.resume().then(() => {
             addDebugInfo("AudioContext resumed immediately");
           }).catch(err => {
             addDebugInfo(`Failed to resume AudioContext: ${err.message}`);
-            
-            // Set up a listener to resume on interaction
-            const resumeAudioContext = () => {
-              newAudioContext.resume().then(() => {
-                addDebugInfo("AudioContext resumed via user interaction");
-                
-                // Remove event listeners once resumed
-                document.removeEventListener('click', resumeAudioContext);
-                document.removeEventListener('touchstart', resumeAudioContext);
-              });
-            };
-            
-            document.addEventListener('click', resumeAudioContext, { once: true });
-            document.addEventListener('touchstart', resumeAudioContext, { once: true });
           });
         }
         
-        // Only play test tone on desktop - can be disruptive on mobile
-        if (!isMobile()) {
-          // Test audio with a quick beep to validate audio setup
-          const oscillator = newAudioContext.createOscillator();
-          const gainNode = newAudioContext.createGain();
-          
-          oscillator.type = "sine";
-          oscillator.frequency.value = 523.25; // C5
-          gainNode.gain.value = 0.1; // Low volume
-          
-          oscillator.connect(gainNode);
-          gainNode.connect(newAudioContext.destination);
-          
-          oscillator.start();
-          setTimeout(() => {
-            oscillator.stop();
-            addDebugInfo("Audio test beep played");
-          }, 200);
-        }
-        
+        return newAudioContext;
       } catch (err) {
-        console.error("Error initializing audio:", err);
-        addDebugInfo(`Audio initialization error: ${err}`);
+        console.error("Error initializing audio context:", err);
+        addDebugInfo(`Audio context initialization error: ${err}`);
+        return null;
       }
-    } else if (audioContext.state === 'suspended') {
+    } else if (audioContextRef.current.state === 'suspended') {
       // If context exists but is suspended, try to resume it
-      audioContext.resume().then(() => {
+      audioContextRef.current.resume().then(() => {
         addDebugInfo("Existing AudioContext resumed");
       }).catch(err => {
         addDebugInfo(`Failed to resume existing AudioContext: ${err.message}`);
       });
+    }
+    
+    return audioContextRef.current;
+  };
+
+  // Init audio context on first interaction
+  const initAudio = () => {
+    const newContext = initAudioContext();
+    
+    if (newContext) {
+      // Create audio element if it doesn't exist
+      if (!audioElementRef.current) {
+        const audioEl = new Audio();
+        audioEl.autoplay = true;
+        audioEl.controls = false;
+        audioEl.volume = 1.0;
+        audioEl.muted = false;
+        
+        // Add to DOM to ensure it works in some browsers
+        audioEl.style.display = 'none';
+        document.body.appendChild(audioEl);
+        
+        // Create a dummy buffer to play to initialize audio
+        const buffer = newContext.createBuffer(1, 1, 22050);
+        const source = newContext.createBufferSource();
+        source.buffer = buffer;
+        source.connect(newContext.destination);
+        
+        // On iOS/Safari, audio playback must be triggered by user interaction
+        if (isIOS() || isSafari()) {
+          addDebugInfo("iOS/Safari detected, deferring audio start until user interaction");
+          
+          // We'll start the source later when user interacts
+          audioElementRef.current = audioEl;
+          
+          // Set up one-time click listener to initialize audio
+          const initAudioOnInteraction = () => {
+            source.start();
+            addDebugInfo("Audio initialized via user interaction");
+            document.removeEventListener('click', initAudioOnInteraction);
+            document.removeEventListener('touchstart', initAudioOnInteraction);
+          };
+          
+          document.addEventListener('click', initAudioOnInteraction, { once: true });
+          document.addEventListener('touchstart', initAudioOnInteraction, { once: true });
+        } else {
+          // Start immediately on other browsers
+          source.start();
+          audioElementRef.current = audioEl;
+          addDebugInfo("Audio element created and initialized");
+        }
+      }
+      
+      // Only play test tone on desktop - can be disruptive on mobile
+      if (!isMobile()) {
+        // Test audio with a quick beep to validate audio setup
+        const oscillator = newContext.createOscillator();
+        const gainNode = newContext.createGain();
+        
+        oscillator.type = "sine";
+        oscillator.frequency.value = 523.25; // C5
+        gainNode.gain.value = 0.1; // Low volume
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(newContext.destination);
+        
+        oscillator.start();
+        setTimeout(() => {
+          oscillator.stop();
+          addDebugInfo("Audio test beep played");
+        }, 200);
+      }
     }
   };
 
@@ -526,31 +413,13 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
       const avatarStream = new MediaStream([audioTrack]);
       avatarAudioStreamRef.current = avatarStream;
       
-      // Ensure audio context is initialized
-      if (!window.audioContext) {
-        try {
-          window.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-          
-          // Force resume audio context - helps with Chrome's autoplay policy
-          if (window.audioContext.state === 'suspended') {
-            window.audioContext.resume().then(() => {
-              addDebugInfo("Audio context resumed during initialization");
-            }).catch(err => {
-              addDebugInfo(`Error resuming audio context: ${err.message}`);
-            });
-          }
-        } catch (err) {
-          addDebugInfo(`Error creating audio context: ${err.message}`);
-        }
-      }
-      
-      // Create audio monitoring instance with hark
+      // Create audio monitoring instance
       const options = {
         threshold: -70,  // Lower threshold to detect softer speech
         interval: 100    // Check every 100ms
       };
       
-      const speechEvents = hark(avatarStream, options);
+      const speechEvents = createAudioMonitor(avatarStream, options);
       
       speechEvents.on('speaking', () => {
         addDebugInfo("Avatar speaking detected");
@@ -1787,68 +1656,74 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
       avatarAudioStreamRef.current = avatarStream;
       
       // Create a new audio context for processing
-      const avatarAudioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      avatarAudioContextRef.current = avatarAudioCtx;
+      if (typeof AudioContext !== 'undefined') {
+        const avatarAudioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        avatarAudioContextRef.current = avatarAudioCtx;
+      }
       
       // Create a recognition instance
-      const recognition = new SpeechRecognitionAPI();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
-      
-      // Set up recognition event handlers
-      recognition.onresult = (event: any) => {
-        const result = event.results[event.results.length - 1];
-        const transcript = result[0].transcript;
-        const isFinal = result.isFinal;
+      if (SpeechRecognitionAPI) {
+        const recognition = new SpeechRecognitionAPI();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
         
-        addDebugInfo(`Avatar speech recognized: ${transcript} (${isFinal ? 'final' : 'interim'})`);
-        
-        if (isFinal) {
-          // Add to transcript
-          const speaker = personaData.name;
-          setTranscript(prev => {
-            // Avoid duplicate messages
-            if (prev.length > 0 && 
-                prev[prev.length - 1].speaker === speaker && 
-                prev[prev.length - 1].text === transcript) {
-              return prev;
-            }
-            return [...prev, { speaker, text: transcript }];
-          });
-        }
-      };
-      
-      recognition.onerror = (event: any) => {
-        addDebugInfo(`Speech recognition error: ${event.error}`);
-        isRecognizingRef.current = false;
-        setIsListeningToAvatar(false);
-      };
-      
-      recognition.onend = () => {
-        addDebugInfo("Speech recognition ended - attempting to restart");
-        if (isRecognizingRef.current) {
-          // Restart recognition if it's still supposed to be running
-          try {
-            recognition.start();
-            addDebugInfo("Speech recognition restarted");
-          } catch (e) {
-            addDebugInfo(`Failed to restart speech recognition: ${e}`);
+        // Set up recognition event handlers
+        recognition.onresult = (event: any) => {
+          const result = event.results[event.results.length - 1];
+          const transcript = result[0].transcript;
+          const isFinal = result.isFinal;
+          
+          addDebugInfo(`Avatar speech recognized: ${transcript} (${isFinal ? 'final' : 'interim'})`);
+          
+          if (isFinal) {
+            // Add to transcript
+            const speaker = personaData.name;
+            setTranscript(prev => {
+              // Avoid duplicate messages
+              if (prev.length > 0 && 
+                  prev[prev.length - 1].speaker === speaker && 
+                  prev[prev.length - 1].text === transcript) {
+                return prev;
+              }
+              return [...prev, { speaker, text: transcript }];
+            });
           }
+        };
+        
+        recognition.onerror = (event: any) => {
+          addDebugInfo(`Speech recognition error: ${event.error}`);
+          isRecognizingRef.current = false;
+          setIsListeningToAvatar(false);
+        };
+        
+        recognition.onend = () => {
+          addDebugInfo("Speech recognition ended - attempting to restart");
+          if (isRecognizingRef.current) {
+            // Restart recognition if it's still supposed to be running
+            try {
+              recognition.start();
+              addDebugInfo("Speech recognition restarted");
+            } catch (e) {
+              addDebugInfo(`Failed to restart speech recognition: ${e}`);
+            }
+          }
+        };
+        
+        // Store the recognition instance
+        recognitionRef.current = recognition;
+        
+        // Start recognition
+        try {
+          recognition.start();
+          isRecognizingRef.current = true;
+          setIsListeningToAvatar(true);
+          addDebugInfo("Avatar speech recognition started");
+        } catch (e) {
+          addDebugInfo(`Failed to start speech recognition: ${e}`);
         }
-      };
-      
-      // Store the recognition instance
-      recognitionRef.current = recognition;
-      
-      // Start recognition
-      try {
-        recognition.start();
-        isRecognizingRef.current = true;
-        setIsListeningToAvatar(true);
-        addDebugInfo("Avatar speech recognition started");
-      } catch (e) {
-        addDebugInfo(`Failed to start speech recognition: ${e}`);
+      } else {
+        addDebugInfo("Speech recognition API not available in this browser");
       }
     } catch (error) {
       addDebugInfo(`Error setting up avatar speech recognition: ${error}`);
@@ -2001,6 +1876,48 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
 
   // Add a ref to track last check time
   const lastChatbotCheckRef = useRef<number | null>(null);
+
+  // Handle for Mobile Audio Test Button
+  const handleMobileAudioTest = async () => {
+    try {
+      // Create audio context if needed
+      if (!audioContextRef.current) {
+        const newAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioContextRef.current = newAudioContext;
+        setAudioContext(newAudioContext);
+      }
+      
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
+      
+      const oscillator = audioContextRef.current.createOscillator();
+      const gainNode = audioContextRef.current.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 440;
+      gainNode.gain.value = 0.1;
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContextRef.current.destination);
+      
+      oscillator.start();
+      
+      setTimeout(() => {
+        oscillator.stop();
+        
+        // Show success toast
+        setToastMessage("Audio test successful!");
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      }, 500);
+    } catch (err) {
+      console.error("Audio test failed:", err);
+      setToastMessage("Audio test failed. Please try again.");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }
+  };
 
   return (
     <div className="flex flex-col h-full w-full overflow-hidden relative">
@@ -2248,25 +2165,28 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
                     <motion.button
                       onClick={async () => {
                         try {
-                          if (!audioContext) {
+                          if (!audioContextRef.current) {
                             const newAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-                            audioContext = newAudioContext;
-                            window.audioContext = newAudioContext;
+                            audioContextRef.current = newAudioContext;
+                            setAudioContext(newAudioContext);
+                            if (!window.audioContext) {
+                              window.audioContext = newAudioContext;
+                            }
                           }
                           
-                          if (audioContext.state === 'suspended') {
-                            await audioContext.resume();
+                          if (audioContextRef.current.state === 'suspended') {
+                            await audioContextRef.current.resume();
                           }
                           
-                          const oscillator = audioContext.createOscillator();
-                          const gainNode = audioContext.createGain();
+                          const oscillator = audioContextRef.current.createOscillator();
+                          const gainNode = audioContextRef.current.createGain();
                           
                           oscillator.type = 'sine';
                           oscillator.frequency.value = 440;
                           gainNode.gain.value = 0.1;
                           
                           oscillator.connect(gainNode);
-                          gainNode.connect(audioContext.destination);
+                          gainNode.connect(audioContextRef.current.destination);
                           
                           oscillator.start();
                           
