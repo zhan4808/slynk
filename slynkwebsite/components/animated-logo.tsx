@@ -12,11 +12,11 @@ export function AnimatedLogo({ isAnimating = false, scale = 1 }: AnimatedLogoPro
   const [isHovered, setIsHovered] = useState(false)
   const shouldAnimate = isHovered || isAnimating
   
-  // Calculate dimensions based on scale - increase base size
-  const logoSize = `${10 * scale}px`
-  const innerSize = `${8 * scale}px`
-  const dotSize = `${5 * scale}px`
-  const fontSize = scale < 1 ? 'text-xl' : 'text-2xl'
+  // Scale transformations
+  const containerSize = `${Math.round(8 * scale)}px`
+  const innerSize = `${Math.round(6 * scale)}px`
+  const glowSize = `${Math.round(4 * scale)}px`
+  const fontSize = scale < 1 ? "text-lg" : "text-xl"
   
   return (
     <div className="inline-block">
@@ -28,12 +28,11 @@ export function AnimatedLogo({ isAnimating = false, scale = 1 }: AnimatedLogoPro
           backgroundColor: "rgba(243, 244, 246, 0.8)" 
         }}
         whileTap={{ scale: 0.95 }}
-        style={{ scale }}
       >
         {/* Logo mark */}
         <motion.div 
           className="relative"
-          style={{ width: logoSize, height: logoSize }}
+          style={{ width: containerSize, height: containerSize }}
         >
           {/* Background glow */}
           <motion.div
@@ -71,10 +70,10 @@ export function AnimatedLogo({ isAnimating = false, scale = 1 }: AnimatedLogoPro
               <motion.div 
                 className="absolute rounded-full bg-white/90"
                 style={{ 
-                  width: dotSize, 
-                  height: dotSize,
-                  top: `${1 * scale}px`, 
-                  left: `${1 * scale}px`
+                  width: glowSize, 
+                  height: glowSize,
+                  top: `${Math.round(1 * scale)}px`,
+                  left: `${Math.round(1 * scale)}px`
                 }}
                 animate={shouldAnimate ? { 
                   x: [0, 2 * scale, -2 * scale, 0],

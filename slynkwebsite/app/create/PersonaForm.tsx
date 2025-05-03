@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { 
   Loader2, Upload, Check, Play, X, 
-  Mic, Image as ImageIcon, UserRound, Sparkles
+  Mic, Image as ImageIcon, UserRound, Sparkles, RefreshCw
 } from "lucide-react"
 import Image from "next/image"
 import { 
@@ -63,7 +63,7 @@ export default function PersonaForm() {
   })
   const [originalFaceResponse, setOriginalFaceResponse] = useState<any>(null)
   const [isPollingActive, setIsPollingActive] = useState(false)
-  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Voice upload
@@ -71,6 +71,10 @@ export default function PersonaForm() {
   const [isUploadingVoice, setIsUploadingVoice] = useState(false)
   const [voicePreviewUrl, setVoicePreviewUrl] = useState<string | null>(null)
   const voiceInputRef = useRef<HTMLInputElement>(null)
+
+  // Add a timer ref and state to track processing time
+  const processingTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [processingTime, setProcessingTime] = useState(0);
 
   // Auto advance steps when criteria are met
   useEffect(() => {
@@ -82,43 +86,84 @@ export default function PersonaForm() {
     }
   }, [formData.name, formData.description, formData.faceId, activeStep])
 
-  // Set up polling for face generation status
+  // Set up polling for face generation status with adaptive interval
   useEffect(() => {
     if (isCustomFaceInQueue && originalFaceResponse?.character_uid && !isPollingActive) {
-      console.log("Starting polling for face generation status");
+      console.log("Starting adaptive polling for face generation status");
       setIsPollingActive(true);
       
-      // Start polling immediately
+      // Start status check immediately
       checkFaceStatus();
       
-      // Set up periodic polling - check every 30 seconds since face generation takes longer
-      pollingIntervalRef.current = setInterval(checkFaceStatus, 30000);
+      // Set up adaptive polling - check more frequently at the beginning,
+      // then gradually increase the interval as time passes
+      let pollCount = 0;
+      let currentInterval = 5000; // Start with 5 seconds
       
-      return () => {
-        if (pollingIntervalRef.current) {
-          clearInterval(pollingIntervalRef.current);
-          pollingIntervalRef.current = null;
+      const scheduleNextPoll = () => {
+        // Clear any existing timeout
+        if (pollingTimeoutRef.current) {
+          clearTimeout(pollingTimeoutRef.current);
         }
+        
+        // Calculate next interval - increase after certain number of attempts
+        if (pollCount < 3) {
+          currentInterval = 5000; // 5 seconds for first 3 checks
+        } else if (pollCount < 10) {
+          currentInterval = 15000; // 15 seconds for next 7 checks
+        } else {
+          currentInterval = 30000; // 30 seconds after that
+        }
+        
+        console.log(`Scheduling next face status check in ${currentInterval/1000}s (poll #${pollCount+1})`);
+        
+        // Schedule next poll
+        pollingTimeoutRef.current = setTimeout(async () => {
+          pollCount++;
+          await checkFaceStatus();
+          
+          // Only schedule another poll if we should continue polling
+          if (isCustomFaceInQueue && !faceGenerationStatus.isReady && !faceGenerationStatus.failed) {
+            scheduleNextPoll();
+          } else {
+            console.log("Stopping polling - face is ready or failed");
+            setIsPollingActive(false);
+          }
+        }, currentInterval);
+      };
+      
+      // Start the polling sequence
+      scheduleNextPoll();
+      
+      // Cleanup function
+      return () => {
+        console.log("Cleaning up face generation polling");
+        if (pollingTimeoutRef.current) {
+          clearTimeout(pollingTimeoutRef.current);
+          pollingTimeoutRef.current = null;
+        }
+        setIsPollingActive(false);
       };
     }
   }, [isCustomFaceInQueue, originalFaceResponse]);
-  
+
   // Handle polling cleanup on unmount
   useEffect(() => {
     return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current);
+        pollingTimeoutRef.current = null;
       }
+      setIsPollingActive(false);
     };
   }, []);
-  
+
   // Stop polling when face is ready
   useEffect(() => {
-    if (faceGenerationStatus.isReady && pollingIntervalRef.current) {
-      clearInterval(pollingIntervalRef.current)
-      pollingIntervalRef.current = null
-      setIsPollingActive(false)
+    if (faceGenerationStatus.isReady && pollingTimeoutRef.current) {
+      clearTimeout(pollingTimeoutRef.current);
+      pollingTimeoutRef.current = null;
+      setIsPollingActive(false);
       
       // If we got a real face ID back, update the form data
       if (faceGenerationStatus.status === "ready" && 
@@ -128,13 +173,13 @@ export default function PersonaForm() {
         setFormData(prev => ({
           ...prev,
           faceId: faceGenerationStatus.faceId || prev.faceId
-        }))
+        }));
         
-        setIsCustomFaceInQueue(false)
-        setSuccessMessage("Your custom face is ready! You can now generate a preview with your custom face.")
+        setIsCustomFaceInQueue(false);
+        setSuccessMessage("Your custom face is ready! You can now generate a preview with your custom face.");
       }
     }
-  }, [faceGenerationStatus.isReady, faceGenerationStatus.faceId])
+  }, [faceGenerationStatus.isReady, faceGenerationStatus.faceId]);
   
   // Function to check face generation status
   const checkFaceStatus = async () => {
@@ -165,9 +210,9 @@ export default function PersonaForm() {
       
       // If face generation failed, we should update the UI to allow retry
       if (result.failed) {
-        if (pollingIntervalRef.current) {
-          clearInterval(pollingIntervalRef.current);
-          pollingIntervalRef.current = null;
+        if (pollingTimeoutRef.current) {
+          clearTimeout(pollingTimeoutRef.current);
+          pollingTimeoutRef.current = null;
         }
         setIsPollingActive(false);
         setError("Face generation failed. You can try again with a different image.");
@@ -544,9 +589,9 @@ export default function PersonaForm() {
     setSuccessMessage(null);
     setError(null);
     
-    if (pollingIntervalRef.current) {
-      clearInterval(pollingIntervalRef.current);
-      pollingIntervalRef.current = null;
+    if (pollingTimeoutRef.current) {
+      clearTimeout(pollingTimeoutRef.current);
+      pollingTimeoutRef.current = null;
     }
     setIsPollingActive(false);
   }
@@ -585,6 +630,51 @@ export default function PersonaForm() {
       setSuccessMessage("Voice sample uploaded! Generate a preview to hear it.");
     }
   };
+
+  // Start timer when face generation begins
+  useEffect(() => {
+    if (isCustomFaceInQueue && !processingTimerRef.current) {
+      // Start the timer
+      setProcessingTime(0);
+      processingTimerRef.current = setInterval(() => {
+        setProcessingTime(prev => prev + 1);
+      }, 1000);
+    } else if (!isCustomFaceInQueue && processingTimerRef.current) {
+      // Clear the timer when processing completes
+      clearInterval(processingTimerRef.current);
+      processingTimerRef.current = null;
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      if (processingTimerRef.current) {
+        clearInterval(processingTimerRef.current);
+        processingTimerRef.current = null;
+      }
+    };
+  }, [isCustomFaceInQueue]);
+
+  // Helper function to format time as mm:ss
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Handle cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current);
+        pollingTimeoutRef.current = null;
+      }
+      if (processingTimerRef.current) {
+        clearInterval(processingTimerRef.current);
+        processingTimerRef.current = null;
+      }
+      setIsPollingActive(false);
+    };
+  }, []);
 
   return (
     <div className="w-full max-w-5xl mx-auto p-6 font-sans">
@@ -640,76 +730,6 @@ export default function PersonaForm() {
           ))}
         </div>
       </motion.div>
-      
-      {/* Face generation status card - Framer style */}
-      {isCustomFaceInQueue && (
-        <motion.div
-          className="mb-8 p-6 rounded-2xl bg-white shadow-md border-0 overflow-hidden relative"
-          style={{ 
-            boxShadow: "0 10px 30px -5px rgba(79, 70, 229, 0.1)" 
-          }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="flex items-center gap-4">
-            <div className="rounded-full p-3 flex-shrink-0 bg-gradient-to-r from-indigo-50 to-purple-50">
-              {faceGenerationStatus.isReady ? (
-                <Check className="h-6 w-6 text-green-500" />
-              ) : faceGenerationStatus.failed ? (
-                <X className="h-6 w-6 text-red-500" />
-              ) : (
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                >
-                  <Loader2 className="h-6 w-6 text-indigo-500" />
-                </motion.div>
-              )}
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                {faceGenerationStatus.isReady 
-                  ? "Face Generation Complete! 🎉" 
-                  : faceGenerationStatus.failed
-                  ? "Face Generation Failed"
-                  : `Face Processing - Please Wait`}
-              </h3>
-              <p className="text-indigo-600 mb-2">
-                {faceGenerationStatus.message}
-                {!faceGenerationStatus.isReady && !faceGenerationStatus.failed && (
-                  <span className="block mt-1 text-sm opacity-70">
-                    Last checked: {new Date(faceGenerationStatus.lastChecked).toLocaleTimeString()}
-                  </span>
-                )}
-              </p>
-              {faceGenerationStatus.failed ? (
-                <div className="flex gap-3 mt-3">
-                  <Button
-                    type="button"
-                    onClick={clearFaceGeneration}
-                    className="rounded-full bg-red-50 text-red-500 hover:bg-red-100 px-4 py-2 text-sm flex items-center gap-2 transition-colors duration-300"
-                  >
-                    <X className="h-4 w-4" />
-                    Cancel
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      clearFaceGeneration();
-                      fileInputRef.current?.click();
-                    }}
-                    className="rounded-full bg-indigo-50 text-indigo-500 hover:bg-indigo-100 px-4 py-2 text-sm flex items-center gap-2 transition-colors duration-300"
-                  >
-                    <Upload className="h-4 w-4" />
-                    Try with New Image
-                  </Button>
-                </div>
-              ) : null}
-            </div>
-          </div>
-        </motion.div>
-      )}
       
       {/* Error message - Framer style */}
       {error && (
@@ -1004,19 +1024,30 @@ export default function PersonaForm() {
                         </div>
                       ) : isCustomFaceInQueue ? (
                         <div className="mb-4 p-4 bg-indigo-50 rounded-xl text-sm text-indigo-800">
-                      <p className="flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
+                          <p className="flex items-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
                             <span><strong>Face processing:</strong> {faceGenerationStatus.message}</span>
-                      </p>
-                    </div>
-                  ) : (
+                          </p>
+                          <div className="flex items-center justify-between mt-3 text-xs">
+                            <span>Last checked: {faceGenerationStatus.lastChecked ? new Date(faceGenerationStatus.lastChecked).toLocaleTimeString() : 'N/A'}</span>
+                            <button 
+                              onClick={checkFaceStatus} 
+                              className="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-2 py-1 rounded-md flex items-center gap-1 transition-colors"
+                              disabled={isPollingActive}
+                            >
+                              <RefreshCw className="h-3 w-3" />
+                              Refresh Status
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
                         <p className="text-sm text-gray-600 mb-4 p-4 bg-white bg-opacity-60 rounded-xl">
-                      <strong>Step 1:</strong> Upload a reference image and generate a face ID using your image.
-                      <span className="block mt-1 text-xs italic">
-                            Note: Face generation takes 1-3 minutes to process.
-                      </span>
-                    </p>
-                  )}
+                          <strong>Step 1:</strong> Upload a reference image and generate a face ID using your image.
+                          <span className="block mt-1 text-xs italic">
+                            Note: Face generation takes 1-3 minutes to process. For faster results, use squared images under 1MB in size.
+                          </span>
+                        </p>
+                      )}
                   
                   <Button
                     type="button"
@@ -1306,6 +1337,107 @@ export default function PersonaForm() {
                 </div>
               </div>
             </motion.div>
+          
+          {/* Processing Status Section - moved below preview and voice */}
+          {isCustomFaceInQueue && (
+            <motion.div 
+              className="mt-8 p-6 rounded-2xl bg-white shadow-md border-0 overflow-hidden relative"
+              style={{ 
+                boxShadow: "0 10px 30px -5px rgba(79, 70, 229, 0.1)" 
+              }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="flex flex-col md:flex-row md:items-center gap-4">
+                <div className="rounded-full p-3 flex-shrink-0 bg-gradient-to-r from-indigo-50 to-purple-50 self-start">
+                  {faceGenerationStatus.isReady ? (
+                    <Check className="h-6 w-6 text-green-500" />
+                  ) : faceGenerationStatus.failed ? (
+                    <X className="h-6 w-6 text-red-500" />
+                  ) : (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Loader2 className="h-6 w-6 text-indigo-500" />
+                    </motion.div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {faceGenerationStatus.isReady 
+                        ? "Face Generation Complete! 🎉" 
+                        : faceGenerationStatus.failed
+                        ? "Face Generation Failed"
+                        : `Face Processing - Please Wait`}
+                    </h3>
+                    
+                    {/* Processing Timer */}
+                    {!faceGenerationStatus.isReady && !faceGenerationStatus.failed && (
+                      <div className="text-sm font-mono bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
+                        Processing Time: {formatTime(processingTime)}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <p className="text-indigo-600 mt-2">
+                    {faceGenerationStatus.message}
+                    {!faceGenerationStatus.isReady && !faceGenerationStatus.failed && (
+                      <span className="block mt-1 text-sm opacity-70 flex justify-between">
+                        <span>Last checked: {new Date(faceGenerationStatus.lastChecked).toLocaleTimeString()}</span>
+                        <button 
+                          onClick={checkFaceStatus} 
+                          className="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-2 py-1 rounded-md flex items-center gap-1 transition-colors"
+                          disabled={isPollingActive}
+                        >
+                          <RefreshCw className="h-3 w-3" />
+                          Check Status
+                        </button>
+                      </span>
+                    )}
+                  </p>
+                  
+                  {/* Progress bar */}
+                  {!faceGenerationStatus.isReady && !faceGenerationStatus.failed && (
+                    <div className="w-full h-2 bg-gray-100 rounded-full mt-3">
+                      <motion.div 
+                        className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
+                        initial={{ width: "0%" }}
+                        animate={{ width: `${faceGenerationStatus.progress}%` }}
+                        transition={{ duration: 0.5 }}
+                      />
+                    </div>
+                  )}
+                  
+                  {faceGenerationStatus.failed ? (
+                    <div className="flex gap-3 mt-3">
+                      <Button
+                        type="button"
+                        onClick={clearFaceGeneration}
+                        className="rounded-full bg-red-50 text-red-500 hover:bg-red-100 px-4 py-2 text-sm flex items-center gap-2 transition-colors duration-300"
+                      >
+                        <X className="h-4 w-4" />
+                        Cancel
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          clearFaceGeneration();
+                          fileInputRef.current?.click();
+                        }}
+                        className="rounded-full bg-indigo-50 text-indigo-500 hover:bg-indigo-100 px-4 py-2 text-sm flex items-center gap-2 transition-colors duration-300"
+                      >
+                        <Upload className="h-4 w-4" />
+                        Try with New Image
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </motion.div>
+          )}
           
           {/* Submit buttons */}
           <motion.div 

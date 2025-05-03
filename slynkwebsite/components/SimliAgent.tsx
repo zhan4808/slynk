@@ -1251,6 +1251,11 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
         
         // Enhance the ensureAudioEnabled function with more diagnostics
         const ensureAudioEnabled = () => {
+          // Skip if component is not visible or call object is not available
+          if (!isVisible || !newCallObject) {
+            return;
+          }
+
           // Find the Chatbot participant
           const participants = newCallObject.participants();
           const chatbot = Object.values(participants).find(
@@ -1302,7 +1307,12 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
               addDebugInfo("Chatbot has no audio track yet");
             }
           } else {
-            addDebugInfo("Chatbot participant not found in room");
+            // Only log this message once every 10 seconds to reduce noise
+            const now = Date.now();
+            if (!lastChatbotCheckRef.current || now - lastChatbotCheckRef.current > 10000) {
+              addDebugInfo("Chatbot participant not found in room");
+              lastChatbotCheckRef.current = now;
+            }
           }
         };
         
@@ -1843,6 +1853,20 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
       handleLeaveRoom();
     };
   }, [personaId]);
+
+  // First, add a new isVisible state to track if the component is mounted and visible
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Set isVisible to true when component mounts and false when it unmounts
+  useEffect(() => {
+    setIsVisible(true);
+    return () => {
+      setIsVisible(false);
+    };
+  }, []);
+
+  // Add a ref to track last check time
+  const lastChatbotCheckRef = useRef<number | null>(null);
 
   return (
     <div className="flex flex-col w-full max-w-4xl mx-auto">

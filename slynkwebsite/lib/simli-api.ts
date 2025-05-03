@@ -22,6 +22,105 @@ function getValidDailyRoomUrl(): string {
 }
 
 /**
+ * Resize and optimize an image before uploading to Simli API
+ * This significantly reduces processing time while maintaining quality
+ * @param file The original image file
+ * @param maxWidth The maximum width to resize to
+ * @param maxHeight The maximum height to resize to
+ * @param quality JPEG quality (0-1)
+ * @returns A Promise that resolves to the optimized image file
+ */
+export async function optimizeImageForFaceGeneration(
+  file: File,
+  maxWidth = 1024,
+  maxHeight = 1024,
+  quality = 0.85
+): Promise<File> {
+  return new Promise((resolve, reject) => {
+    // Create a FileReader to read the file
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      // Create an image to get the dimensions
+      const img = new Image();
+      img.onload = () => {
+        // Calculate new dimensions while maintaining aspect ratio
+        let width = img.width;
+        let height = img.height;
+        
+        // Only resize if the image is larger than our target dimensions
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            // Landscape orientation
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            // Portrait or square orientation
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        
+        // Create a canvas to draw the resized image
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw the image on the canvas
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+        
+        // Use higher quality resizing algorithm
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convert to blob
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Could not create blob from canvas'));
+              return;
+            }
+            
+            // Create a new file with the optimized blob
+            const optimizedFile = new File(
+              [blob],
+              file.name,
+              { type: 'image/jpeg', lastModified: Date.now() }
+            );
+            
+            console.log(
+              `Image optimized: ${Math.round(file.size / 1024)}KB → ${Math.round(optimizedFile.size / 1024)}KB, ` +
+              `Dimensions: ${img.width}x${img.height} → ${width}x${height}`
+            );
+            
+            resolve(optimizedFile);
+          },
+          'image/jpeg',
+          quality
+        );
+      };
+      
+      img.onerror = () => {
+        reject(new Error('Could not load image'));
+      };
+      
+      // Set the image source to the FileReader result
+      img.src = event.target?.result as string;
+    };
+    
+    reader.onerror = () => {
+      reject(new Error('Could not read file'));
+    };
+    
+    // Read the file as a data URL
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
  * Generate a face ID from an uploaded image
  * @param imageFile The image file to use for face generation
  * @param faceName Optional name for the face
@@ -40,8 +139,21 @@ export async function generateFaceId(imageFile: File, faceName?: string): Promis
       throw new Error("Image must be at least 512x512 pixels");
     }
     
+    // Optimize the image before uploading to reduce processing time
+    let optimizedImage = imageFile;
+    try {
+      // Only optimize if the image is large
+      if (imageFile.size > 500 * 1024) { // 500KB
+        optimizedImage = await optimizeImageForFaceGeneration(imageFile);
+      }
+    } catch (error) {
+      console.warn("Failed to optimize image, using original:", error);
+      // Continue with the original image if optimization fails
+      optimizedImage = imageFile;
+    }
+    
     const formData = new FormData();
-    formData.append('image', imageFile);
+    formData.append('image', optimizedImage);
     
     const apiKey = await getSimliApiKey();
     console.log("Got API key, requesting face generation...");
