@@ -17,7 +17,8 @@
     "db-preview": "node scripts/switch-env.js 2 && prisma db push",
     "db-production": "node scripts/switch-env.js 3 && prisma db push",
     "migrate": "node scripts/migrate-dbs.js",
-    "migrate:deploy": "node scripts/migrate-dbs.js 2"
+    "migrate:deploy": "node scripts/migrate-dbs.js 2",
+    "generate-og": "node scripts/generate-og-image.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.9.0",
@@ -95,6 +96,7 @@
     "dotenv": "^16.5.0",
     "postcss": "^8",
     "prisma": "^6.6.0",
+    "puppeteer": "^22.15.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
   }

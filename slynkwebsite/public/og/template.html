@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Slynk - Open Graph Image</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      width: 1200px;
+      height: 630px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ffffff 0%, #f5f2ff 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 80%;
+      max-width: 900px;
+      text-align: center;
+    }
+    .logo {
+      width: 240px;
+      margin-bottom: 40px;
+    }
+    h1 {
+      font-size: 64px;
+      font-weight: 700;
+      margin: 0 0 24px 0;
+      background: linear-gradient(90deg, #ec4899 0%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    p {
+      font-size: 32px;
+      color: #4b5563;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .decorator {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(236,72,153,0.1) 0%, rgba(139,92,246,0.1) 100%);
+      z-index: -1;
+    }
+    .decorator-1 {
+      top: -100px;
+      left: -100px;
+    }
+    .decorator-2 {
+      bottom: -100px;
+      right: -100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="decorator decorator-1"></div>
+  <div class="decorator decorator-2"></div>
+  
+  <div class="container">
+    <svg width="240" height="240" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="logo">
+      <circle cx="50" cy="50" r="45" fill="none" stroke="url(#grad)" stroke-width="8" />
+      <circle cx="50" cy="50" r="20" fill="url(#grad)" />
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#ec4899" />
+          <stop offset="100%" style="stop-color:#8b5cf6" />
+        </linearGradient>
+      </defs>
+    </svg>
+    <h1>Slynk</h1>
+    <p>Transform static ads into interactive conversational experiences</p>
+  </div>
+</body>
+</html> 
