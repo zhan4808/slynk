@@ -149,9 +149,9 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <DynamicNavbar />
-      <div className="flex-1 flex flex-col pt-14 md:pt-16">
+      <div className="flex-1 flex flex-col pt-20 md:pt-24">
         <div className="container mx-auto max-w-6xl px-4 pb-10">
-          <div className="flex items-center justify-between mb-4 md:mb-6">
+          <div className="flex items-center justify-between mb-6 md:mb-8">
             <h1 className="text-xl md:text-3xl font-bold text-gray-800">
               {persona.name}
             </h1>

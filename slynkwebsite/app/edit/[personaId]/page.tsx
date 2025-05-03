@@ -304,6 +304,40 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
     }
   }, [persona, activeStep]);
   
+  // Add user interaction detection for video autoplay
+  useEffect(() => {
+    // Flag to track if we've already set up the listeners
+    let listenerAdded = false;
+    
+    const markUserInteraction = () => {
+      // Add a class to the document root to indicate user interaction has occurred
+      document.documentElement.classList.add('user-interaction');
+      console.log("User interaction detected, enabling autoplay");
+      
+      // Remove listeners after first interaction
+      if (listenerAdded) {
+        document.removeEventListener('click', markUserInteraction);
+        document.removeEventListener('touchstart', markUserInteraction);
+        document.removeEventListener('keydown', markUserInteraction);
+      }
+    };
+    
+    // Only add listeners if they haven't been added yet
+    if (!listenerAdded) {
+      document.addEventListener('click', markUserInteraction);
+      document.addEventListener('touchstart', markUserInteraction);
+      document.addEventListener('keydown', markUserInteraction);
+      listenerAdded = true;
+    }
+    
+    // Return cleanup function
+    return () => {
+      document.removeEventListener('click', markUserInteraction);
+      document.removeEventListener('touchstart', markUserInteraction);
+      document.removeEventListener('keydown', markUserInteraction);
+    };
+  }, []);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -804,23 +838,23 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-base font-medium text-gray-700">Name</Label>
                 <Input 
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
                   placeholder="E.g., Business Advisor Bob"
                   className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                  required
-                />
-              </div>
-              
+              required
+            />
+          </div>
+          
               <div className="space-y-2">
                 <Label htmlFor="description" className="text-base font-medium text-gray-700">Description</Label>
                 <Textarea 
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
                   placeholder="Describe the persona's background, expertise, and personality"
                   className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
                   rows={3}
@@ -838,10 +872,10 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                   onChange={handleChange}
                   placeholder="E.g., Smart Home Controller"
                   className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                  required
-                />
-              </div>
-              
+                      required
+                    />
+                  </div>
+                  
               <div className="space-y-2">
                 <Label htmlFor="productDescription" className="text-base font-medium text-gray-700">Product Description</Label>
                 <Textarea 
@@ -851,7 +885,7 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                   onChange={handleChange}
                   placeholder="Describe the product"
                   className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                  rows={3}
+                      rows={3}
                 />
               </div>
               
@@ -861,29 +895,29 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                   id="productLink"
                   name="productLink"
                   value={formData.productLink}
-                  onChange={handleChange}
+              onChange={handleChange}
                   placeholder="https://example.com/product"
                   className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                />
-              </div>
-              
+                    />
+                  </div>
+                  
               <div className="space-y-2">
                 <Label htmlFor="firstMessage" className="text-base font-medium text-gray-700">First Message (Optional)</Label>
                 <Textarea 
-                  id="firstMessage"
-                  name="firstMessage"
+              id="firstMessage"
+                      name="firstMessage"
                   value={formData.firstMessage}
-                  onChange={handleChange}
+              onChange={handleChange}
                   placeholder="First message to send when starting a conversation (auto-generated if left empty)"
                   className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
                   rows={2}
-                />
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
         </div>
       </motion.div>
-      
+            
       {/* Preview and Voice Section */}
       <motion.div 
         className="bg-white rounded-3xl shadow-lg overflow-hidden"
@@ -922,12 +956,12 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                   />
                   
                   <div className="mt-4">
-                    <Button
-                      type="button"
+                      <Button 
+                        type="button" 
                       onClick={handleGeneratePreview}
                       disabled={isGeneratingPreview || !formData.faceId}
                       className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl"
-                    >
+                      >
                       {isGeneratingPreview ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -939,7 +973,7 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                           Generate Video Preview
                         </>
                       )}
-                    </Button>
+                      </Button>
                   </div>
                 </div>
                 
@@ -949,17 +983,32 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                       src={videoPreview.mp4Url}
                       controls
                       className="w-full rounded-xl"
+                      preload="auto"
+                      playsInline
+                      onLoadedMetadata={(e) => {
+                        // Ensure video has loaded metadata before playing
+                        const video = e.currentTarget;
+                        console.log("Video metadata loaded, duration:", video.duration);
+                        
+                        // Explicitly set currentTime to 0 to ensure video starts from beginning
+                        video.currentTime = 0;
+                        
+                        // Only attempt playback if user has interacted with page
+                        if (document.documentElement.classList.contains('user-interaction')) {
+                          video.play().catch(err => console.error("Auto-play failed:", err));
+                        }
+                      }}
                     />
                   ) : (
                     <div className="text-center text-gray-500">
                       <ImageIcon className="mx-auto h-12 w-12 text-gray-300" />
                       <p className="mt-2">Generate a preview to see your AI persona in action</p>
                     </div>
-                  )}
-                </div>
+                )}
               </div>
-            </div>
-            
+                  </div>
+                </div>
+                
             {/* Right Column: Voice Selection */}
             <div className="space-y-5">
               <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-6 rounded-2xl shadow-sm">
@@ -973,31 +1022,31 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                 
                 <div className="space-y-5">
                   {/* Pre-defined voice options */}
-                  <div className="space-y-2">
+                    <div className="space-y-2">
                     <Label htmlFor="voice" className="text-base font-medium text-gray-700">Select Voice</Label>
-                    <Select 
+            <Select
                       value={formData.voice} 
-                      onValueChange={handleVoiceChange}
+              onValueChange={handleVoiceChange}
                       disabled={formData.useCustomVoice}
-                    >
+            >
                       <SelectTrigger className="w-full border border-amber-200 focus:border-amber-400 bg-white rounded-xl shadow-sm">
-                        <SelectValue placeholder="Select a voice" />
-                      </SelectTrigger>
+                          <SelectValue placeholder="Select a voice" />
+                        </SelectTrigger>
                       <SelectContent className="bg-white border-0 shadow-lg rounded-xl overflow-hidden">
                         <div className="p-2 max-h-[300px] overflow-y-auto bg-white">
-                          {elevenLabsVoices.map((voice) => (
+                {elevenLabsVoices.map((voice) => (
                             <SelectItem key={voice.id} value={voice.id} className="rounded-lg my-1 hover:bg-amber-50">
-                              {voice.name}
-                            </SelectItem>
-                          ))}
+                    {voice.name}
+                  </SelectItem>
+                ))}
                         </div>
-                      </SelectContent>
-                    </Select>
+                        </SelectContent>
+                      </Select>
                     <p className="text-xs text-amber-700 italic mt-1">
                       Powered by ElevenLabs voice technology
                     </p>
-                  </div>
-                  
+                    </div>
+            
                   {/* Divider with OR text */}
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
@@ -1035,8 +1084,8 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                           </p>
                         </div>
                         <div className="flex gap-2">
-                          <Button
-                            type="button"
+            <Button 
+              type="button"
                             variant="outline"
                             size="sm"
                             onClick={() => {
@@ -1075,7 +1124,7 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                           >
                             <Upload className="h-5 w-5 text-amber-500" />
                             <span className="text-sm text-amber-700">Upload voice sample</span>
-                          </Button>
+            </Button>
                         </motion.div>
                         <p className="text-xs text-amber-700 mt-2">
                           Supported formats: MP3, WAV, M4A (max 10MB)<br />
@@ -1116,7 +1165,7 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                   <Loader2 className="h-6 w-6 text-indigo-500" />
                 </motion.div>
               )}
-            </div>
+              </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-800">
@@ -1131,9 +1180,9 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                 {!faceGenerationStatus.isReady && !faceGenerationStatus.failed && (
                   <div className="text-sm font-mono bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
                     Processing Time: {formatTime(processingTime)}
-                  </div>
-                )}
               </div>
+            )}
+          </div>
               
               <p className="text-indigo-600 mt-2">
                 {faceGenerationStatus.message}
@@ -1151,8 +1200,8 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                   </span>
                 )}
               </p>
-            </div>
-          </div>
+        </div>
+      </div>
         </motion.div>
       )}
       
@@ -1190,7 +1239,7 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
             Save Changes
           </Button>
         </motion.div>
-      </div>
+    </div>
     </form>
   );
 } 

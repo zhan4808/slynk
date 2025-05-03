@@ -493,6 +493,16 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
     if (isUuid) {
       console.log(`Using character_uid directly for preview generation: ${faceId}`);
     }
+
+    // Enhanced encoding preferences for better cross-platform compatibility
+    const encodingPreferences = {
+      preferH264: true,      // Widely supported codec
+      maxBitrate: 1500000,   // 1.5 Mbps for balance of quality and compatibility
+      syncAudioVideo: true,  // Explicitly request audio-video synchronization
+      preloadAudio: true,    // Request audio preloading
+      videoFormat: "mp4",    // Request MP4 format for maximum compatibility
+      optimizeForWeb: true   // Request optimizations for web playback
+    };
     
     // Based on Simli API documentation, for ElevenLabs we use different parameters
     const requestBody = {
@@ -508,7 +518,8 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
           voiceName: voiceId,
           model_id: "eleven_turbo_v2" // Use the latest model from ElevenLabs
         } : {})
-      }
+      },
+      encodingPreferences // Add encoding preferences
     };
     
     console.log("Video preview request:", JSON.stringify(requestBody));
@@ -518,6 +529,8 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify(requestBody),
       });
@@ -529,6 +542,14 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
         // Convert HTTP URLs to HTTPS
         const hlsUrl = data.hls_url.replace(/^http:\/\//i, 'https://');
         const mp4Url = data.mp4_url.replace(/^http:\/\//i, 'https://');
+        
+        // Preload the video to ensure it's available in browser cache
+        try {
+          await preloadVideo(mp4Url);
+          console.log("Video preloaded successfully");
+        } catch (err) {
+          console.warn("Video preloading failed, but continuing:", err);
+        }
         
         return {
           hlsUrl,
@@ -552,7 +573,8 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
               voiceName: voiceId,
               model_id: "eleven_turbo_v2"
             } : {})
-          }
+          },
+          encodingPreferences // Add encoding preferences
         };
         
         console.log("Alternative request:", JSON.stringify(altRequestBody));
@@ -561,6 +583,8 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
           },
           body: JSON.stringify(altRequestBody),
         });
@@ -572,6 +596,14 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
           // Convert HTTP URLs to HTTPS
           const hlsUrl = altData.hls_url.replace(/^http:\/\//i, 'https://');
           const mp4Url = altData.mp4_url.replace(/^http:\/\//i, 'https://');
+          
+          // Preload the video to ensure it's available in browser cache
+          try {
+            await preloadVideo(mp4Url);
+            console.log("Alternative video preloaded successfully");
+          } catch (err) {
+            console.warn("Alternative video preloading failed, but continuing:", err);
+          }
           
           return {
             hlsUrl,
@@ -677,6 +709,40 @@ export async function generateVideoPreview(text: string, faceId: string, voiceId
   } catch (error) {
     console.error('Error generating video preview:', error);
     throw error;
+  }
+}
+
+/**
+ * Helper function to preload a video file by fetching a small portion
+ * This helps ensure the video is in browser cache and headers are properly set
+ */
+async function preloadVideo(url: string): Promise<void> {
+  try {
+    // Fetch just the headers and a small portion of the video
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Range': 'bytes=0-1000', // Just get the first 1KB to check headers
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to preload video: ${response.status}`);
+    }
+    
+    // Check content type to ensure it's video/mp4
+    const contentType = response.headers.get('content-type');
+    console.log(`Video content type: ${contentType}`);
+    
+    if (!contentType || !contentType.includes('video/')) {
+      console.warn(`Warning: Video content type is not video/*: ${contentType}`);
+    }
+    
+    // Successfully preloaded the video
+    return;
+  } catch (err) {
+    console.error("Error preloading video:", err);
+    throw err;
   }
 }
 
