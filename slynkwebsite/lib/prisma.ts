@@ -55,6 +55,12 @@ declare global {
   var prisma: any | undefined;
 }
 
+// Log which database environment is being used
+const databaseEnv = process.env.DATABASE_ENV || 'not specified';
+if (process.env.NODE_ENV === 'development') {
+  console.log(`Using ${databaseEnv} database environment`);
+}
+
 // Use a single instance of Prisma Client
 export const prisma = global.prisma || 
   new PrismaClient({

@@ -343,7 +343,7 @@ export function DynamicNavbar() {
                 className="cursor-pointer"
                 onClick={() => navigateTo("/")}
               >
-                <AnimatedLogo isAnimating={true} scale={0.8} />
+                <AnimatedLogo isAnimating={true} scale={1.2} />
               </motion.div>
               
               {/* Mobile menu button */}

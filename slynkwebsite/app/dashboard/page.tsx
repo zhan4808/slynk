@@ -308,6 +308,54 @@ export default function DashboardPage() {
             </div>
           )}
           
+          {/* Ad Recommendations Section */}
+          {personas.length > 0 && (
+            <motion.section
+              className="mt-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ 
+                type: "spring",
+                stiffness: 300,
+                damping: 24,
+                delay: 0.3
+              }}
+            >
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
+                    Recommended Ad Types
+                  </h2>
+                  <p className="text-sm text-gray-500">Based on your industry trends and audience</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <AdRecommendation
+                  title="Product Demo"
+                  description="Show your product in action with a helpful AI guide"
+                  industry="All industries"
+                  conversionRate="24-38%"
+                  index={0}
+                />
+                <AdRecommendation
+                  title="Customer Service Bot"
+                  description="Handle common questions and provide instant support"
+                  industry="Retail, SaaS"
+                  conversionRate="15-25%"
+                  index={1}
+                />
+                <AdRecommendation
+                  title="Educational Content"
+                  description="Deliver valuable information in an engaging format"
+                  industry="Education, B2B"
+                  conversionRate="32-45%"
+                  index={2}
+                />
+              </div>
+            </motion.section>
+          )}
+          
           {/* Mobile-only Sign Out button */}
           <div className="mt-8 flex justify-center md:hidden">
             <Button 

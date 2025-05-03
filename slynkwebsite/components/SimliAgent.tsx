@@ -213,8 +213,10 @@ const VideoComponent = ({ id, name }: { id: string; name: string }) => {
   return (
     <div className="rounded-xl overflow-hidden h-[400px] w-full bg-gradient-to-b from-gray-900 to-black relative shadow-inner">
       <VideoBox id={id} />
-      <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 text-xs rounded-full backdrop-blur-sm">
-        {name}
+      <div className="absolute top-3 left-3 flex items-center space-x-2">
+        <div className="bg-black/50 text-white px-3 py-1 text-xs rounded-full backdrop-blur-sm">
+          {name}
+        </div>
       </div>
       
       {videoError && (
@@ -1807,6 +1809,41 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
     }
   };
 
+  // Set up event listeners for reload button
+  useEffect(() => {
+    const handleReset = () => {
+      console.log("Resetting Simli session through custom event");
+      resetSimliSession();
+    };
+    
+    window.addEventListener('simli-reset', handleReset);
+    
+    return () => {
+      window.removeEventListener('simli-reset', handleReset);
+    };
+  }, []);
+
+  // Component mount effect
+  useEffect(() => {
+    console.log("SimliAgent component mounted for persona:", personaId);
+    
+    // Initialize audio context if needed
+    initAudio();
+    
+    // Clean up any existing Daily sessions
+    cleanupExistingDaily().then(() => {
+      // Join the Daily room
+      handleJoinRoom();
+    });
+    
+    // Component cleanup
+    return () => {
+      console.log("SimliAgent component unmounting...");
+      cleanupAvatarSpeechRecognition();
+      handleLeaveRoom();
+    };
+  }, [personaId]);
+
   return (
     <div className="flex flex-col w-full max-w-4xl mx-auto">
       {!isAvatarVisible ? (
@@ -1905,6 +1942,14 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
                   title={isAudioMuted ? "Unmute Speaker" : "Mute Speaker"}
                 >
                   {isAudioMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                </button>
+                
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('simli-reset'))}
+                  className="flex items-center justify-center h-10 w-10 rounded-full bg-pink-100 text-pink-700 hover:bg-pink-200 transition-all duration-200"
+                  title="Reload AI agent"
+                >
+                  <RefreshCw size={18} />
                 </button>
               </div>
             </div>

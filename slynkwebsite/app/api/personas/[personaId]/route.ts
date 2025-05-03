@@ -264,6 +264,9 @@ export async function PUT(
     if (data.firstMessage) updateData.firstMessage = data.firstMessage;
     if (data.faceId) updateData.faceId = data.faceId;
     if (data.voice) updateData.voice = data.voice;
+    if (data.productName) updateData.productName = data.productName;
+    if (data.productDescription) updateData.productDescription = data.productDescription;
+    if (data.productLink) updateData.productLink = data.productLink;
 
     // Update the persona
     const updatedPersona = await prisma.aIPersona.update({

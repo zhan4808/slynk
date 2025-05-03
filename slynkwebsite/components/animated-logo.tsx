@@ -12,11 +12,11 @@ export function AnimatedLogo({ isAnimating = false, scale = 1 }: AnimatedLogoPro
   const [isHovered, setIsHovered] = useState(false)
   const shouldAnimate = isHovered || isAnimating
   
-  // Calculate dimensions based on scale
-  const logoSize = `${8 * scale}px`
-  const innerSize = `${6 * scale}px`
-  const dotSize = `${4 * scale}px`
-  const fontSize = scale < 1 ? 'text-lg' : 'text-xl'
+  // Calculate dimensions based on scale - increase base size
+  const logoSize = `${10 * scale}px`
+  const innerSize = `${8 * scale}px`
+  const dotSize = `${5 * scale}px`
+  const fontSize = scale < 1 ? 'text-xl' : 'text-2xl'
   
   return (
     <div className="inline-block">

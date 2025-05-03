@@ -4,11 +4,14 @@ export interface Persona {
   id: string;
   name: string;
   description: string;
-  systemPrompt: string;
+  systemPrompt?: string;
   firstMessage?: string;
   faceId: string;
   voice: string;
   useCustomVoice: boolean;
+  productName?: string;
+  productDescription?: string;
+  productLink?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,11 +19,13 @@ export interface Persona {
 export interface PersonaFormData {
   name: string;
   description: string;
-  systemPrompt: string;
   firstMessage?: string;
   faceId: string;
   voice: string;
   useCustomVoice: boolean;
+  productName?: string;
+  productDescription?: string;
+  productLink?: string;
 }
 
 // Function to create a new persona

@@ -6036,6 +6036,9 @@ export namespace Prisma {
     isCustomFaceInQueue: boolean | null
     voice: string | null
     useCustomVoice: boolean | null
+    productName: string | null
+    productDescription: string | null
+    productLink: string | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6056,6 +6059,9 @@ export namespace Prisma {
     isCustomFaceInQueue: boolean | null
     voice: string | null
     useCustomVoice: boolean | null
+    productName: string | null
+    productDescription: string | null
+    productLink: string | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -6076,6 +6082,9 @@ export namespace Prisma {
     isCustomFaceInQueue: number
     voice: number
     useCustomVoice: number
+    productName: number
+    productDescription: number
+    productLink: number
     metadata: number
     userId: number
     createdAt: number
@@ -6099,6 +6108,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: true
     voice?: true
     useCustomVoice?: true
+    productName?: true
+    productDescription?: true
+    productLink?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -6119,6 +6131,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: true
     voice?: true
     useCustomVoice?: true
+    productName?: true
+    productDescription?: true
+    productLink?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -6139,6 +6154,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: true
     voice?: true
     useCustomVoice?: true
+    productName?: true
+    productDescription?: true
+    productLink?: true
     metadata?: true
     userId?: true
     createdAt?: true
@@ -6233,6 +6251,9 @@ export namespace Prisma {
     isCustomFaceInQueue: boolean
     voice: string | null
     useCustomVoice: boolean
+    productName: string | null
+    productDescription: string | null
+    productLink: string | null
     metadata: JsonValue | null
     userId: string
     createdAt: Date
@@ -6271,6 +6292,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: boolean
     useCustomVoice?: boolean
+    productName?: boolean
+    productDescription?: boolean
+    productLink?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -6296,6 +6320,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: boolean
     useCustomVoice?: boolean
+    productName?: boolean
+    productDescription?: boolean
+    productLink?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -6318,6 +6345,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: boolean
     useCustomVoice?: boolean
+    productName?: boolean
+    productDescription?: boolean
+    productLink?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
@@ -6340,13 +6370,16 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: boolean
     useCustomVoice?: boolean
+    productName?: boolean
+    productDescription?: boolean
+    productLink?: boolean
     metadata?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AIPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "pageLink" | "adImageUrl" | "voiceSampleUrl" | "faceId" | "simliSessionId" | "simliAgentId" | "systemPrompt" | "firstMessage" | "isCustomFaceInQueue" | "voice" | "useCustomVoice" | "metadata" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["aIPersona"]>
+  export type AIPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "pageLink" | "adImageUrl" | "voiceSampleUrl" | "faceId" | "simliSessionId" | "simliAgentId" | "systemPrompt" | "firstMessage" | "isCustomFaceInQueue" | "voice" | "useCustomVoice" | "productName" | "productDescription" | "productLink" | "metadata" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["aIPersona"]>
   export type AIPersonaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     sessions?: boolean | AIPersona$sessionsArgs<ExtArgs>
@@ -6382,6 +6415,9 @@ export namespace Prisma {
       isCustomFaceInQueue: boolean
       voice: string | null
       useCustomVoice: boolean
+      productName: string | null
+      productDescription: string | null
+      productLink: string | null
       metadata: Prisma.JsonValue | null
       userId: string
       createdAt: Date
@@ -6826,6 +6862,9 @@ export namespace Prisma {
     readonly isCustomFaceInQueue: FieldRef<"AIPersona", 'Boolean'>
     readonly voice: FieldRef<"AIPersona", 'String'>
     readonly useCustomVoice: FieldRef<"AIPersona", 'Boolean'>
+    readonly productName: FieldRef<"AIPersona", 'String'>
+    readonly productDescription: FieldRef<"AIPersona", 'String'>
+    readonly productLink: FieldRef<"AIPersona", 'String'>
     readonly metadata: FieldRef<"AIPersona", 'Json'>
     readonly userId: FieldRef<"AIPersona", 'String'>
     readonly createdAt: FieldRef<"AIPersona", 'DateTime'>
@@ -10596,6 +10635,9 @@ export namespace Prisma {
     isCustomFaceInQueue: 'isCustomFaceInQueue',
     voice: 'voice',
     useCustomVoice: 'useCustomVoice',
+    productName: 'productName',
+    productDescription: 'productDescription',
+    productLink: 'productLink',
     metadata: 'metadata',
     userId: 'userId',
     createdAt: 'createdAt',
@@ -11043,6 +11085,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
     voice?: StringNullableFilter<"AIPersona"> | string | null
     useCustomVoice?: BoolFilter<"AIPersona"> | boolean
+    productName?: StringNullableFilter<"AIPersona"> | string | null
+    productDescription?: StringNullableFilter<"AIPersona"> | string | null
+    productLink?: StringNullableFilter<"AIPersona"> | string | null
     metadata?: JsonNullableFilter<"AIPersona">
     userId?: StringFilter<"AIPersona"> | string
     createdAt?: DateTimeFilter<"AIPersona"> | Date | string
@@ -11067,6 +11112,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: SortOrder
     voice?: SortOrderInput | SortOrder
     useCustomVoice?: SortOrder
+    productName?: SortOrderInput | SortOrder
+    productDescription?: SortOrderInput | SortOrder
+    productLink?: SortOrderInput | SortOrder
     metadata?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -11094,6 +11142,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
     voice?: StringNullableFilter<"AIPersona"> | string | null
     useCustomVoice?: BoolFilter<"AIPersona"> | boolean
+    productName?: StringNullableFilter<"AIPersona"> | string | null
+    productDescription?: StringNullableFilter<"AIPersona"> | string | null
+    productLink?: StringNullableFilter<"AIPersona"> | string | null
     metadata?: JsonNullableFilter<"AIPersona">
     userId?: StringFilter<"AIPersona"> | string
     createdAt?: DateTimeFilter<"AIPersona"> | Date | string
@@ -11118,6 +11169,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: SortOrder
     voice?: SortOrderInput | SortOrder
     useCustomVoice?: SortOrder
+    productName?: SortOrderInput | SortOrder
+    productDescription?: SortOrderInput | SortOrder
+    productLink?: SortOrderInput | SortOrder
     metadata?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -11145,6 +11199,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolWithAggregatesFilter<"AIPersona"> | boolean
     voice?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
     useCustomVoice?: BoolWithAggregatesFilter<"AIPersona"> | boolean
+    productName?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
+    productDescription?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
+    productLink?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
     metadata?: JsonNullableWithAggregatesFilter<"AIPersona">
     userId?: StringWithAggregatesFilter<"AIPersona"> | string
     createdAt?: DateTimeWithAggregatesFilter<"AIPersona"> | Date | string
@@ -11622,6 +11679,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    productName?: string | null
+    productDescription?: string | null
+    productLink?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11645,6 +11705,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    productName?: string | null
+    productDescription?: string | null
+    productLink?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
@@ -11668,6 +11731,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productLink?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11691,6 +11757,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productLink?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11714,6 +11783,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    productName?: string | null
+    productDescription?: string | null
+    productLink?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
@@ -11735,6 +11807,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productLink?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11755,6 +11830,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productLink?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12314,6 +12392,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: SortOrder
     voice?: SortOrder
     useCustomVoice?: SortOrder
+    productName?: SortOrder
+    productDescription?: SortOrder
+    productLink?: SortOrder
     metadata?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -12335,6 +12416,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: SortOrder
     voice?: SortOrder
     useCustomVoice?: SortOrder
+    productName?: SortOrder
+    productDescription?: SortOrder
+    productLink?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -12355,6 +12439,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: SortOrder
     voice?: SortOrder
     useCustomVoice?: SortOrder
+    productName?: SortOrder
+    productDescription?: SortOrder
+    productLink?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -13257,6 +13344,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    productName?: string | null
+    productDescription?: string | null
+    productLink?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13279,6 +13369,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    productName?: string | null
+    productDescription?: string | null
+    productLink?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13416,6 +13509,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
     voice?: StringNullableFilter<"AIPersona"> | string | null
     useCustomVoice?: BoolFilter<"AIPersona"> | boolean
+    productName?: StringNullableFilter<"AIPersona"> | string | null
+    productDescription?: StringNullableFilter<"AIPersona"> | string | null
+    productLink?: StringNullableFilter<"AIPersona"> | string | null
     metadata?: JsonNullableFilter<"AIPersona">
     userId?: StringFilter<"AIPersona"> | string
     createdAt?: DateTimeFilter<"AIPersona"> | Date | string
@@ -13688,6 +13784,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    productName?: string | null
+    productDescription?: string | null
+    productLink?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13710,6 +13809,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    productName?: string | null
+    productDescription?: string | null
+    productLink?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
@@ -13748,6 +13850,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productLink?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13770,6 +13875,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productLink?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13816,6 +13924,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    productName?: string | null
+    productDescription?: string | null
+    productLink?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13838,6 +13949,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    productName?: string | null
+    productDescription?: string | null
+    productLink?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     createdAt?: Date | string
@@ -13934,6 +14048,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productLink?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13956,6 +14073,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productLink?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14063,6 +14183,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    productName?: string | null
+    productDescription?: string | null
+    productLink?: string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14110,6 +14233,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productLink?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14132,6 +14258,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productLink?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14154,6 +14283,9 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    productLink?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

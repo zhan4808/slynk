@@ -81,7 +81,22 @@ export async function POST(req: NextRequest) {
     }
     
     // Get JSON data
-    const data = await req.json();
+    let data;
+    try {
+      data = await req.json();
+      console.log("Received persona creation data:", {
+        name: data.name,
+        description: data.description?.substring(0, 30) + "...",
+        productName: data.productName,
+        productDescription: data.productDescription?.substring(0, 30) + "...",
+        productLink: data.productLink,
+        faceId: data.faceId,
+        isCustomFaceInQueue: data.isCustomFaceInQueue
+      });
+    } catch (parseError) {
+      console.error("Error parsing request JSON:", parseError);
+      return NextResponse.json({ error: "Invalid JSON in request" }, { status: 400 });
+    }
     
     // Check if faceId is a UUID (character_uid format)
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.faceId);
@@ -96,60 +111,90 @@ export async function POST(req: NextRequest) {
     }
 
     // First create the AI persona in our database
-    const persona = await prisma.aIPersona.create({
-      data: {
+    try {
+      console.log("Creating persona in database with the following data:", {
         name: data.name,
-        description: data.description,
-        systemPrompt: data.systemPrompt,
-        firstMessage: data.firstMessage,
-        // Store the original faceId (character_uid for queued faces)
+        description: data.description?.substring(0, 30) + "...",
+        systemPrompt: data.systemPrompt?.substring(0, 30) + "...",
+        firstMessage: data.firstMessage?.substring(0, 30) + "...",
+        productName: data.productName,
+        productDescription: data.productDescription?.substring(0, 30) + "...",
+        productLink: data.productLink,
         faceId: data.faceId,
-        isCustomFaceInQueue: isCustomFaceInQueue,
-        metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
-        userId,
-      },
-    });
+        isCustomFaceInQueue,
+        metadata: Object.keys(metadata).length > 0 ? "has metadata" : "no metadata",
+        userId
+      });
 
-    // Check if we should also create a Simli Agent through their API
-    if (!useMockApi && process.env.SIMLI_ENABLE_AGENT_CREATION === "true") {
-      try {
-        // Create the agent in Simli using improved agent creation function
-        const simliAgent = await createSimliAgent({
-          faceId: data.faceId, // Pass the original faceId - our function will handle the UUID case
+      const persona = await prisma.aIPersona.create({
+        data: {
           name: data.name,
-          firstMessage: data.firstMessage,
-          prompt: data.systemPrompt,
-          voiceProvider: "cartesia", // Default to Cartesia for better compatibility
-          voiceId: data.voice, // Pass the voice ID from request data
-          language: "en" // Default to English
-        });
+          description: data.description || '',
+          systemPrompt: data.systemPrompt || null,
+          firstMessage: data.firstMessage || null,
+          productName: data.productName || null,
+          productDescription: data.productDescription || null,
+          productLink: data.productLink || null,
+          // Store the original faceId (character_uid for queued faces)
+          faceId: data.faceId || '',
+          isCustomFaceInQueue: isCustomFaceInQueue || false,
+          metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+          userId,
+        },
+      });
+      
+      console.log("Successfully created persona in database with ID:", persona.id);
 
-        // Update our persona record with the Simli agent ID and additional metadata
-        await prisma.aIPersona.update({
-          where: { id: persona.id },
-          data: { 
-            simliAgentId: simliAgent.id,
-            // Merge existing metadata with agent details
-            metadata: {
-              ...metadata,
-              simliAgentCreated: true,
-              simliAgentDetails: JSON.stringify(simliAgent),
-              // Store the originalCharacterId from the agent if it exists
-              originalCharacterId: simliAgent.originalCharacterId || metadata.originalCharacterId
+      // Check if we should also create a Simli Agent through their API
+      if (!useMockApi && process.env.SIMLI_ENABLE_AGENT_CREATION === "true") {
+        try {
+          // Create the agent in Simli using improved agent creation function
+          const simliAgent = await createSimliAgent({
+            faceId: data.faceId, // Pass the original faceId - our function will handle the UUID case
+            name: data.name,
+            firstMessage: data.firstMessage,
+            prompt: data.systemPrompt,
+            voiceProvider: "cartesia", // Default to Cartesia for better compatibility
+            voiceId: data.voice, // Pass the voice ID from request data
+            language: "en" // Default to English
+          });
+
+          // Update our persona record with the Simli agent ID and additional metadata
+          await prisma.aIPersona.update({
+            where: { id: persona.id },
+            data: { 
+              simliAgentId: simliAgent.id,
+              // Merge existing metadata with agent details
+              metadata: {
+                ...metadata,
+                simliAgentCreated: true,
+                simliAgentDetails: JSON.stringify(simliAgent),
+                // Store the originalCharacterId from the agent if it exists
+                originalCharacterId: simliAgent.originalCharacterId || metadata.originalCharacterId
+              }
             }
-          }
-        });
+          });
 
-        console.log(`Created Simli agent with ID ${simliAgent.id} for persona ${persona.id}`);
-      } catch (error) {
-        // Log but don't fail if agent creation has issues
-        console.error("Error creating Simli agent:", error);
+          console.log(`Created Simli agent with ID ${simliAgent.id} for persona ${persona.id}`);
+        } catch (error) {
+          // Log but don't fail if agent creation has issues
+          console.error("Error creating Simli agent:", error);
+        }
       }
-    }
 
-    return NextResponse.json({ id: persona.id });
+      return NextResponse.json({ id: persona.id });
+    } catch (dbError) {
+      console.error("Error creating AI persona in database:", dbError);
+      return NextResponse.json({ 
+        error: "Failed to create AI persona in database", 
+        details: dbError instanceof Error ? dbError.message : String(dbError) 
+      }, { status: 500 });
+    }
   } catch (error) {
-    console.error("Error creating AI persona:", error);
-    return NextResponse.json({ error: "Failed to create AI persona" }, { status: 500 });
+    console.error("Unhandled error creating AI persona:", error);
+    return NextResponse.json({ 
+      error: "Failed to create AI persona", 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 });
   }
 } 

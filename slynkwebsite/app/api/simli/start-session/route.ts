@@ -144,6 +144,19 @@ export async function POST(req: NextRequest) {
     let systemPrompt = `You are a virtual spokesperson for ${persona.name}. `;
     systemPrompt += `Here's important information about ${persona.name}: ${persona.description}. `;
     
+    // Add product/service knowledge if available
+    if (persona.productName) {
+      systemPrompt += `You are an expert on ${persona.productName}. `;
+      
+      if (persona.productDescription) {
+        systemPrompt += `Here's important information about ${persona.productName}: ${persona.productDescription}. `;
+      }
+      
+      if (persona.productLink) {
+        systemPrompt += `You can refer users to this link for more product information: ${persona.productLink}. `;
+      }
+    }
+    
     // Add Q&A knowledge
     if (persona.qaPairs && persona.qaPairs.length > 0) {
       systemPrompt += "Here are some specific questions and answers you should know: ";

@@ -14,7 +14,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
           {/* Left Column */}
           <div className="space-y-4 md:space-y-6">
-            <AnimatedLogo scale={0.9} />
+            <AnimatedLogo scale={1.2} />
             
             <p className="text-gray-600 max-w-md text-sm md:text-base">
               Slynk is an AI-powered platform that transforms static advertisements into engaging, 

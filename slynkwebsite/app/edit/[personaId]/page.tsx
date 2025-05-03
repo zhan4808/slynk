@@ -39,6 +39,9 @@ interface PersonaData {
     question: string
     answer: string
   }>
+  productName?: string
+  productDescription?: string
+  productLink?: string
 }
 
 export default function EditPersonaPage() {
@@ -83,7 +86,10 @@ export default function EditPersonaPage() {
           systemPrompt: data.systemPrompt,
           firstMessage: data.firstMessage,
           voice: data.voice || DEFAULT_VOICE,
-          qaPairs: data.qaPairs || []
+          qaPairs: data.qaPairs || [],
+          productName: data.productName,
+          productDescription: data.productDescription,
+          productLink: data.productLink
         })
       } catch (error) {
         console.error("Error fetching persona:", error)
@@ -194,6 +200,18 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
       
       if (formData.voice) {
         formDataToSend.append("voice", formData.voice)
+      }
+      
+      if (formData.productName) {
+        formDataToSend.append("productName", formData.productName)
+      }
+      
+      if (formData.productDescription) {
+        formDataToSend.append("productDescription", formData.productDescription)
+      }
+      
+      if (formData.productLink) {
+        formDataToSend.append("productLink", formData.productLink)
       }
       
       // QA pairs
@@ -387,6 +405,45 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                     />
                   </div>
                   
+          <div>
+            <label htmlFor="productName" className="block text-sm font-medium text-gray-700 mb-1">Product/Service Name</label>
+            <input
+              id="productName"
+              name="productName"
+              type="text"
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              value={formData.productName || ""}
+              onChange={handleChange}
+              placeholder="Name of the product or service"
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="productDescription" className="block text-sm font-medium text-gray-700 mb-1">Product/Service Description</label>
+            <textarea
+              id="productDescription"
+              name="productDescription"
+              rows={3}
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              value={formData.productDescription || ""}
+              onChange={handleChange}
+              placeholder="Describe the product or service"
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="productLink" className="block text-sm font-medium text-gray-700 mb-1">Product/Service Link</label>
+            <input
+              id="productLink"
+              name="productLink"
+              type="text"
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              value={formData.productLink || ""}
+              onChange={handleChange}
+              placeholder="URL to product or service information"
+            />
+          </div>
+          
           <div>
             <label htmlFor="firstMessage" className="block text-sm font-medium text-gray-700 mb-1">First Message</label>
             <textarea

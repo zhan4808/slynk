@@ -28,11 +28,13 @@ export default function PersonaForm() {
   const [formData, setFormData] = useState<PersonaFormData>({
     name: "",
     description: "",
-    systemPrompt: "",
     firstMessage: "",
     faceId: "",
     voice: DEFAULT_VOICE,
     useCustomVoice: false,
+    productName: "",
+    productDescription: "",
+    productLink: "",
   })
   const [image, setImage] = useState<File | null>(null)
   const [previewImage, setPreviewImage] = useState<string | null>(null)
@@ -411,12 +413,17 @@ export default function PersonaForm() {
         }))
       }
       
-      // Prepare prompt and first message
-      const systemPrompt = formData.systemPrompt || 
-        `You are a virtual assistant named ${formData.name}. ${formData.description} Keep your responses helpful, concise, and friendly.`
+      // Generate system prompt from product and persona information
+      const systemPrompt = generateSystemPrompt(
+        formData.name, 
+        formData.description,
+        formData.productName || undefined,
+        formData.productDescription || undefined,
+        formData.productLink || undefined
+      )
       
       const firstMessage = formData.firstMessage || 
-        `Hello, I'm ${formData.name}. How can I help you today?`
+        `Hello, I'm ${formData.name}. How can I help you with ${formData.productName || 'your questions'} today?`
       
       // Create form data for file upload if we have a custom voice
       let voiceDataUrl = null;
@@ -444,7 +451,10 @@ export default function PersonaForm() {
       console.log("Creating persona with settings:", {
         name: formData.name,
         description: formData.description,
-        faceId: formData.faceId,
+        productName: formData.productName || 'N/A',
+        productDescription: formData.productDescription ? (formData.productDescription.substring(0, 50) + "...") : 'N/A',
+        productLink: formData.productLink || 'N/A',
+        faceId: formData.faceId || DEFAULT_FACE_ID,
         originalCharacterId: isCustomFaceInQueue ? originalFaceResponse?.character_uid : undefined,
         voice: formData.voice,
         hasVoiceFile: !!voiceDataUrl,
@@ -461,6 +471,9 @@ export default function PersonaForm() {
         body: JSON.stringify({
           name: formData.name,
           description: formData.description,
+          productName: formData.productName || null,
+          productDescription: formData.productDescription || null,
+          productLink: formData.productLink || null,
           systemPrompt: systemPrompt,
           firstMessage: firstMessage,
           faceId: formData.faceId || DEFAULT_FACE_ID, // Include the Simli face ID with fallback
@@ -487,6 +500,34 @@ export default function PersonaForm() {
       setError(error instanceof Error ? error.message : "Failed to create persona")
       setLoading(false)
     }
+  }
+
+  // Function to generate system prompt based on product and persona info
+  const generateSystemPrompt = (
+    personaName: string,
+    personaDescription: string,
+    productName?: string,
+    productDescription?: string,
+    productLink?: string
+  ) => {
+    let prompt = `You are a virtual spokesperson named ${personaName || 'AI Assistant'}. ${personaDescription || ''} `
+    
+    if (productName) {
+      prompt += `You are an expert on ${productName}. `
+      
+      if (productDescription) {
+        prompt += `Here's important information about ${productName}: ${productDescription} `
+      }
+      
+      if (productLink) {
+        prompt += `You can refer users to this link for more information: ${productLink} `
+      }
+    }
+    
+    prompt += "Keep your responses helpful, concise, and focused on providing valuable information. " +
+      "Always be friendly and professional."
+    
+    return prompt
   }
 
   // Add a function to clear the face generation queue
@@ -803,15 +844,40 @@ export default function PersonaForm() {
               
                   <div className="space-y-5">
                 <div className="space-y-2">
-                      <Label htmlFor="systemPrompt" className="text-base font-medium text-gray-700">System Prompt</Label>
-                  <Textarea 
-                    id="systemPrompt"
-                    name="systemPrompt"
-                    value={formData.systemPrompt}
+                      <Label htmlFor="productName" className="text-base font-medium text-gray-700">Product Name</Label>
+                  <Input 
+                    id="productName"
+                    name="productName"
+                    value={formData.productName}
                     onChange={handleChange}
-                    placeholder="Instructions for how the AI should behave (auto-generated if left empty)"
+                    placeholder="E.g., Smart Home Controller"
+                        className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                      <Label htmlFor="productDescription" className="text-base font-medium text-gray-700">Product Description</Label>
+                  <Textarea 
+                    id="productDescription"
+                    name="productDescription"
+                    value={formData.productDescription}
+                    onChange={handleChange}
+                    placeholder="Describe the product"
                         className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
                     rows={3}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                      <Label htmlFor="productLink" className="text-base font-medium text-gray-700">Product Link (Optional)</Label>
+                  <Input 
+                    id="productLink"
+                    name="productLink"
+                    value={formData.productLink}
+                    onChange={handleChange}
+                    placeholder="https://example.com/product"
+                        className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
                   />
                 </div>
                 
