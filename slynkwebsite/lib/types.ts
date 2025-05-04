@@ -1,6 +1,7 @@
 /**
  * Global type definitions for the Slynk application
  */
+import { PersonaType } from './enhanced-prompts';
 
 // Persona data structure
 export interface Persona {
@@ -12,6 +13,7 @@ export interface Persona {
   voice?: string;
   useCustomVoice?: boolean;
   productName?: string;
+  personaType?: PersonaType;
   createdAt: Date;
   updatedAt: Date;
   userId: string;
@@ -76,6 +78,7 @@ export interface SimliAgentProps {
     voice?: string;
     useCustomVoice?: boolean;
     productName?: string;
+    personaType?: PersonaType;
   };
   onStart?: () => void;
   onClose?: () => void;

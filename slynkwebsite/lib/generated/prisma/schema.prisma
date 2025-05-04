@@ -72,6 +72,7 @@ model AIPersona {
   isCustomFaceInQueue Boolean       @default(false)
   voice               String?
   useCustomVoice      Boolean       @default(false)
+  personaType         String?       @default("default")
   productName         String?
   productDescription  String?
   productLink         String?

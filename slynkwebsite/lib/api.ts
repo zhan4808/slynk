@@ -1,4 +1,5 @@
 // API functions for persona management
+import { PersonaType } from './enhanced-prompts';
 
 export interface Persona {
   id: string;
@@ -12,6 +13,7 @@ export interface Persona {
   productName?: string;
   productDescription?: string;
   productLink?: string;
+  personaType?: PersonaType;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,6 +28,7 @@ export interface PersonaFormData {
   productName?: string;
   productDescription?: string;
   productLink?: string;
+  personaType?: PersonaType;
 }
 
 // Function to create a new persona

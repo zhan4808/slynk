@@ -26,6 +26,7 @@ import {
 import { DynamicNavbar } from "@/components/dynamic-navbar"
 import { elevenLabsVoices, DEFAULT_VOICE } from '@/lib/voice-options'
 import { Slider } from "@/components/ui/slider"
+import { generateEnhancedPrompt, PersonaType } from '@/lib/enhanced-prompts'
 
 interface PersonaFormData {
   id?: string
@@ -43,6 +44,7 @@ interface PersonaFormData {
   productLink: string
   originalCharacterId?: string
   isCustomFaceInQueue?: boolean
+  personaType: PersonaType
 }
 
 interface PersonaData {
@@ -99,6 +101,18 @@ export default function EditPersonaPage() {
   const [loading, setLoading] = useState(true)
   const [persona, setPersona] = useState<PersonaData | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [formData, setFormData] = useState<PersonaFormData>({
+    name: "",
+    description: "",
+    firstMessage: "",
+    faceId: "",
+    voice: DEFAULT_VOICE,
+    useCustomVoice: false,
+    productName: "",
+    productDescription: "",
+    productLink: "",
+    personaType: "default" as PersonaType
+  })
 
   // If not authenticated, redirect to sign-in
   useEffect(() => {
@@ -138,6 +152,21 @@ export default function EditPersonaPage() {
           productName: data.productName,
           productDescription: data.productDescription,
           productLink: data.productLink
+        })
+        
+        // Update form data with persona data
+        setFormData({
+          id: data.id,
+          name: data.name || data.productName || "",
+          description: data.description || "",
+          firstMessage: data.firstMessage || "",
+          faceId: data.faceId || "",
+          voice: data.voice || DEFAULT_VOICE,
+          useCustomVoice: !!data.voiceSample,
+          productName: data.productName || "",
+          productDescription: data.productDescription || "",
+          productLink: data.productLink || "",
+          personaType: data.personaType || "default" as PersonaType
         })
       } catch (error) {
         console.error("Error fetching persona:", error)
@@ -195,7 +224,7 @@ export default function EditPersonaPage() {
               {error}
             </div>
           ) : persona ? (
-            <EditPersonaForm persona={persona} personaId={params.personaId as string} />
+            <EditPersonaForm persona={persona} personaId={params.personaId as string} formData={formData} setFormData={setFormData} />
           ) : null}
         </div>
       </div>
@@ -206,23 +235,13 @@ export default function EditPersonaPage() {
 interface EditPersonaFormProps {
   persona: PersonaData;
   personaId: string;
+  formData: PersonaFormData;
+  setFormData: React.Dispatch<React.SetStateAction<PersonaFormData>>;
 }
 
-function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
+function EditPersonaForm({ persona, personaId, formData, setFormData }: EditPersonaFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState<PersonaFormData>({
-    id: persona.id,
-    name: persona.name || "",
-    description: persona.description,
-    firstMessage: persona.firstMessage || "",
-    faceId: persona.faceId || "",
-    voice: persona.voice || DEFAULT_VOICE,
-    useCustomVoice: false,
-    productName: persona.productName || "",
-    productDescription: persona.productDescription || "",
-    productLink: persona.productLink || "",
-  })
   const [image, setImage] = useState<File | null>(null)
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [isGeneratingFace, setIsGeneratingFace] = useState(false)
@@ -344,26 +363,36 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
     setError(null)
     
     try {
+      // Generate the system prompt
+      const systemPrompt = generateSystemPrompt(
+        formData.name,
+        formData.description,
+        formData.productName,
+        formData.productDescription,
+        formData.productLink,
+        formData.personaType
+      )
+      
+      // Prepare data to send
+      const personaData = {
+        id: personaId,
+        name: formData.name,
+        description: formData.description,
+        systemPrompt,
+        firstMessage: formData.firstMessage,
+        faceId: formData.faceId,
+        voice: formData.voice,
+        productName: formData.productName,
+        productDescription: formData.productDescription,
+        productLink: formData.productLink,
+        personaType: formData.personaType
+      }
+      
       // Check if we have a face ID
       if (!formData.faceId) {
         // Set default face ID if none exists
-        setFormData(prev => ({
-          ...prev,
-          faceId: DEFAULT_FACE_ID
-        }))
+        personaData.faceId = DEFAULT_FACE_ID
       }
-      
-      // Generate system prompt from product and persona information
-      const systemPrompt = generateSystemPrompt(
-        formData.name, 
-        formData.description,
-        formData.productName || undefined,
-        formData.productDescription || undefined,
-        formData.productLink || undefined
-      )
-      
-      const firstMessage = formData.firstMessage || 
-        `Hello, I'm ${formData.name}. How can I help you with ${formData.productName || 'your questions'} today?`
       
       // Create form data for file upload if we have a custom voice
       let voiceDataUrl = null;
@@ -388,49 +417,32 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
         }
       }
       
-      console.log("Updating persona with settings:", {
-        name: formData.name,
-        description: formData.description,
-        productName: formData.productName || 'N/A',
-        productDescription: formData.productDescription ? (formData.productDescription.substring(0, 50) + "...") : 'N/A',
-        productLink: formData.productLink || 'N/A',
-        faceId: formData.faceId || DEFAULT_FACE_ID,
-        originalCharacterId: isCustomFaceInQueue ? originalFaceResponse?.character_uid : undefined,
-        voice: formData.voice,
-        hasVoiceFile: !!voiceDataUrl,
-        systemPrompt: systemPrompt.substring(0, 50) + "...",
-        firstMessage: firstMessage
-      })
+      console.log("Updating persona with settings:", personaData)
       
       // Prepare data for API request
       const formDataToSend = new FormData()
       
       // Text fields
-      formDataToSend.append("name", formData.name)
-      formDataToSend.append("description", formData.description)
-      formDataToSend.append("systemPrompt", systemPrompt)
-      formDataToSend.append("firstMessage", firstMessage)
-      formDataToSend.append("faceId", formData.faceId || DEFAULT_FACE_ID)
-      formDataToSend.append("voice", formData.voice)
+      formDataToSend.append("name", personaData.name)
+      formDataToSend.append("description", personaData.description)
+      formDataToSend.append("systemPrompt", personaData.systemPrompt)
+      formDataToSend.append("firstMessage", personaData.firstMessage || "")
+      formDataToSend.append("faceId", personaData.faceId || DEFAULT_FACE_ID)
+      formDataToSend.append("voice", personaData.voice)
       formDataToSend.append("useCustomVoice", formData.useCustomVoice.toString())
+      formDataToSend.append("personaType", personaData.personaType || "default")
       
-      if (formData.productName) {
-        formDataToSend.append("productName", formData.productName)
+      if (personaData.productName) {
+        formDataToSend.append("productName", personaData.productName)
       }
       
-      if (formData.productDescription) {
-        formDataToSend.append("productDescription", formData.productDescription)
+      if (personaData.productDescription) {
+        formDataToSend.append("productDescription", personaData.productDescription)
       }
       
-      if (formData.productLink) {
-        formDataToSend.append("productLink", formData.productLink)
+      if (personaData.productLink) {
+        formDataToSend.append("productLink", personaData.productLink)
       }
-      
-      if (isCustomFaceInQueue && originalFaceResponse?.character_uid) {
-        formDataToSend.append("originalCharacterId", originalFaceResponse.character_uid)
-      }
-      
-      formDataToSend.append("isCustomFaceInQueue", isCustomFaceInQueue.toString())
       
       // Append files if any
       if (image) {
@@ -468,32 +480,32 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
     }
   }
   
+  // Function to handle persona type change
+  const handlePersonaTypeChange = (value: string) => {
+    setFormData({
+      ...formData,
+      personaType: value as PersonaType
+    })
+  }
+  
   // Function to generate system prompt based on product and persona info
   const generateSystemPrompt = (
     personaName: string,
     personaDescription: string,
     productName?: string,
     productDescription?: string,
-    productLink?: string
+    productLink?: string,
+    personaType: PersonaType = "default"
   ) => {
-    let prompt = `You are a virtual spokesperson named ${personaName || 'AI Assistant'}. ${personaDescription || ''} `
-    
-    if (productName) {
-      prompt += `You are an expert on ${productName}. `
-      
-      if (productDescription) {
-        prompt += `Here's important information about ${productName}: ${productDescription} `
-      }
-      
-      if (productLink) {
-        prompt += `You can refer users to this link for more information: ${productLink} `
-      }
-    }
-    
-    prompt += "Keep your responses helpful, concise, and focused on providing valuable information. " +
-      "Always be friendly and professional."
-    
-    return prompt
+    // Use the enhanced prompt generator
+    return generateEnhancedPrompt({
+      name: personaName,
+      description: personaDescription,
+      productName: productName || "",
+      productDescription: productDescription || "",
+      productLink: productLink || "",
+      personaType
+    })
   }
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -864,6 +876,64 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
             
             <div className="space-y-5">
               <div className="space-y-2">
+                <Label htmlFor="personaType" className="text-base font-medium text-gray-700">Persona Type</Label>
+                <Select 
+                  value={formData.personaType} 
+                  onValueChange={handlePersonaTypeChange}
+                >
+                  <SelectTrigger className="w-full border border-indigo-200 focus:border-indigo-400 bg-white rounded-xl shadow-sm">
+                    <SelectValue placeholder="Select a persona type" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-0 shadow-lg rounded-xl overflow-hidden">
+                    <div className="p-2 max-h-[300px] overflow-y-auto bg-white">
+                      <SelectGroup>
+                        <SelectLabel className="px-2 py-1 text-xs font-medium text-gray-500">Persona Types</SelectLabel>
+                        <SelectItem value="default" className="rounded-lg my-1 hover:bg-indigo-50">Default - Professional & Balanced</SelectItem>
+                        <SelectItem value="tech" className="rounded-lg my-1 hover:bg-indigo-50">Tech - Technical & Innovative</SelectItem>
+                        <SelectItem value="lifestyle" className="rounded-lg my-1 hover:bg-indigo-50">Lifestyle - Approachable & Trendy</SelectItem>
+                        <SelectItem value="finance" className="rounded-lg my-1 hover:bg-indigo-50">Finance - Authoritative & Precise</SelectItem>
+                        <SelectItem value="healthcare" className="rounded-lg my-1 hover:bg-indigo-50">Healthcare - Caring & Informative</SelectItem>
+                        <SelectItem value="entertainment" className="rounded-lg my-1 hover:bg-indigo-50">Entertainment - Energetic & Engaging</SelectItem>
+                        <SelectItem value="food" className="rounded-lg my-1 hover:bg-indigo-50">Food - Passionate & Descriptive</SelectItem>
+                        <SelectItem value="travel" className="rounded-lg my-1 hover:bg-indigo-50">Travel - Adventurous & Inspiring</SelectItem>
+                        <SelectItem value="education" className="rounded-lg my-1 hover:bg-indigo-50">Education - Patient & Instructive</SelectItem>
+                        <SelectItem value="luxury" className="rounded-lg my-1 hover:bg-indigo-50">Luxury - Sophisticated & Exclusive</SelectItem>
+                        <SelectItem value="fitness" className="rounded-lg my-1 hover:bg-indigo-50">Fitness - Motivational & Supportive</SelectItem>
+                      </SelectGroup>
+                    </div>
+                  </SelectContent>
+                </Select>
+                <p className="mt-2 text-xs text-indigo-700 italic">
+                  Select the persona type that best matches your product or service. This affects
+                  how your AI spokesperson will communicate with users.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+            
+      {/* Product Information Section */}
+      <motion.div 
+        className="bg-white rounded-3xl shadow-lg overflow-hidden"
+        style={{ boxShadow: "0 20px 60px -15px rgba(0,0,0,0.1)" }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <div className="p-8">
+          <motion.div
+            className="flex items-center gap-2 mb-6"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-2xl font-semibold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Product Information</h2>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-5">
+              <div className="space-y-2">
                 <Label htmlFor="productName" className="text-base font-medium text-gray-700">Product Name</Label>
                 <Input 
                   id="productName"
@@ -872,10 +942,10 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                   onChange={handleChange}
                   placeholder="E.g., Smart Home Controller"
                   className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                      required
-                    />
-                  </div>
-                  
+                  required
+                />
+              </div>
+          
               <div className="space-y-2">
                 <Label htmlFor="productDescription" className="text-base font-medium text-gray-700">Product Description</Label>
                 <Textarea 
@@ -883,41 +953,43 @@ function EditPersonaForm({ persona, personaId }: EditPersonaFormProps) {
                   name="productDescription"
                   value={formData.productDescription}
                   onChange={handleChange}
-                  placeholder="Describe the product"
+                  placeholder="Describe the product's features, benefits, and unique selling points"
                   className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                      rows={3}
+                  rows={3}
                 />
               </div>
-              
+            </div>
+            
+            <div className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="productLink" className="text-base font-medium text-gray-700">Product Link (Optional)</Label>
                 <Input 
                   id="productLink"
                   name="productLink"
                   value={formData.productLink}
-              onChange={handleChange}
+                  onChange={handleChange}
                   placeholder="https://example.com/product"
                   className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                    />
-                  </div>
-                  
+                />
+              </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="firstMessage" className="text-base font-medium text-gray-700">First Message (Optional)</Label>
                 <Textarea 
-              id="firstMessage"
-                      name="firstMessage"
+                  id="firstMessage"
+                  name="firstMessage"
                   value={formData.firstMessage}
-              onChange={handleChange}
+                  onChange={handleChange}
                   placeholder="First message to send when starting a conversation (auto-generated if left empty)"
                   className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
                   rows={2}
-                    />
-                  </div>
-                </div>
+                />
               </div>
+            </div>
+          </div>
         </div>
       </motion.div>
-            
+      
       {/* Preview and Voice Section */}
       <motion.div 
         className="bg-white rounded-3xl shadow-lg overflow-hidden"

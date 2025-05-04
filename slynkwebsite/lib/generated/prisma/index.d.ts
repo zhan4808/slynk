@@ -6036,6 +6036,7 @@ export namespace Prisma {
     isCustomFaceInQueue: boolean | null
     voice: string | null
     useCustomVoice: boolean | null
+    personaType: string | null
     productName: string | null
     productDescription: string | null
     productLink: string | null
@@ -6059,6 +6060,7 @@ export namespace Prisma {
     isCustomFaceInQueue: boolean | null
     voice: string | null
     useCustomVoice: boolean | null
+    personaType: string | null
     productName: string | null
     productDescription: string | null
     productLink: string | null
@@ -6082,6 +6084,7 @@ export namespace Prisma {
     isCustomFaceInQueue: number
     voice: number
     useCustomVoice: number
+    personaType: number
     productName: number
     productDescription: number
     productLink: number
@@ -6108,6 +6111,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: true
     voice?: true
     useCustomVoice?: true
+    personaType?: true
     productName?: true
     productDescription?: true
     productLink?: true
@@ -6131,6 +6135,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: true
     voice?: true
     useCustomVoice?: true
+    personaType?: true
     productName?: true
     productDescription?: true
     productLink?: true
@@ -6154,6 +6159,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: true
     voice?: true
     useCustomVoice?: true
+    personaType?: true
     productName?: true
     productDescription?: true
     productLink?: true
@@ -6251,6 +6257,7 @@ export namespace Prisma {
     isCustomFaceInQueue: boolean
     voice: string | null
     useCustomVoice: boolean
+    personaType: string | null
     productName: string | null
     productDescription: string | null
     productLink: string | null
@@ -6292,6 +6299,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: boolean
     useCustomVoice?: boolean
+    personaType?: boolean
     productName?: boolean
     productDescription?: boolean
     productLink?: boolean
@@ -6320,6 +6328,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: boolean
     useCustomVoice?: boolean
+    personaType?: boolean
     productName?: boolean
     productDescription?: boolean
     productLink?: boolean
@@ -6345,6 +6354,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: boolean
     useCustomVoice?: boolean
+    personaType?: boolean
     productName?: boolean
     productDescription?: boolean
     productLink?: boolean
@@ -6370,6 +6380,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: boolean
     useCustomVoice?: boolean
+    personaType?: boolean
     productName?: boolean
     productDescription?: boolean
     productLink?: boolean
@@ -6379,7 +6390,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type AIPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "pageLink" | "adImageUrl" | "voiceSampleUrl" | "faceId" | "simliSessionId" | "simliAgentId" | "systemPrompt" | "firstMessage" | "isCustomFaceInQueue" | "voice" | "useCustomVoice" | "productName" | "productDescription" | "productLink" | "metadata" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["aIPersona"]>
+  export type AIPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "pageLink" | "adImageUrl" | "voiceSampleUrl" | "faceId" | "simliSessionId" | "simliAgentId" | "systemPrompt" | "firstMessage" | "isCustomFaceInQueue" | "voice" | "useCustomVoice" | "personaType" | "productName" | "productDescription" | "productLink" | "metadata" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["aIPersona"]>
   export type AIPersonaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     sessions?: boolean | AIPersona$sessionsArgs<ExtArgs>
@@ -6415,6 +6426,7 @@ export namespace Prisma {
       isCustomFaceInQueue: boolean
       voice: string | null
       useCustomVoice: boolean
+      personaType: string | null
       productName: string | null
       productDescription: string | null
       productLink: string | null
@@ -6862,6 +6874,7 @@ export namespace Prisma {
     readonly isCustomFaceInQueue: FieldRef<"AIPersona", 'Boolean'>
     readonly voice: FieldRef<"AIPersona", 'String'>
     readonly useCustomVoice: FieldRef<"AIPersona", 'Boolean'>
+    readonly personaType: FieldRef<"AIPersona", 'String'>
     readonly productName: FieldRef<"AIPersona", 'String'>
     readonly productDescription: FieldRef<"AIPersona", 'String'>
     readonly productLink: FieldRef<"AIPersona", 'String'>
@@ -10635,6 +10648,7 @@ export namespace Prisma {
     isCustomFaceInQueue: 'isCustomFaceInQueue',
     voice: 'voice',
     useCustomVoice: 'useCustomVoice',
+    personaType: 'personaType',
     productName: 'productName',
     productDescription: 'productDescription',
     productLink: 'productLink',
@@ -11085,6 +11099,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
     voice?: StringNullableFilter<"AIPersona"> | string | null
     useCustomVoice?: BoolFilter<"AIPersona"> | boolean
+    personaType?: StringNullableFilter<"AIPersona"> | string | null
     productName?: StringNullableFilter<"AIPersona"> | string | null
     productDescription?: StringNullableFilter<"AIPersona"> | string | null
     productLink?: StringNullableFilter<"AIPersona"> | string | null
@@ -11112,6 +11127,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: SortOrder
     voice?: SortOrderInput | SortOrder
     useCustomVoice?: SortOrder
+    personaType?: SortOrderInput | SortOrder
     productName?: SortOrderInput | SortOrder
     productDescription?: SortOrderInput | SortOrder
     productLink?: SortOrderInput | SortOrder
@@ -11142,6 +11158,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
     voice?: StringNullableFilter<"AIPersona"> | string | null
     useCustomVoice?: BoolFilter<"AIPersona"> | boolean
+    personaType?: StringNullableFilter<"AIPersona"> | string | null
     productName?: StringNullableFilter<"AIPersona"> | string | null
     productDescription?: StringNullableFilter<"AIPersona"> | string | null
     productLink?: StringNullableFilter<"AIPersona"> | string | null
@@ -11169,6 +11186,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: SortOrder
     voice?: SortOrderInput | SortOrder
     useCustomVoice?: SortOrder
+    personaType?: SortOrderInput | SortOrder
     productName?: SortOrderInput | SortOrder
     productDescription?: SortOrderInput | SortOrder
     productLink?: SortOrderInput | SortOrder
@@ -11199,6 +11217,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolWithAggregatesFilter<"AIPersona"> | boolean
     voice?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
     useCustomVoice?: BoolWithAggregatesFilter<"AIPersona"> | boolean
+    personaType?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
     productName?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
     productDescription?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
     productLink?: StringNullableWithAggregatesFilter<"AIPersona"> | string | null
@@ -11679,6 +11698,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    personaType?: string | null
     productName?: string | null
     productDescription?: string | null
     productLink?: string | null
@@ -11705,6 +11725,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    personaType?: string | null
     productName?: string | null
     productDescription?: string | null
     productLink?: string | null
@@ -11731,6 +11752,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    personaType?: NullableStringFieldUpdateOperationsInput | string | null
     productName?: NullableStringFieldUpdateOperationsInput | string | null
     productDescription?: NullableStringFieldUpdateOperationsInput | string | null
     productLink?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11757,6 +11779,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    personaType?: NullableStringFieldUpdateOperationsInput | string | null
     productName?: NullableStringFieldUpdateOperationsInput | string | null
     productDescription?: NullableStringFieldUpdateOperationsInput | string | null
     productLink?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11783,6 +11806,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    personaType?: string | null
     productName?: string | null
     productDescription?: string | null
     productLink?: string | null
@@ -11807,6 +11831,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    personaType?: NullableStringFieldUpdateOperationsInput | string | null
     productName?: NullableStringFieldUpdateOperationsInput | string | null
     productDescription?: NullableStringFieldUpdateOperationsInput | string | null
     productLink?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11830,6 +11855,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    personaType?: NullableStringFieldUpdateOperationsInput | string | null
     productName?: NullableStringFieldUpdateOperationsInput | string | null
     productDescription?: NullableStringFieldUpdateOperationsInput | string | null
     productLink?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12392,6 +12418,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: SortOrder
     voice?: SortOrder
     useCustomVoice?: SortOrder
+    personaType?: SortOrder
     productName?: SortOrder
     productDescription?: SortOrder
     productLink?: SortOrder
@@ -12416,6 +12443,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: SortOrder
     voice?: SortOrder
     useCustomVoice?: SortOrder
+    personaType?: SortOrder
     productName?: SortOrder
     productDescription?: SortOrder
     productLink?: SortOrder
@@ -12439,6 +12467,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: SortOrder
     voice?: SortOrder
     useCustomVoice?: SortOrder
+    personaType?: SortOrder
     productName?: SortOrder
     productDescription?: SortOrder
     productLink?: SortOrder
@@ -13344,6 +13373,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    personaType?: string | null
     productName?: string | null
     productDescription?: string | null
     productLink?: string | null
@@ -13369,6 +13399,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    personaType?: string | null
     productName?: string | null
     productDescription?: string | null
     productLink?: string | null
@@ -13509,6 +13540,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFilter<"AIPersona"> | boolean
     voice?: StringNullableFilter<"AIPersona"> | string | null
     useCustomVoice?: BoolFilter<"AIPersona"> | boolean
+    personaType?: StringNullableFilter<"AIPersona"> | string | null
     productName?: StringNullableFilter<"AIPersona"> | string | null
     productDescription?: StringNullableFilter<"AIPersona"> | string | null
     productLink?: StringNullableFilter<"AIPersona"> | string | null
@@ -13784,6 +13816,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    personaType?: string | null
     productName?: string | null
     productDescription?: string | null
     productLink?: string | null
@@ -13809,6 +13842,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    personaType?: string | null
     productName?: string | null
     productDescription?: string | null
     productLink?: string | null
@@ -13850,6 +13884,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    personaType?: NullableStringFieldUpdateOperationsInput | string | null
     productName?: NullableStringFieldUpdateOperationsInput | string | null
     productDescription?: NullableStringFieldUpdateOperationsInput | string | null
     productLink?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13875,6 +13910,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    personaType?: NullableStringFieldUpdateOperationsInput | string | null
     productName?: NullableStringFieldUpdateOperationsInput | string | null
     productDescription?: NullableStringFieldUpdateOperationsInput | string | null
     productLink?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13924,6 +13960,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    personaType?: string | null
     productName?: string | null
     productDescription?: string | null
     productLink?: string | null
@@ -13949,6 +13986,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    personaType?: string | null
     productName?: string | null
     productDescription?: string | null
     productLink?: string | null
@@ -14048,6 +14086,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    personaType?: NullableStringFieldUpdateOperationsInput | string | null
     productName?: NullableStringFieldUpdateOperationsInput | string | null
     productDescription?: NullableStringFieldUpdateOperationsInput | string | null
     productLink?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14073,6 +14112,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    personaType?: NullableStringFieldUpdateOperationsInput | string | null
     productName?: NullableStringFieldUpdateOperationsInput | string | null
     productDescription?: NullableStringFieldUpdateOperationsInput | string | null
     productLink?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14183,6 +14223,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: boolean
     voice?: string | null
     useCustomVoice?: boolean
+    personaType?: string | null
     productName?: string | null
     productDescription?: string | null
     productLink?: string | null
@@ -14233,6 +14274,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    personaType?: NullableStringFieldUpdateOperationsInput | string | null
     productName?: NullableStringFieldUpdateOperationsInput | string | null
     productDescription?: NullableStringFieldUpdateOperationsInput | string | null
     productLink?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14258,6 +14300,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    personaType?: NullableStringFieldUpdateOperationsInput | string | null
     productName?: NullableStringFieldUpdateOperationsInput | string | null
     productDescription?: NullableStringFieldUpdateOperationsInput | string | null
     productLink?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14283,6 +14326,7 @@ export namespace Prisma {
     isCustomFaceInQueue?: BoolFieldUpdateOperationsInput | boolean
     voice?: NullableStringFieldUpdateOperationsInput | string | null
     useCustomVoice?: BoolFieldUpdateOperationsInput | boolean
+    personaType?: NullableStringFieldUpdateOperationsInput | string | null
     productName?: NullableStringFieldUpdateOperationsInput | string | null
     productDescription?: NullableStringFieldUpdateOperationsInput | string | null
     productLink?: NullableStringFieldUpdateOperationsInput | string | null

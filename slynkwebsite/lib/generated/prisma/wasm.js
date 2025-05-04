@@ -170,6 +170,7 @@ exports.Prisma.AIPersonaScalarFieldEnum = {
   isCustomFaceInQueue: 'isCustomFaceInQueue',
   voice: 'voice',
   useCustomVoice: 'useCustomVoice',
+  personaType: 'personaType',
   productName: 'productName',
   productDescription: 'productDescription',
   productLink: 'productLink',

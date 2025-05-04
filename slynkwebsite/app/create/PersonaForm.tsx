@@ -21,11 +21,25 @@ import { motion } from "framer-motion"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { elevenLabsVoices, DEFAULT_VOICE } from '@/lib/voice-options'
 import { createPersona, PersonaFormData } from '@/lib/api'
+import { generateEnhancedPrompt } from '@/lib/enhanced-prompts'
+
+type PersonaType = 
+  | 'default'
+  | 'tech' 
+  | 'lifestyle'
+  | 'finance'
+  | 'healthcare'
+  | 'entertainment'
+  | 'food'
+  | 'travel'
+  | 'education'
+  | 'luxury'
+  | 'fitness'
 
 export default function PersonaForm() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState<PersonaFormData>({
+  const [formData, setFormData] = useState<PersonaFormData & { personaType: PersonaType }>({
     name: "",
     description: "",
     firstMessage: "",
@@ -35,6 +49,7 @@ export default function PersonaForm() {
     productName: "",
     productDescription: "",
     productLink: "",
+    personaType: "default",
   })
   const [image, setImage] = useState<File | null>(null)
   const [previewImage, setPreviewImage] = useState<string | null>(null)
@@ -462,9 +477,10 @@ export default function PersonaForm() {
       const systemPrompt = generateSystemPrompt(
         formData.name, 
         formData.description,
-        formData.productName || undefined,
-        formData.productDescription || undefined,
-        formData.productLink || undefined
+        formData.productName,
+        formData.productDescription,
+        formData.productLink,
+        formData.personaType
       )
       
       const firstMessage = formData.firstMessage || 
@@ -553,26 +569,17 @@ export default function PersonaForm() {
     personaDescription: string,
     productName?: string,
     productDescription?: string,
-    productLink?: string
+    productLink?: string,
+    personaType: PersonaType = 'default'
   ) => {
-    let prompt = `You are a virtual spokesperson named ${personaName || 'AI Assistant'}. ${personaDescription || ''} `
-    
-    if (productName) {
-      prompt += `You are an expert on ${productName}. `
-      
-      if (productDescription) {
-        prompt += `Here's important information about ${productName}: ${productDescription} `
-      }
-      
-      if (productLink) {
-        prompt += `You can refer users to this link for more information: ${productLink} `
-      }
-    }
-    
-    prompt += "Keep your responses helpful, concise, and focused on providing valuable information. " +
-      "Always be friendly and professional."
-    
-    return prompt
+    return generateEnhancedPrompt({
+      name: personaName,
+      description: personaDescription,
+      productName: productName || "",
+      productDescription: productDescription || "",
+      productLink: productLink || "",
+      personaType
+    });
   }
 
   // Add a function to clear the face generation queue
@@ -675,6 +682,14 @@ export default function PersonaForm() {
       setIsPollingActive(false);
     };
   }, []);
+
+  // Add function to handle personaType change
+  const handlePersonaTypeChange = (value: PersonaType) => {
+    setFormData({
+      ...formData,
+      personaType: value
+    });
+  };
 
   return (
     <div className="w-full max-w-5xl mx-auto p-6 font-sans">
@@ -863,6 +878,36 @@ export default function PersonaForm() {
               </div>
               
                   <div className="space-y-5">
+                <div className="space-y-2">
+                      <Label htmlFor="personaType">Persona Type</Label>
+                  <Select
+                    value={formData.personaType}
+                    onValueChange={(value) => handlePersonaTypeChange(value as PersonaType)}
+                  >
+                    <SelectTrigger className="w-full border border-indigo-200 focus:border-indigo-400 bg-white rounded-xl shadow-sm">
+                      <SelectValue placeholder="Select a persona type" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-0 shadow-lg rounded-xl overflow-hidden">
+                      <div className="p-2 max-h-[300px] overflow-y-auto bg-white">
+                        <SelectItem value="default" className="rounded-lg my-1 hover:bg-indigo-50">Default - Professional & Balanced</SelectItem>
+                        <SelectItem value="tech" className="rounded-lg my-1 hover:bg-indigo-50">Technology - Technical & Innovative</SelectItem>
+                        <SelectItem value="lifestyle" className="rounded-lg my-1 hover:bg-indigo-50">Lifestyle - Approachable & Trendy</SelectItem>
+                        <SelectItem value="finance" className="rounded-lg my-1 hover:bg-indigo-50">Finance - Authoritative & Precise</SelectItem>
+                        <SelectItem value="healthcare" className="rounded-lg my-1 hover:bg-indigo-50">Healthcare - Caring & Informative</SelectItem>
+                        <SelectItem value="entertainment" className="rounded-lg my-1 hover:bg-indigo-50">Entertainment - Energetic & Engaging</SelectItem>
+                        <SelectItem value="food" className="rounded-lg my-1 hover:bg-indigo-50">Food & Dining - Passionate & Descriptive</SelectItem>
+                        <SelectItem value="travel" className="rounded-lg my-1 hover:bg-indigo-50">Travel - Adventurous & Inspiring</SelectItem>
+                        <SelectItem value="education" className="rounded-lg my-1 hover:bg-indigo-50">Education - Patient & Instructive</SelectItem>
+                        <SelectItem value="luxury" className="rounded-lg my-1 hover:bg-indigo-50">Luxury - Sophisticated & Exclusive</SelectItem>
+                        <SelectItem value="fitness" className="rounded-lg my-1 hover:bg-indigo-50">Fitness - Motivational & Supportive</SelectItem>
+                      </div>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-indigo-700 italic mt-1">
+                    Choose a personality type that best matches your AI spokesperson's role.
+                  </p>
+                </div>
+                
                 <div className="space-y-2">
                       <Label htmlFor="productName" className="text-base font-medium text-gray-700">Product Name</Label>
                   <Input 
