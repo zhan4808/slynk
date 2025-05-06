@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { 
   Loader2, Upload, Check, Play, X, 
-  Mic, Image as ImageIcon, UserRound, Sparkles, RefreshCw
+  Mic, Image as ImageIcon, UserRound, Sparkles, RefreshCw, AlertCircle, CheckCircle
 } from "lucide-react"
 import Image from "next/image"
 import { 
@@ -62,6 +62,7 @@ export default function PersonaForm() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [isPreviewGenerated, setIsPreviewGenerated] = useState(false)
   const [isCustomFaceInQueue, setIsCustomFaceInQueue] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
   const [faceGenerationStatus, setFaceGenerationStatus] = useState<{
     isReady: boolean,
     progress: number,
@@ -271,11 +272,13 @@ export default function PersonaForm() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
       setImage(file)
+      // Reset any existing error messages when a new image is selected
+      setError(null)
       
-      // Create preview
+      // Create a preview of the image
       const reader = new FileReader()
-      reader.onload = () => {
-        setPreviewImage(reader.result as string)
+      reader.onload = (readerEvent) => {
+        setPreviewImage(readerEvent.target?.result as string)
       }
       reader.readAsDataURL(file)
     }
@@ -286,71 +289,48 @@ export default function PersonaForm() {
       setError("Please upload an image first")
       return
     }
-    
-    // Check image size before attempting generation
-    if (image.size > 10 * 1024 * 1024) { // 10MB limit
-      setError("Image size exceeds 10MB limit. Please upload a smaller image.")
-      return
-    }
-    
-    // Clear any existing face generation data
-    clearFaceGeneration()
-    
-    setIsGeneratingFace(true)
-    setError(null)
-    setSuccessMessage(null)
-    
+
     try {
-      // Attempt to generate a face ID using Simli's API
-      console.log("Generating face ID from uploaded image...")
-      const result = await generateFaceId(image, formData.name || "unnamed_persona")
-      console.log("Successfully generated face ID:", result)
+      // Clear messages
+      setError(null)
+      setSuccessMessage(null)
+      setIsGeneratingFace(true)
       
-      if (!result || !result.faceId) {
-        throw new Error("No face ID was returned from the API")
-      }
+      // Generate face ID
+      const { faceId, isInQueue, originalResponse } = await generateFaceId(image, formData.name)
       
-      setFormData({
-        ...formData,
-        faceId: result.faceId
-      })
-      
-      // Set additional state for queue status
-      setIsCustomFaceInQueue(result.isInQueue)
-      if (result.originalResponse) {
-        setOriginalFaceResponse(result.originalResponse)
-      }
-      
-      if (result.isInQueue) {
-        // Handle queued face ID scenario
-        setSuccessMessage(
-          "Your custom face has been added to the processing queue! " +
-          "This can take 1-3 minutes to complete. " +
-          "We'll notify you when it's ready for preview generation."
-        )
-        
-        // Set up periodic checking if needed
-        if (result.originalResponse?.character_uid) {
-          // Start polling immediately for status updates
-          console.log("Face generation queued with character_uid:", result.originalResponse.character_uid)
-        }
+      // If face is put in a processing queue, indicate this to the user
+      if (isInQueue) {
+        setIsCustomFaceInQueue(true)
+        setOriginalFaceResponse(originalResponse)
+        setFaceGenerationStatus({
+          isReady: false,
+          progress: 10,
+          message: "Your face is currently being processed. This typically takes 1-3 minutes.",
+          lastChecked: Date.now()
+        })
+        setSuccessMessage("Processing your image. This will take a few minutes...")
       } else {
-        setSuccessMessage("Face ID generated successfully! Now proceed to Step 3 to generate a preview.")
+        // Face ID was generated immediately
+        setFormData({
+          ...formData,
+          faceId
+        })
+        setSuccessMessage("Face ID generated successfully!")
       }
-    } catch (error) {
-      console.error("Error generating face ID:", error)
-      
-      // Extract error details for better messages
-      let errorMsg = error instanceof Error ? error.message : "Failed to generate face"
-      
-      // Handle specific errors with better messages
-      if (errorMsg.includes("512x512")) {
-        errorMsg = "Image must be at least 512x512 pixels. Please upload a larger image."
-      } else if (errorMsg.includes("502")) {
-        errorMsg = "Server error when processing image. Please try again with a different image."
+    } catch (err: any) {
+      console.error("Face generation error:", err)
+      setError(`Failed to generate face: ${err.message || "Unknown error"}`)
+      // Show more helpful message for common errors
+      if (err.message?.includes("dimensions")) {
+        setError("The image dimensions are too small. Please upload a larger image (at least 512x512 pixels).")
+      } else if (err.message?.includes("format")) {
+        setError("Unsupported image format. Please upload a JPG, PNG or WebP image.")
+      } else if (err.message?.includes("too large")) {
+        setError("The image is too large. Please upload an image smaller than 10MB.")
+      } else if (err.message?.includes("corrupted")) {
+        setError("The image appears to be corrupted. Please try a different image.")
       }
-      
-      setError(errorMsg)
     } finally {
       setIsGeneratingFace(false)
     }
@@ -691,6 +671,165 @@ export default function PersonaForm() {
     });
   };
 
+  // Step 2: Face ID
+  const renderFaceIdStep = () => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: activeStep >= 2 ? 1 : 0, y: activeStep >= 2 ? 0 : 10 }}
+        transition={{ duration: 0.4 }}
+        className={`mb-8 rounded-xl bg-white p-6 shadow-sm ${activeStep < 2 ? 'hidden' : ''}`}
+      >
+        <h2 className="mb-4 text-xl font-semibold">Step 2: Upload or generate a face for your AI</h2>
+        
+        <div className="mb-6">
+          <div className="flex flex-col gap-6 md:flex-row">
+            <div className="flex-1">
+              <div className="mb-4">
+                <p className="mb-2 text-sm font-medium text-gray-700">Upload a portrait photo</p>
+                <div
+                  className={`rounded-lg border-2 border-dashed p-4 transition-all ${
+                    isDragging ? "border-pink-400 bg-pink-50" : 
+                    error && error.toLowerCase().includes("image") ? "border-red-400 bg-red-50" : 
+                    "border-gray-300 hover:border-pink-300 hover:bg-gray-50"
+                  }`}
+                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDragging(false);
+                    
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                      const file = e.dataTransfer.files[0];
+                      if (file.type.startsWith('image/')) {
+                        setImage(file);
+                        
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          setPreviewImage(event.target?.result as string);
+                        };
+                        reader.readAsDataURL(file);
+                        
+                        // Clear errors when user tries again
+                        setError(null);
+                      } else {
+                        setError("Please upload an image file (JPG, PNG, or WebP)");
+                      }
+                    }
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <div className="flex flex-col items-center justify-center py-4">
+                    {!previewImage ? (
+                      <div className="text-center">
+                        <UserRound size={36} className="mx-auto mb-2 text-gray-400" />
+                        <p className="mb-1 text-sm text-gray-500">
+                          <span className="font-medium text-pink-500">Click to upload</span> or drag and drop
+                        </p>
+                        <p className="text-xs text-gray-400">PNG, JPG or WebP</p>
+                        <p className="text-xs text-gray-400 mt-1">Minimum 512x512 pixels</p>
+                      </div>
+                    ) : (
+                      <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-lg">
+                        <Image 
+                          src={previewImage} 
+                          alt="Preview" 
+                          fill 
+                          style={{objectFit: 'cover'}} 
+                          className="rounded-lg border border-gray-200" 
+                        />
+                        <button 
+                          className="absolute top-1 right-1 rounded-full bg-gray-800 bg-opacity-70 p-1 text-white"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPreviewImage(null);
+                            setImage(null);
+                            setError(null);
+                          }}
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    )}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      className="hidden"
+                      accept="image/png,image/jpeg,image/jpg,image/webp"
+                      onChange={handleImageUpload}
+                    />
+                  </div>
+                </div>
+
+                {/* Image error message display */}
+                {error && error.toLowerCase().includes("image") && (
+                  <div className="mt-2 flex items-start gap-2 rounded-md bg-red-50 p-2 text-sm text-red-600">
+                    <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+                    <p>{error}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-3 flex gap-2">
+                <Button
+                  onClick={handleGenerateFaceId}
+                  disabled={!image || isGeneratingFace}
+                  className="gap-2"
+                >
+                  {isGeneratingFace ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={16} />
+                      Generate Face ID
+                    </>
+                  )}
+                </Button>
+              </div>
+              
+              {/* Progress indicator for custom face generation */}
+              {isCustomFaceInQueue && (
+                <div className="mt-4">
+                  <div className="mb-1 flex items-center justify-between">
+                    <p className="text-sm text-gray-600">Processing your face...</p>
+                    <p className="text-sm font-medium text-gray-600">{faceGenerationStatus.progress}%</p>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-gray-200">
+                    <div 
+                      className="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-700"
+                      style={{ width: `${faceGenerationStatus.progress}%` }}
+                    ></div>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">{faceGenerationStatus.message}</p>
+                  
+                  {/* Show estimated time left for processing */}
+                  {faceGenerationStatus.progress > 0 && faceGenerationStatus.progress < 100 && (
+                    <p className="mt-2 text-xs text-gray-500">
+                      Processing time: {formatTime(processingTime)} 
+                      {processingTime < 180 && " (typically takes 1-3 minutes)"}
+                    </p>
+                  )}
+                </div>
+              )}
+              
+              {formData.faceId && !isCustomFaceInQueue && (
+                <div className="mt-4 rounded-md bg-green-50 p-3 text-sm text-green-700">
+                  <div className="flex items-center">
+                    <CheckCircle size={16} className="mr-2 flex-shrink-0" />
+                    <p>Face ID generated successfully!</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    )
+  }
+
   return (
     <div className="w-full max-w-5xl mx-auto p-6 font-sans">
       
@@ -1012,9 +1151,9 @@ export default function PersonaForm() {
                             setImage(null)
                             setPreviewImage(null)
                           }}
-                          className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors duration-200"
+                          className="absolute top-2 right-2 bg-gray-800 bg-opacity-70 rounded-full p-1 text-white"
                         >
-                          <X size={16} />
+                          <X size={14} />
                         </button>
                           </motion.div>
                     ) : (

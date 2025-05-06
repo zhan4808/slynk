@@ -527,11 +527,13 @@ function EditPersonaForm({ persona, personaId, formData, setFormData }: EditPers
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
       setImage(file)
+      // Reset any existing error messages when a new image is selected
+      setError(null)
       
-      // Create preview
+      // Create a preview of the image
       const reader = new FileReader()
-      reader.onload = () => {
-        setPreviewImage(reader.result as string)
+      reader.onload = (readerEvent) => {
+        setPreviewImage(readerEvent.target?.result as string)
       }
       reader.readAsDataURL(file)
     }
@@ -542,71 +544,57 @@ function EditPersonaForm({ persona, personaId, formData, setFormData }: EditPers
       setError("Please upload an image first")
       return
     }
-    
-    // Check image size before attempting generation
-    if (image.size > 10 * 1024 * 1024) { // 10MB limit
-      setError("Image size exceeds 10MB limit. Please upload a smaller image.")
-      return
-    }
-    
-    // Clear any existing face generation data
-    clearFaceGeneration()
-    
-    setIsGeneratingFace(true)
-    setError(null)
-    setSuccessMessage(null)
-    
+
     try {
-      // Attempt to generate a face ID using Simli's API
-      console.log("Generating face ID from uploaded image...")
-      const result = await generateFaceId(image, formData.name || "unnamed_persona")
-      console.log("Successfully generated face ID:", result)
+      // Clear messages
+      setError(null)
+      setSuccessMessage(null)
+      setIsGeneratingFace(true)
       
-      if (!result || !result.faceId) {
-        throw new Error("No face ID was returned from the API")
-      }
+      // Generate face ID
+      const { faceId, isInQueue, originalResponse } = await generateFaceId(image, formData.name)
       
-      setFormData({
-        ...formData,
-        faceId: result.faceId
-      })
-      
-      // Set additional state for queue status
-      setIsCustomFaceInQueue(result.isInQueue)
-      if (result.originalResponse) {
-        setOriginalFaceResponse(result.originalResponse)
-      }
-      
-      if (result.isInQueue) {
-        // Handle queued face ID scenario
-        setSuccessMessage(
-          "Your custom face has been added to the processing queue! " +
-          "This can take 1-3 minutes to complete. " +
-          "We'll notify you when it's ready for preview generation."
-        )
+      // If face is put in a processing queue, indicate this to the user
+      if (isInQueue) {
+        setFormData({
+          ...formData,
+          isCustomFaceInQueue: true,
+          originalCharacterId: originalResponse?.character_uid
+        })
+        setFaceGenerationStatus({
+          isReady: false,
+          progress: 10,
+          message: "Your face is currently being processed. This typically takes 1-3 minutes.",
+          lastChecked: Date.now()
+        })
+        setSuccessMessage("Processing your image. This will take a few minutes...")
         
-        // Set up periodic checking if needed
-        if (result.originalResponse?.character_uid) {
-          // Start polling immediately for status updates
-          console.log("Face generation queued with character_uid:", result.originalResponse.character_uid)
+        // Start polling for status if we have a character_uid
+        if (originalResponse?.character_uid) {
+          startPollingFaceStatus(originalResponse.character_uid)
         }
       } else {
-        setSuccessMessage("Face ID generated successfully! Now proceed to Step 3 to generate a preview.")
+        // Face ID was generated immediately
+        setFormData({
+          ...formData,
+          faceId,
+          isCustomFaceInQueue: false
+        })
+        setSuccessMessage("Face ID generated successfully!")
       }
-    } catch (error) {
-      console.error("Error generating face ID:", error)
-      
-      // Extract error details for better messages
-      let errorMsg = error instanceof Error ? error.message : "Failed to generate face"
-      
-      // Handle specific errors with better messages
-      if (errorMsg.includes("512x512")) {
-        errorMsg = "Image must be at least 512x512 pixels. Please upload a larger image."
-      } else if (errorMsg.includes("502")) {
-        errorMsg = "Server error when processing image. Please try again with a different image."
+    } catch (err: any) {
+      console.error("Face generation error:", err)
+      setError(`Failed to generate face: ${err.message || "Unknown error"}`)
+      // Show more helpful message for common errors
+      if (err.message?.includes("dimensions")) {
+        setError("The image dimensions are too small. Please upload a larger image (at least 512x512 pixels).")
+      } else if (err.message?.includes("format")) {
+        setError("Unsupported image format. Please upload a JPG, PNG or WebP image.")
+      } else if (err.message?.includes("too large")) {
+        setError("The image is too large. Please upload an image smaller than 10MB.")
+      } else if (err.message?.includes("corrupted")) {
+        setError("The image appears to be corrupted. Please try a different image.")
       }
-      
-      setError(errorMsg)
     } finally {
       setIsGeneratingFace(false)
     }
@@ -786,532 +774,315 @@ function EditPersonaForm({ persona, personaId, formData, setFormData }: EditPers
     `Hello, I'm ${formData.name}. How can I help you with ${formData.productName || 'your questions'} today?`
   );
 
-  // Fix checkFaceStatus function
+  // Function to start polling for face generation status
+  const startPollingFaceStatus = (characterUid: string) => {
+    if (isPollingActive) return;
+    
+    console.log("Starting polling for face status with character_uid:", characterUid);
+    setIsPollingActive(true);
+    
+    // Check the face status immediately
+    checkFaceStatus();
+    
+    // Set up adaptive polling
+    let pollCount = 0;
+    const pollWithBackoff = () => {
+      // Clear any existing timeout
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current);
+      }
+      
+      // Calculate next interval based on how many polls we've done
+      let interval = 5000; // Start with 5 seconds
+      if (pollCount >= 3 && pollCount < 10) {
+        interval = 15000; // 15 seconds after 3 attempts
+      } else if (pollCount >= 10) {
+        interval = 30000; // 30 seconds after 10 attempts
+      }
+      
+      pollingTimeoutRef.current = setTimeout(async () => {
+        pollCount++;
+        console.log(`Poll #${pollCount} for face status`);
+        
+        await checkFaceStatus();
+        
+        // Continue polling if still needed
+        if (formData.isCustomFaceInQueue) {
+          pollWithBackoff();
+        } else {
+          console.log("Stopping polling - face is ready or failed");
+          setIsPollingActive(false);
+        }
+      }, interval);
+    };
+    
+    // Start polling sequence
+    pollWithBackoff();
+  };
+  
+  // Clean up polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current);
+        pollingTimeoutRef.current = null;
+      }
+      setIsPollingActive(false);
+    };
+  }, []);
+  
+  // Function to check face generation status
   const checkFaceStatus = async () => {
-    if (!originalFaceResponse?.character_uid) return;
+    if (!formData.originalCharacterId) return;
     
     try {
-      setIsPollingActive(true);
-      const status = await checkFaceGenerationStatus(originalFaceResponse.character_uid);
+      console.log(`Checking face status for character_uid: ${formData.originalCharacterId}`);
+      const result = await checkFaceGenerationStatus(formData.originalCharacterId);
+      console.log("Face status check result:", result);
       
-      // Update status display
-      setFaceGenerationStatus(prev => ({
-        ...prev,
-        ...status,
-        lastChecked: Date.now()
-      }));
+      // Calculate progress percentage
+      let progress = 0;
+      if (result.status === "processing") progress = 40;
+      else if (result.status === "in_progress") progress = 60;
+      else if (result.status === "generating") progress = 80;
+      else if (result.status === "completed" || result.status === "ready") progress = 100;
+      else if (result.status === "failed") progress = 0;
       
-      if (status.isReady) {
-        // Face is ready, set the face ID
+      setFaceGenerationStatus({
+        status: result.status,
+        progress,
+        isReady: result.isReady,
+        message: result.message || `Face generation ${result.status}`,
+        lastChecked: Date.now(),
+        faceId: result.faceId,
+        failed: result.failed
+      });
+      
+      // Update the form data if face is ready or failed
+      if (result.failed) {
+        setError("Face generation failed. You can try again with a different image.");
         setFormData(prev => ({
           ...prev,
-          faceId: status.faceId || prev.faceId
+          isCustomFaceInQueue: false
         }));
-        setIsCustomFaceInQueue(false);
-        setSuccessMessage("Custom face is ready! You can now generate a preview.");
-      } else if (status.failed) {
-        setError("Face generation failed. Please try with a different image.");
-        setIsCustomFaceInQueue(false);
+      } else if (result.isReady && result.faceId) {
+        setFormData(prev => ({
+          ...prev,
+          faceId: result.faceId || prev.faceId,
+          isCustomFaceInQueue: false
+        }));
+        setSuccessMessage("Your custom face is ready! You can now generate a preview.");
       }
     } catch (error) {
-      console.error("Error checking face generation status:", error);
-      setFaceGenerationStatus(prev => ({
-        ...prev,
-        lastChecked: Date.now(),
-        message: "Error checking status"
-      }));
-    } finally {
-      setIsPollingActive(false);
+      console.error("Error checking face status:", error);
     }
+  };
+
+  // Image upload section
+  const renderImageUploadSection = () => {
+    const [localIsDragging, setLocalIsDragging] = useState(false);
+    
+    return (
+      <div className="mb-6">
+        <p className="mb-2 text-sm font-medium text-gray-700">Face Image</p>
+        <div
+          className={`rounded-lg border-2 border-dashed p-4 transition-all ${
+            localIsDragging ? "border-pink-400 bg-pink-50" : 
+            error && error.toLowerCase().includes("image") ? "border-red-400 bg-red-50" : 
+            "border-gray-300 hover:border-pink-300 hover:bg-gray-50"
+          }`}
+          onDragOver={(e) => { e.preventDefault(); setLocalIsDragging(true); }}
+          onDragLeave={() => setLocalIsDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setLocalIsDragging(false);
+            
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+              const file = e.dataTransfer.files[0];
+              if (file.type.startsWith('image/')) {
+                setImage(file);
+                setError(null);
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                  setPreviewImage(event.target?.result as string);
+                };
+                reader.readAsDataURL(file);
+              } else {
+                setError("Please upload an image file (JPG, PNG, or WebP)");
+              }
+            }
+          }}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <div className="flex flex-col items-center justify-center py-4">
+            {!previewImage ? (
+              <div className="text-center">
+                <UserRound size={36} className="mx-auto mb-2 text-gray-400" />
+                <p className="mb-1 text-sm text-gray-500">
+                  <span className="font-medium text-pink-500">Click to upload</span> or drag and drop
+                </p>
+                <p className="text-xs text-gray-400">PNG, JPG or WebP</p>
+                <p className="text-xs text-gray-400 mt-1">Minimum 512x512 pixels</p>
+              </div>
+            ) : (
+              <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-lg">
+                <Image 
+                  src={previewImage} 
+                  alt="Preview" 
+                  fill 
+                  style={{objectFit: 'cover'}} 
+                  className="rounded-lg border border-gray-200" 
+                />
+                <button 
+                  className="absolute top-1 right-1 rounded-full bg-gray-800 bg-opacity-70 p-1 text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPreviewImage(null);
+                    setImage(null);
+                    setError(null);
+                  }}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="hidden"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+              onChange={handleImageUpload}
+            />
+          </div>
+        </div>
+        
+        {/* Image error message display */}
+        {error && error.toLowerCase().includes("image") && (
+          <div className="mt-2 flex items-start gap-2 rounded-md bg-red-50 p-2 text-sm text-red-600">
+            <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+            <p>{error}</p>
+          </div>
+        )}
+        
+        <div className="mt-3 flex gap-2">
+          <Button
+            onClick={handleGenerateFaceId}
+            disabled={!image || isGeneratingFace}
+            className="gap-2"
+          >
+            {isGeneratingFace ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Sparkles size={16} />
+                Generate Face ID
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+    );
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Basic Information Section */}
-      <motion.div 
-        className="bg-white rounded-3xl shadow-lg overflow-hidden"
-        style={{ boxShadow: "0 20px 60px -15px rgba(0,0,0,0.1)" }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <div className="p-8">
-          <motion.div
-            className="flex items-center gap-2 mb-6"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl font-semibold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Basic Information</h2>
-          </motion.div>
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        {/* Form section: Basic Information */}
+        <div className="rounded-xl bg-white p-6 shadow-sm">
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-800">
+            <User size={18} className="text-pink-600" />
+            <span>Basic Information</span>
+          </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-base font-medium text-gray-700">Name</Label>
-                <Input 
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-                  placeholder="E.g., Business Advisor Bob"
-                  className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-              required
-            />
-          </div>
-          
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-base font-medium text-gray-700">Description</Label>
-                <Textarea 
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-                  placeholder="Describe the persona's background, expertise, and personality"
-                  className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                  rows={3}
-                />
-              </div>
+          <div className="mt-4 space-y-4">
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="e.g. Product Expert Sarah"
+                className="mt-1"
+                required
+              />
             </div>
             
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="personaType" className="text-base font-medium text-gray-700">Persona Type</Label>
-                <Select 
-                  value={formData.personaType} 
-                  onValueChange={handlePersonaTypeChange}
-                >
-                  <SelectTrigger className="w-full border border-indigo-200 focus:border-indigo-400 bg-white rounded-xl shadow-sm">
-                    <SelectValue placeholder="Select a persona type" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border-0 shadow-lg rounded-xl overflow-hidden">
-                    <div className="p-2 max-h-[300px] overflow-y-auto bg-white">
-                      <SelectGroup>
-                        <SelectLabel className="px-2 py-1 text-xs font-medium text-gray-500">Persona Types</SelectLabel>
-                        <SelectItem value="default" className="rounded-lg my-1 hover:bg-indigo-50">Default - Professional & Balanced</SelectItem>
-                        <SelectItem value="tech" className="rounded-lg my-1 hover:bg-indigo-50">Tech - Technical & Innovative</SelectItem>
-                        <SelectItem value="lifestyle" className="rounded-lg my-1 hover:bg-indigo-50">Lifestyle - Approachable & Trendy</SelectItem>
-                        <SelectItem value="finance" className="rounded-lg my-1 hover:bg-indigo-50">Finance - Authoritative & Precise</SelectItem>
-                        <SelectItem value="healthcare" className="rounded-lg my-1 hover:bg-indigo-50">Healthcare - Caring & Informative</SelectItem>
-                        <SelectItem value="entertainment" className="rounded-lg my-1 hover:bg-indigo-50">Entertainment - Energetic & Engaging</SelectItem>
-                        <SelectItem value="food" className="rounded-lg my-1 hover:bg-indigo-50">Food - Passionate & Descriptive</SelectItem>
-                        <SelectItem value="travel" className="rounded-lg my-1 hover:bg-indigo-50">Travel - Adventurous & Inspiring</SelectItem>
-                        <SelectItem value="education" className="rounded-lg my-1 hover:bg-indigo-50">Education - Patient & Instructive</SelectItem>
-                        <SelectItem value="luxury" className="rounded-lg my-1 hover:bg-indigo-50">Luxury - Sophisticated & Exclusive</SelectItem>
-                        <SelectItem value="fitness" className="rounded-lg my-1 hover:bg-indigo-50">Fitness - Motivational & Supportive</SelectItem>
-                      </SelectGroup>
-                    </div>
-                  </SelectContent>
-                </Select>
-                <p className="mt-2 text-xs text-indigo-700 italic">
-                  Select the persona type that best matches your product or service. This affects
-                  how your AI spokesperson will communicate with users.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-            
-      {/* Product Information Section */}
-      <motion.div 
-        className="bg-white rounded-3xl shadow-lg overflow-hidden"
-        style={{ boxShadow: "0 20px 60px -15px rgba(0,0,0,0.1)" }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <div className="p-8">
-          <motion.div
-            className="flex items-center gap-2 mb-6"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl font-semibold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Product Information</h2>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="productName" className="text-base font-medium text-gray-700">Product Name</Label>
-                <Input 
-                  id="productName"
-                  name="productName"
-                  value={formData.productName}
-                  onChange={handleChange}
-                  placeholder="E.g., Smart Home Controller"
-                  className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                  required
-                />
-              </div>
-          
-              <div className="space-y-2">
-                <Label htmlFor="productDescription" className="text-base font-medium text-gray-700">Product Description</Label>
-                <Textarea 
-                  id="productDescription"
-                  name="productDescription"
-                  value={formData.productDescription}
-                  onChange={handleChange}
-                  placeholder="Describe the product's features, benefits, and unique selling points"
-                  className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                  rows={3}
-                />
-              </div>
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Describe your AI persona..."
+                className="mt-1"
+                rows={4}
+                required
+              />
             </div>
             
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="productLink" className="text-base font-medium text-gray-700">Product Link (Optional)</Label>
-                <Input 
-                  id="productLink"
-                  name="productLink"
-                  value={formData.productLink}
-                  onChange={handleChange}
-                  placeholder="https://example.com/product"
-                  className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="firstMessage" className="text-base font-medium text-gray-700">First Message (Optional)</Label>
-                <Textarea 
-                  id="firstMessage"
-                  name="firstMessage"
-                  value={formData.firstMessage}
-                  onChange={handleChange}
-                  placeholder="First message to send when starting a conversation (auto-generated if left empty)"
-                  className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-gray-50"
-                  rows={2}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-      
-      {/* Preview and Voice Section */}
-      <motion.div 
-        className="bg-white rounded-3xl shadow-lg overflow-hidden"
-        style={{ boxShadow: "0 20px 60px -15px rgba(0,0,0,0.1)" }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <div className="p-8">
-          <motion.div
-            className="flex items-center gap-2 mb-6"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl font-semibold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Preview & Voice</h2>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left Column: Preview */}
-            <div className="space-y-5">
-              <div className="space-y-3">
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl shadow-sm">
-                  <h3 className="text-lg font-medium mb-4 flex items-center gap-2 text-gray-800">
-                    <MessageSquare className="h-5 w-5 text-blue-500" />
-                    Preview Message
-                  </h3>
-                  
-                  <Textarea 
-                    id="previewText"
-                    value={previewText}
-                    onChange={(e) => setPreviewText(e.target.value)}
-                    placeholder="Enter the message your AI persona will say in the preview"
-                    className="p-3 text-base border-0 focus:ring-1 focus:ring-indigo-400 transition-all rounded-xl shadow-sm bg-white bg-opacity-80"
-                    rows={3}
-                  />
-                  
-                  <div className="mt-4">
-                      <Button 
-                        type="button" 
-                      onClick={handleGeneratePreview}
-                      disabled={isGeneratingPreview || !formData.faceId}
-                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl"
-                      >
-                      {isGeneratingPreview ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Generating Preview...
-                        </>
-                      ) : (
-                        <>
-                          <Play className="mr-2 h-4 w-4" />
-                          Generate Video Preview
-                        </>
-                      )}
-                      </Button>
-                  </div>
-                </div>
-                
-                <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm min-h-[200px] flex items-center justify-center">
-                  {videoPreview ? (
-                    <video
-                      src={videoPreview.mp4Url}
-                      controls
-                      className="w-full rounded-xl"
-                      preload="auto"
-                      playsInline
-                      onLoadedMetadata={(e) => {
-                        // Ensure video has loaded metadata before playing
-                        const video = e.currentTarget;
-                        console.log("Video metadata loaded, duration:", video.duration);
-                        
-                        // Explicitly set currentTime to 0 to ensure video starts from beginning
-                        video.currentTime = 0;
-                        
-                        // Only attempt playback if user has interacted with page
-                        if (document.documentElement.classList.contains('user-interaction')) {
-                          video.play().catch(err => console.error("Auto-play failed:", err));
-                        }
-                      }}
-                    />
-                  ) : (
-                    <div className="text-center text-gray-500">
-                      <ImageIcon className="mx-auto h-12 w-12 text-gray-300" />
-                      <p className="mt-2">Generate a preview to see your AI persona in action</p>
-                    </div>
-                )}
-              </div>
-                  </div>
-                </div>
-                
-            {/* Right Column: Voice Selection */}
-            <div className="space-y-5">
-              <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-6 rounded-2xl shadow-sm">
-                <h3 className="text-lg font-medium mb-4 flex items-center gap-2 text-gray-800">
-                  <Mic className="h-5 w-5 text-amber-500" />
-                  Voice Selection
-                </h3>
-                <p className="text-sm text-gray-600 mb-4 p-4 bg-white bg-opacity-60 rounded-xl">
-                  Choose a voice for your AI persona, or upload your own voice sample.
-                </p>
-                
-                <div className="space-y-5">
-                  {/* Pre-defined voice options */}
-                    <div className="space-y-2">
-                    <Label htmlFor="voice" className="text-base font-medium text-gray-700">Select Voice</Label>
-            <Select
-                      value={formData.voice} 
-              onValueChange={handleVoiceChange}
-                      disabled={formData.useCustomVoice}
-            >
-                      <SelectTrigger className="w-full border border-amber-200 focus:border-amber-400 bg-white rounded-xl shadow-sm">
-                          <SelectValue placeholder="Select a voice" />
-                        </SelectTrigger>
-                      <SelectContent className="bg-white border-0 shadow-lg rounded-xl overflow-hidden">
-                        <div className="p-2 max-h-[300px] overflow-y-auto bg-white">
-                {elevenLabsVoices.map((voice) => (
-                            <SelectItem key={voice.id} value={voice.id} className="rounded-lg my-1 hover:bg-amber-50">
-                    {voice.name}
-                  </SelectItem>
-                ))}
-                        </div>
-                        </SelectContent>
-                      </Select>
-                    <p className="text-xs text-amber-700 italic mt-1">
-                      Powered by ElevenLabs voice technology
-                    </p>
-                    </div>
-            
-                  {/* Divider with OR text */}
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-amber-200"></div>
-                    </div>
-                    <div className="relative flex justify-center">
-                      <span className="bg-gradient-to-r from-amber-50 to-yellow-50 px-3 text-sm text-amber-600 font-medium">
-                        OR
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {/* Custom voice upload */}
-                  <div className="space-y-3">
-                    <Label className="text-base font-medium text-gray-700">Upload Your Voice</Label>
-                    
-                    <input
-                      ref={voiceInputRef}
-                      type="file"
-                      accept="audio/*"
-                      onChange={handleVoiceUpload}
-                      className="hidden"
-                    />
-                    
-                    {voicePreviewUrl ? (
-                      <div className="space-y-3">
-                        <div className="bg-white p-4 rounded-xl border border-amber-200 shadow-sm">
-                          <audio
-                            src={voicePreviewUrl}
-                            controls
-                            className="w-full h-10"
-                          ></audio>
-                          <p className="text-xs text-amber-700 mt-2">
-                            Your custom voice sample will be used for this AI persona
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-            <Button 
-              type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setVoiceFile(null);
-                              setVoicePreviewUrl(null);
-                              setFormData(prev => ({ ...prev, useCustomVoice: false }));
-                            }}
-                            className="text-amber-700 border-amber-300 hover:bg-amber-100 rounded-xl"
-                          >
-                            <X className="h-3.5 w-3.5 mr-1" />
-                            Remove
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => voiceInputRef.current?.click()}
-                            className="text-amber-700 border-amber-300 hover:bg-amber-100 rounded-xl"
-                          >
-                            <Upload className="h-3.5 w-3.5 mr-1" />
-                            Change
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div>
-                        <motion.div 
-                          whileHover={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.1)" }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <Button 
-                            type="button"
-                            variant="outline"
-                            onClick={() => voiceInputRef.current?.click()}
-                            className="w-full h-20 border-2 border-dashed border-amber-300 hover:border-amber-400 bg-white flex flex-col items-center justify-center gap-2 transition-all duration-300 rounded-xl"
-                          >
-                            <Upload className="h-5 w-5 text-amber-500" />
-                            <span className="text-sm text-amber-700">Upload voice sample</span>
-            </Button>
-                        </motion.div>
-                        <p className="text-xs text-amber-700 mt-2">
-                          Supported formats: MP3, WAV, M4A (max 10MB)<br />
-                          A clear 10-20 second sample works best
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-      
-      {/* Processing Status Section - shown only when a custom face is in the queue */}
-      {isCustomFaceInQueue && (
-        <motion.div 
-          className="mt-8 p-6 rounded-2xl bg-white shadow-md border-0 overflow-hidden relative"
-          style={{ 
-            boxShadow: "0 10px 30px -5px rgba(79, 70, 229, 0.1)" 
-          }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="flex flex-col md:flex-row md:items-center gap-4">
-            <div className="rounded-full p-3 flex-shrink-0 bg-gradient-to-r from-indigo-50 to-purple-50 self-start">
-              {faceGenerationStatus.isReady ? (
-                <Check className="h-6 w-6 text-green-500" />
-              ) : faceGenerationStatus.failed ? (
-                <X className="h-6 w-6 text-red-500" />
-              ) : (
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                >
-                  <Loader2 className="h-6 w-6 text-indigo-500" />
-                </motion.div>
-              )}
-              </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {faceGenerationStatus.isReady 
-                    ? "Face Generation Complete! 🎉" 
-                    : faceGenerationStatus.failed
-                    ? "Face Generation Failed"
-                    : `Face Processing - Please Wait`}
-                </h3>
-                
-                {/* Processing Timer */}
-                {!faceGenerationStatus.isReady && !faceGenerationStatus.failed && (
-                  <div className="text-sm font-mono bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
-                    Processing Time: {formatTime(processingTime)}
-              </div>
-            )}
-          </div>
-              
-              <p className="text-indigo-600 mt-2">
-                {faceGenerationStatus.message}
-                {!faceGenerationStatus.isReady && !faceGenerationStatus.failed && (
-                  <span className="block mt-1 text-sm opacity-70 flex justify-between">
-                    <span>Last checked: {new Date(faceGenerationStatus.lastChecked).toLocaleTimeString()}</span>
-                    <button 
-                      onClick={checkFaceStatus} 
-                      className="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-2 py-1 rounded-md flex items-center gap-1 transition-colors"
-                      disabled={isPollingActive}
-                    >
-                      <RefreshCw className="h-3 w-3" />
-                      Check Status
-                    </button>
-                  </span>
-                )}
+            <div>
+              <Label htmlFor="firstMessage">Greeting Message</Label>
+              <Textarea
+                id="firstMessage"
+                name="firstMessage"
+                value={formData.firstMessage}
+                onChange={handleChange}
+                placeholder="Hello! I'm [Name]. How can I help you today?"
+                className="mt-1"
+                rows={3}
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                This is the first message your AI will say when starting a conversation.
               </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Form section: Visual Appearance */}
+        <div className="rounded-xl bg-white p-6 shadow-sm">
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-800">
+            <ImageIcon size={18} className="text-pink-600" />
+            <span>Visual Appearance</span>
+          </h3>
+          
+          <div className="mt-4 space-y-5">
+            {renderImageUploadSection()}
+          </div>
+          
+          {/* Show success message or error */}
+          {successMessage && (
+            <div className="mt-3 rounded-md bg-green-50 p-3 text-sm text-green-700">
+              <div className="flex items-center">
+                <CheckCircle size={16} className="mr-2 flex-shrink-0" />
+                <p>{successMessage}</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-        </motion.div>
-      )}
       
-      {/* Error and Success Messages */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600 flex items-start">
-          <AlertCircle className="h-5 w-5 mr-2 mt-0.5 text-red-500 flex-shrink-0" />
-          <p>{error}</p>
-        </div>
-      )}
-      
-      {successMessage && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-600 flex items-start">
-          <CheckCircle className="h-5 w-5 mr-2 mt-0.5 text-green-500 flex-shrink-0" />
-          <p>{successMessage}</p>
-        </div>
-      )}
-      
-      {/* Save Button */}
-      <div className="flex justify-end pt-4">
-        <motion.div
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-        >
-          <Button 
-            type="submit" 
-            className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg rounded-xl"
-            disabled={loading || !formData.name || !formData.description}
-          >
-            {loading ? (
+      {/* Form submission button */}
+      <div className="flex justify-end">
+        <Button type="submit" disabled={loading} className="gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700">
+          {loading ? (
+            <>
               <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
-            )}
-            Save Changes
-          </Button>
-        </motion.div>
-    </div>
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save size={16} />
+              Save Changes
+            </>
+          )}
+        </Button>
+      </div>
     </form>
   );
 } 

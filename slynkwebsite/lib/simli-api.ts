@@ -11,6 +11,64 @@ export const DEFAULT_DAILY_DOMAIN = "slynk.daily.co";
 // Default Daily.co room to use as fallback
 export const DEFAULT_DAILY_ROOM = "boilermake-demo";
 
+// Image validation constraints
+export const FACE_IMAGE_REQUIREMENTS = {
+  minWidth: 512,
+  minHeight: 512,
+  maxSize: 10 * 1024 * 1024, // 10MB
+  supportedFormats: ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
+};
+
+/**
+ * Validate an image for face generation
+ * @param file The image file to validate
+ * @returns An object with isValid flag and error message if invalid
+ */
+export async function validateImageForFaceGeneration(file: File): Promise<{ 
+  isValid: boolean; 
+  errorMessage?: string;
+  dimensions?: { width: number; height: number };
+}> {
+  // Check file size
+  if (file.size > FACE_IMAGE_REQUIREMENTS.maxSize) {
+    return {
+      isValid: false,
+      errorMessage: `Image is too large (${(file.size / (1024 * 1024)).toFixed(1)}MB). Maximum size is ${FACE_IMAGE_REQUIREMENTS.maxSize / (1024 * 1024)}MB.`
+    };
+  }
+
+  // Check file type
+  if (!FACE_IMAGE_REQUIREMENTS.supportedFormats.includes(file.type)) {
+    return {
+      isValid: false,
+      errorMessage: `Unsupported file format (${file.type}). Supported formats: ${FACE_IMAGE_REQUIREMENTS.supportedFormats.join(', ')}.`
+    };
+  }
+
+  // Check image dimensions
+  try {
+    const dimensions = await getImageDimensions(file);
+    
+    if (dimensions.width < FACE_IMAGE_REQUIREMENTS.minWidth || dimensions.height < FACE_IMAGE_REQUIREMENTS.minHeight) {
+      return {
+        isValid: false,
+        errorMessage: `Image dimensions too small (${dimensions.width}x${dimensions.height}). Minimum size is ${FACE_IMAGE_REQUIREMENTS.minWidth}x${FACE_IMAGE_REQUIREMENTS.minHeight} pixels.`,
+        dimensions
+      };
+    }
+    
+    return {
+      isValid: true,
+      dimensions
+    };
+  } catch (error) {
+    return {
+      isValid: false,
+      errorMessage: 'Failed to validate image. The file may be corrupted or not a valid image.'
+    };
+  }
+}
+
 /**
  * Helper function to get a valid Daily.co room URL that is known to exist
  * This avoids the "meeting does not exist" error when joining
@@ -133,10 +191,10 @@ export async function generateFaceId(imageFile: File, faceName?: string): Promis
   try {
     console.log(`Generating face ID for ${faceName || 'unnamed_persona'}, image size: ${Math.round(imageFile.size / 1024)}KB`);
     
-    // Check image dimensions to avoid API errors
-    const dimensions = await getImageDimensions(imageFile);
-    if (dimensions.width < 512 || dimensions.height < 512) {
-      throw new Error("Image must be at least 512x512 pixels");
+    // Validate the image first
+    const validation = await validateImageForFaceGeneration(imageFile);
+    if (!validation.isValid) {
+      throw new Error(validation.errorMessage);
     }
     
     // Optimize the image before uploading to reduce processing time
