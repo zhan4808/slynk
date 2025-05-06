@@ -782,6 +782,12 @@ export async function startE2ESession(config: {
     // Always use ElevenLabs as the TTS provider
     const ttsProvider = "ElevenLabs";
     
+    // Ensure voice ID is valid or fall back to default
+    const voiceId = config.voiceId || "21m00Tcm4TlvDq8ikWAM"; // Rachel voice as fallback
+    
+    // Log the voice ID we're using
+    console.log(`Using voice ID for Simli session: ${voiceId}`);
+    
     const requestBody = {
       apiKey: config.apiKey,
       faceId: config.faceId,
@@ -790,11 +796,21 @@ export async function startE2ESession(config: {
       createTranscript: true,
       ttsProvider: ttsProvider,
       ttsModel: "sonic-turbo-2025-03-07", // Use a specific newer model
-      voiceId: config.voiceId || "21m00Tcm4TlvDq8ikWAM", // Use Rachel as the fallback voice
-      voice: config.voiceId || "21m00Tcm4TlvDq8ikWAM", // Explicitly add voice parameter to match API expectations
+      voiceId: voiceId, // Use the configured voice ID or fallback
+      voice: voiceId, // Explicitly add voice parameter to match API expectations
       language: "en", // Specify language
       llmModel: "gpt-4o-mini" // Specify LLM model
     };
+    
+    console.log("Simli session request details:", {
+      faceId: requestBody.faceId,
+      ttsProvider: requestBody.ttsProvider,
+      ttsModel: requestBody.ttsModel,
+      voiceId: requestBody.voiceId,
+      voice: requestBody.voice,
+      firstMessageLength: requestBody.firstMessage.length,
+      systemPromptLength: requestBody.systemPrompt.length,
+    });
     
     const response = await fetch('https://api.simli.ai/startE2ESession', {
       method: 'POST',
