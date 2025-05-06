@@ -264,7 +264,7 @@ export async function POST(req: NextRequest) {
 
     // If we reach here, we're using the real Simli API
     
-    // Prepare the request body for Simli API based on latest documentation
+    // Fix the simliRequestBody section to ensure persona.voice is correctly used
     const simliRequestBody = {
       apiKey: sessionToken, // Send session token as apiKey as required in the body
       faceId: persona.faceId || "tmp9i8bbq7c",
@@ -279,9 +279,34 @@ export async function POST(req: NextRequest) {
       language: "en",
       createTranscript: true
     };
-    
+
+    // Explicitly double-check voice settings
+    console.log(`[start-session] Setting up voice parameters...`);
+    console.log(`[start-session] Raw persona voice value: "${persona.voice || 'NOT_SET'}"`);
+    console.log(`[start-session] Persona name: ${persona.name}`);
+
+    // Explicitly ensure voice ID is set properly (the API seems to need both parameters)
+    if (!simliRequestBody.voice || !simliRequestBody.voiceId) {
+      const defaultVoice = "21m00Tcm4TlvDq8ikWAM"; // Rachel voice as fallback
+      console.log(`[start-session] VOICE MISSING - Using default voice (${defaultVoice}) - missing voice ID in persona`);
+      console.log(`[start-session] Voice ID missing or invalid in persona data. Check the persona creation process.`);
+      simliRequestBody.voice = defaultVoice;
+      simliRequestBody.voiceId = defaultVoice;
+    } else {
+      console.log(`[start-session] Voice ID parameters confirmed: voice=${simliRequestBody.voice}, voiceId=${simliRequestBody.voiceId}`);
+    }
+
+    // Make extra sure both voice parameters are set to the same value
+    if (simliRequestBody.voice !== simliRequestBody.voiceId) {
+      console.log(`[start-session] WARNING: Voice parameter mismatch! Fixing by making them identical.`);
+      // Set both to the voiceId parameter for consistency
+      simliRequestBody.voice = simliRequestBody.voiceId;
+      console.log(`[start-session] Unified voice parameters to: ${simliRequestBody.voiceId}`);
+    }
+
     console.log(`[start-session] Calling Simli API to start E2E session with face ID: ${simliRequestBody.faceId}`);
-    console.log(`[start-session] Using voice: ${simliRequestBody.voiceId} with provider: ${simliRequestBody.ttsProvider}`);
+    console.log(`[start-session] Using voice ID: ${simliRequestBody.voiceId} with provider: ${simliRequestBody.ttsProvider}`);
+    console.log(`[start-session] Persona voice ID from database: ${persona.voice || "NOT_SET"}`);
 
     // Call the Simli API to start a session with error logging
     let response;
