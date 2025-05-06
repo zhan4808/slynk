@@ -791,6 +791,7 @@ export async function startE2ESession(config: {
       ttsProvider: ttsProvider,
       ttsModel: "sonic-turbo-2025-03-07", // Use a specific newer model
       voiceId: config.voiceId || "21m00Tcm4TlvDq8ikWAM", // Use Rachel as the fallback voice
+      voice: config.voiceId || "21m00Tcm4TlvDq8ikWAM", // Explicitly add voice parameter to match API expectations
       language: "en", // Specify language
       llmModel: "gpt-4o-mini" // Specify LLM model
     };

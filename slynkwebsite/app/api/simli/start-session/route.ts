@@ -271,6 +271,7 @@ export async function POST(req: NextRequest) {
       ttsProvider: "ElevenLabs", // Always use ElevenLabs voices
       ttsModel: "sonic-turbo-2025-03-07", // Latest model from API docs
       voiceId: persona.voice || "21m00Tcm4TlvDq8ikWAM", // Use persona's voice ID with Rachel as fallback
+      voice: persona.voice || "21m00Tcm4TlvDq8ikWAM", // Add voice parameter explicitly to match API expectations
       systemPrompt: systemPrompt,
       firstMessage: "Hello! How can I help you today?",
       maxSessionLength: 3600, // 1 hour
