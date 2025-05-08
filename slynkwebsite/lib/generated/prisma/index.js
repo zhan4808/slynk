@@ -258,7 +258,7 @@ const config = {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "postgresql://postgres.evmwkddmneiqgseujzrf:Dou6^doU!@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+        "value": "DATABASE_URL"
       }
     }
   },
