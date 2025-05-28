@@ -57,13 +57,20 @@ const useMockApi = process.env.USE_MOCK_API === "true";
 
 // Function to get the adapter
 const getAdapter = () => {
-  if (useMockApi) return undefined;
+  if (useMockApi) {
+    console.log("Using mock mode - no database adapter");
+    return undefined;
+  }
   
   try {
-    return PrismaAdapter(prisma) as Adapter;
+    console.log("Initializing Prisma adapter...");
+    const adapter = PrismaAdapter(prisma) as Adapter;
+    console.log("Prisma adapter initialized successfully");
+    return adapter;
   } catch (error) {
     console.error("Failed to create Prisma adapter:", error);
-    return undefined;
+    console.error("This will cause authentication to fail. Check your database connection.");
+    throw error; // Don't silently fail - this should be caught early
   }
 };
 
@@ -204,14 +211,15 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         if (!session.user) {
           session.user = {
-            id: "mock-user-id",
+            id: "temp-user-id",
             name: null,
             email: null,
             image: null,
           };
         }
         
-        session.user.id = (token.id as string) || "mock-user-id";
+        // Ensure we always have a valid user ID
+        session.user.id = (token.id as string) || `temp-${Date.now()}`;
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.image = token.picture;
@@ -219,9 +227,9 @@ export const authOptions: NextAuthOptions = {
 
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
-        // If we have a user from sign-in
+        // If we have a user from sign-in (first time)
         token.id = user.id;
         return token;
       }
@@ -232,31 +240,52 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      // Look up the user in the database
+      // If we already have an ID in the token, keep it
+      if (token.id) {
+        return token;
+      }
+
+      // Look up or create the user in the database
       if (token.email) {
         try {
-          const dbUser = await prisma.user.findFirst({
+          let dbUser = await prisma.user.findFirst({
             where: { email: token.email },
           });
 
-          if (dbUser) {
-            token.id = dbUser.id;
+          // If user doesn't exist, create them
+          if (!dbUser) {
+            dbUser = await prisma.user.create({
+              data: {
+                email: token.email,
+                name: token.name,
+                image: token.picture,
+              },
+            });
           }
+
+          token.id = dbUser.id;
         } catch (error) {
-          console.error("Database lookup error:", error);
-          // If there's a database error, fall back to using the token as is
+          console.error("Database lookup/creation error:", error);
+          // Generate a fallback ID to prevent auth failure
+          token.id = `fallback-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         }
       }
 
       return token;
     },
     async redirect({ url, baseUrl }) {
+      console.log(`Redirect callback - url: ${url}, baseUrl: ${baseUrl}`);
+      
       // Validate and allow only internal redirects or those to trusted domains
       if (isValidCallbackUrl(url)) {
+        console.log(`Valid callback URL, redirecting to: ${url}`);
         return url;
       }
+      
       // Default fallback to dashboard
-      return `${baseUrl}/dashboard`;
+      const fallbackUrl = `${baseUrl}/dashboard`;
+      console.log(`Invalid callback URL, falling back to: ${fallbackUrl}`);
+      return fallbackUrl;
     },
   },
   debug: process.env.NODE_ENV === 'development',
