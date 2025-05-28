@@ -110,7 +110,7 @@ const configureEmailProvider = () => {
   }
   
   // In production, use SendGrid for email delivery
-  const from = process.env.EMAIL_FROM || 'noreply@slynkapp.com';
+  const from = process.env.EMAIL_FROM || 'noreply@slynk.studio';
   
   return EmailProvider({
     server: {
@@ -151,11 +151,23 @@ const isValidCallbackUrl = (url: string): boolean => {
   // Safe internal callback URLs
   if (url.startsWith('/')) return true;
   
-  // Check if URL matches our domain
+  // Check if URL matches our domain or localhost
   try {
+    const callbackUrlObj = new URL(url);
+    
+    // Allow any localhost URL regardless of port (for development)
+    if (callbackUrlObj.hostname === 'localhost') {
+      return true;
+    }
+    
+    // Allow production domain
+    if (callbackUrlObj.hostname === 'slynk.studio') {
+      return true;
+    }
+    
+    // Check if URL matches our configured domain
     const baseUrl = getBaseUrl();
     const baseUrlObj = new URL(baseUrl);
-    const callbackUrlObj = new URL(url);
     
     // Only allow callbacks to our domain
     return callbackUrlObj.hostname === baseUrlObj.hostname;
@@ -168,7 +180,7 @@ const isValidCallbackUrl = (url: string): boolean => {
 export const authOptions: NextAuthOptions = {
   adapter: getAdapter(),
   session: {
-    strategy: "jwt",
+    strategy: "database",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
@@ -203,78 +215,39 @@ export const authOptions: NextAuthOptions = {
         GoogleProvider({
           clientId: process.env.GOOGLE_CLIENT_ID!,
           clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+          allowDangerousEmailAccountLinking: true, // Allow linking multiple Google accounts
         }),
         configureEmailProvider(),
       ],
   callbacks: {
-    async session({ token, session }) {
-      if (token) {
-        if (!session.user) {
-          session.user = {
-            id: "temp-user-id",
-            name: null,
-            email: null,
-            image: null,
-          };
-        }
-        
-        // Ensure we always have a valid user ID
-        session.user.id = (token.id as string) || `temp-${Date.now()}`;
-        session.user.name = token.name;
-        session.user.email = token.email;
-        session.user.image = token.picture;
-      }
-
-      return session;
+    async signIn({ user, account, profile, email, credentials }) {
+      // Always allow sign in - let the adapter handle user creation/linking
+      return true;
     },
-    async jwt({ token, user, account }) {
-      if (user) {
-        // If we have a user from sign-in (first time)
-        token.id = user.id;
-        return token;
+    async session({ session, user }) {
+      // For database strategy, user comes from database
+      if (session.user && user) {
+        session.user.id = user.id;
       }
-
-      // In mock mode, just return the token
-      if (useMockApi) {
-        token.id = token.id || "mock-user-id";
-        return token;
-      }
-
-      // If we already have an ID in the token, keep it
-      if (token.id) {
-        return token;
-      }
-
-      // Look up or create the user in the database
-      if (token.email) {
-        try {
-          let dbUser = await prisma.user.findFirst({
-            where: { email: token.email },
-          });
-
-          // If user doesn't exist, create them
-          if (!dbUser) {
-            dbUser = await prisma.user.create({
-              data: {
-                email: token.email,
-                name: token.name,
-                image: token.picture,
-              },
-            });
-          }
-
-          token.id = dbUser.id;
-        } catch (error) {
-          console.error("Database lookup/creation error:", error);
-          // Generate a fallback ID to prevent auth failure
-          token.id = `fallback-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        }
-      }
-
-      return token;
+      return session;
     },
     async redirect({ url, baseUrl }) {
       console.log(`Redirect callback - url: ${url}, baseUrl: ${baseUrl}`);
+      
+      // Handle production vs development URL normalization
+      if (process.env.NODE_ENV === 'production') {
+        // In production, ensure we use HTTPS and the correct domain
+        if (url.startsWith('http://') && baseUrl.includes('slynk.studio')) {
+          url = url.replace('http://', 'https://');
+          console.log(`Fixed protocol for production, new url: ${url}`);
+        }
+      } else {
+        // Handle the port mismatch issue in development
+        if (url.includes('localhost:3000') && baseUrl.includes('localhost:3003')) {
+          url = url.replace('localhost:3000', 'localhost:3003');
+          console.log(`Fixed port mismatch, new url: ${url}`);
+        }
+      }
       
       // Validate and allow only internal redirects or those to trusted domains
       if (isValidCallbackUrl(url)) {
