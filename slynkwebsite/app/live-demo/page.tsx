@@ -4,12 +4,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SimliAgent from "@/components/SimliAgent";
 
-const samplePersona = {
-  id: "demo",
+const demoPersona = {
   name: "Demo Avatar",
-  productName: "Slynk AI",
-  systemPrompt: "You are a demo assistant for Slynk. Be engaging and helpful.",
-  firstMessage: "Hi! I'm a live demo of Slynk's AI technology. Try talking to me!",
+  description: "A sample AI persona for live demo.",
+  systemPrompt: undefined,
+  firstMessage: undefined,
   faceId: "tmp9i8bbq7c",
   voice: "default",
   useCustomVoice: false,
@@ -39,10 +38,26 @@ export default function LiveDemoPage() {
     );
   }
 
+  // Generate systemPrompt/firstMessage as in chat page
+  const systemPrompt = demoPersona.systemPrompt ||
+    `You are a virtual spokesperson for ${demoPersona.name}. ${demoPersona.description || ''}. Keep your responses friendly, helpful, and concise.`;
+  const firstMessage = demoPersona.firstMessage ||
+    `Hello! I'm ${demoPersona.name}. How can I help you today?`;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-purple-50">
       <div className="container mx-auto max-w-6xl px-4 pt-24 pb-16">
-        <SimliAgent personaId={samplePersona.id} personaData={samplePersona} />
+        <SimliAgent
+          personaId="demo"
+          personaData={{
+            name: demoPersona.name,
+            systemPrompt,
+            firstMessage,
+            faceId: demoPersona.faceId,
+            voice: demoPersona.voice,
+            useCustomVoice: demoPersona.useCustomVoice,
+          }}
+        />
       </div>
     </div>
   );
