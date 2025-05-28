@@ -922,6 +922,7 @@ const SimliAgent: React.FC<SimliAgentProps> = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "x-demo-key": "my-super-secret-demo-key"
         }
       });
       
