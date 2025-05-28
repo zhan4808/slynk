@@ -123,22 +123,34 @@ const configureEmailProvider = () => {
     },
     from,
     sendVerificationRequest: async ({ identifier, url, provider }) => {
-      // Set up SendGrid
-      setupSendgrid();
+      console.log(`🔄 sendVerificationRequest called for: ${identifier}`);
+      console.log(`📧 Magic link URL: ${url}`);
       
-      // Format the email
-      const { text, html } = formatVerificationEmail(identifier, url);
-      
-      // Send the email
-      const result = await sendEmail({
-        to: identifier,
-        subject: 'Sign in to Slynk AI',
-        text,
-        html,
-      });
-      
-      if (!result.success) {
-        console.error('Failed to send verification email:', result.error);
+      try {
+        // Set up SendGrid
+        console.log('Setting up SendGrid...');
+        setupSendgrid();
+        
+        // Format the email
+        console.log('Formatting email...');
+        const { text, html } = formatVerificationEmail(identifier, url);
+        
+        // Send the email
+        console.log('Sending email via SendGrid...');
+        const result = await sendEmail({
+          to: identifier,
+          subject: 'Sign in to Slynk AI',
+          text,
+          html,
+        });
+        
+        if (result.success) {
+          console.log(`✅ Verification email sent successfully to: ${identifier}`);
+        } else {
+          console.error(`❌ Failed to send verification email to ${identifier}:`, result.error);
+        }
+      } catch (error) {
+        console.error(`❌ Error in sendVerificationRequest for ${identifier}:`, error);
       }
     },
   });
