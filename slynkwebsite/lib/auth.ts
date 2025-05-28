@@ -122,35 +122,70 @@ const configureEmailProvider = () => {
       },
     },
     from,
-    sendVerificationRequest: async ({ identifier, url, provider }) => {
-      console.log(`🔄 sendVerificationRequest called for: ${identifier}`);
+    // Use NextAuth's default email template with our custom styling
+    sendVerificationRequest: async ({ identifier, url, provider, theme }) => {
+      console.log(`🔄 Sending verification email to: ${identifier}`);
       console.log(`📧 Magic link URL: ${url}`);
       
+      // Use NextAuth's built-in Nodemailer transport to ensure tokens work correctly
+      const { createTransport } = await import('nodemailer');
+      const transport = createTransport({
+        host: 'smtp.sendgrid.net',
+        port: 587,
+        secure: false,
+        auth: {
+          user: 'apikey',
+          pass: process.env.SENDGRID_API_KEY,
+        },
+      });
+      
+      const html = `
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+          <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+            <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); padding: 40px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 700;">✨ Slynk</h1>
+              <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 18px;">Sign in to your account</p>
+            </div>
+            <div style="padding: 40px;">
+              <h2 style="color: #333; margin: 0 0 20px 0; font-size: 24px;">Ready to continue?</h2>
+              <p style="color: #666; line-height: 1.6; margin: 0 0 30px 0; font-size: 16px;">
+                Click the button below to sign in to your Slynk account. This link will expire in 24 hours for your security.
+              </p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${url}" style="display: inline-block; background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 15px rgba(238, 90, 36, 0.3);">
+                  🚀 Sign in to Slynk
+                </a>
+              </div>
+              <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 30px 0;">
+                <p style="color: #666; font-size: 14px; margin: 0; line-height: 1.5;">
+                  <strong>Security note:</strong> If you didn't request this sign-in link, you can safely ignore this email. 
+                  The link will expire automatically.
+                </p>
+              </div>
+              <div style="text-align: center; margin-top: 30px;">
+                <p style="color: #999; font-size: 14px; margin: 0;">
+                  Need help? Contact us at <a href="mailto:support@slynk.studio" style="color: #ff6b6b; text-decoration: none;">support@slynk.studio</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      const text = `Sign in to Slynk\n\nClick this link to sign in to your account:\n${url}\n\nThis link will expire in 24 hours for your security.\n\nIf you didn't request this sign-in link, you can safely ignore this email.`;
+      
       try {
-        // Set up SendGrid
-        console.log('Setting up SendGrid...');
-        setupSendgrid();
-        
-        // Format the email
-        console.log('Formatting email...');
-        const { text, html } = formatVerificationEmail(identifier, url);
-        
-        // Send the email
-        console.log('Sending email via SendGrid...');
-        const result = await sendEmail({
+        await transport.sendMail({
           to: identifier,
+          from: provider.from,
           subject: 'Sign in to Slynk AI',
           text,
           html,
         });
-        
-        if (result.success) {
-          console.log(`✅ Verification email sent successfully to: ${identifier}`);
-        } else {
-          console.error(`❌ Failed to send verification email to ${identifier}:`, result.error);
-        }
+        console.log(`✅ Verification email sent successfully to: ${identifier}`);
       } catch (error) {
-        console.error(`❌ Error in sendVerificationRequest for ${identifier}:`, error);
+        console.error(`❌ Failed to send verification email to ${identifier}:`, error);
+        throw error;
       }
     },
   });
