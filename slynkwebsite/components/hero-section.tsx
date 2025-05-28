@@ -2,67 +2,32 @@
 
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { Mail, Sparkles, ArrowRight, MousePointer2 } from "lucide-react"
-import Image from "next/image"
+import { Sparkles, ArrowRight, MousePointer2, Play, Zap } from "lucide-react"
+import Link from "next/link"
 import { AnimatedText } from "@/components/animated-text"
-import { toast } from "@/components/ui/use-toast"
 import { AnimatedEmojiBackground } from "@/components/animated-emoji-background"
 import { motion, AnimatePresence } from "framer-motion"
 import { AnimatedLogo } from "@/components/animated-logo"
+import dynamic from "next/dynamic"
+import { DEFAULT_FACE_ID } from "@/lib/simli-api"
+
+// Dynamically import SimliAgent to avoid SSR issues
+const SimliAgent = dynamic(() => import("@/components/SimliAgent"), {
+  ssr: false,
+  loading: () => (
+    <div className="aspect-video rounded-2xl bg-gradient-to-r from-pink-100 to-purple-100 flex items-center justify-center">
+      <div className="flex items-center gap-3 text-gray-600">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+        <span>Loading interactive demo...</span>
+      </div>
+    </div>
+  )
+})
 
 export function HeroSection() {
-  const [email, setEmail] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isInputFocused, setIsInputFocused] = useState(false)
   const [isVideoHovered, setIsVideoHovered] = useState(false)
-
-  const handleWaitlistSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!email.trim() || !email.includes('@')) {
-      toast({
-        title: "Invalid Email",
-        description: "Please enter a valid email address",
-        variant: "destructive",
-      })
-      return
-    }
-    
-    setIsSubmitting(true)
-    
-    try {
-      // Submit to our API endpoint
-      const response = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      })
-      
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to submit')
-      }
-      
-      toast({
-        title: "Success!",
-        description: "You've been added to our waitlist. We'll notify you when we launch!",
-        variant: "default",
-      })
-      
-      setEmail("")
-    } catch (error) {
-      console.error("Error submitting to waitlist:", error)
-      toast({
-        title: "Submission Failed",
-        description: error instanceof Error ? error.message : "There was an error adding you to the waitlist. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+  const [showLiveDemo, setShowLiveDemo] = useState(false)
 
   return (
     <section className="relative min-h-screen pt-32 pb-16 overflow-hidden bg-gradient-to-b from-white to-pink-50/30">
@@ -118,9 +83,9 @@ export function HeroSection() {
             AI-driven avatars tell your story.
           </motion.p>
           
-          {/* Animated Waitlist Form */}
+          {/* Action Buttons */}
           <motion.div 
-            className="relative max-w-2xl mx-auto"
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -161,94 +126,96 @@ export function HeroSection() {
             >
               <Sparkles className="h-6 w-6 text-purple-500" />
             </motion.div>
-            
-            {/* Animated gradient border - now with pointer-events-none */}
-            <div className="absolute -inset-1.5 rounded-2xl bg-gradient-to-r from-pink-400 via-purple-500 to-blue-500 opacity-75 blur-sm animate-border-flow pointer-events-none"></div>
-            
-            {/* Spotlight effect on hover - also with pointer-events-none */}
-            <motion.div 
-              className="absolute inset-0 bg-gradient-to-r from-pink-300/0 via-white/50 to-purple-300/0 rounded-2xl opacity-0 pointer-events-none"
-              animate={isInputFocused ? { opacity: 0.5, x: ["-100%", "100%"] } : { opacity: 0 }}
-              transition={isInputFocused ? { 
-                x: { duration: 1.5, repeat: Infinity, ease: "linear" },
-                opacity: { duration: 0.3 }
-              } : { opacity: { duration: 0.3 } }}
-            />
-            
-            {/* Waitlist Form */}
-            <form onSubmit={handleWaitlistSubmit} className="relative flex flex-col sm:flex-row gap-3 bg-white/90 backdrop-blur-sm rounded-2xl p-1.5 shadow-xl">
-              <div className="relative flex-grow">
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="pl-12 h-14 text-base rounded-xl border-none shadow-inner bg-gray-50/80 focus:ring-2 focus:ring-pink-400 focus:bg-white transition-all"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onFocus={() => setIsInputFocused(true)}
-                  onBlur={() => setIsInputFocused(false)}
-                  required
-                />
-              </div>
-              
-              <Button 
-                type="submit" 
-                className="h-14 px-8 text-base font-medium bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:opacity-90 rounded-xl transition-all shadow-md hover:shadow-pink-400/20 hover:shadow-lg flex items-center gap-2"
-                disabled={isSubmitting}
+
+            <Link href="/create" className="relative">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                {isSubmitting ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Adding...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Join Waitlist</span>
-                    <ArrowRight className="h-4 w-4 ml-1" />
-                  </>
-                )}
-              </Button>
-            </form>
-            
-            {/* Subtle pulse animation around the form - with pointer-events-none */}
-            <motion.div 
-              className="absolute -inset-4 rounded-3xl border border-pink-200/40 pointer-events-none"
-              animate={{ 
-                scale: [1, 1.01, 1],
-                opacity: [0.2, 0.3, 0.2]
-              }}
-              transition={{ 
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut" 
-              }}
-            />
-          </motion.div>
-          
-          {/* Original buttons (commented out) */}
-          {/*
-          <div className="flex gap-4 justify-center relative z-20">
-            <Button
-              variant="outline"
-              className="gap-2 border-pink-200 hover:bg-pink-50 text-pink-600"
-              onClick={() => window.open("#demo", "_self")}
-            >
-              <Play className="w-4 h-4" />
-              Watch Demo
-            </Button>
-            <Link href="/create" className="z-20">
-              <Button className="bg-gradient-to-r from-pink-400 to-pink-600 text-white hover:opacity-90">
-                Get Started
-              </Button>
+                <Button className="h-14 px-8 text-base font-medium bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:opacity-90 rounded-xl transition-all shadow-md hover:shadow-pink-400/20 hover:shadow-lg flex items-center gap-2">
+                  <Zap className="h-5 w-5" />
+                  <span>Get Started</span>
+                  <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
+              </motion.div>
             </Link>
-          </div>
-          */}
+
+            <div className="relative">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {/* Animated gradient border */}
+                <div className="absolute -inset-1.5 rounded-2xl bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 opacity-75 blur-sm animate-border-flow pointer-events-none"></div>
+                
+                <Button
+                  className="relative h-14 px-8 text-base font-medium gap-2 bg-white/90 backdrop-blur-sm text-purple-600 rounded-xl transition-all shadow-xl hover:shadow-purple-400/20 hover:shadow-lg border-none hover:bg-white"
+                  onClick={() => setShowLiveDemo(!showLiveDemo)}
+                >
+                  <Play className="w-5 h-5" />
+                  {showLiveDemo ? "Hide Demo" : "Try Live Demo"}
+                </Button>
+                
+                {/* Subtle pulse animation around the button */}
+                <motion.div 
+                  className="absolute -inset-4 rounded-3xl border border-purple-200/40 pointer-events-none"
+                  animate={{ 
+                    scale: [1, 1.01, 1],
+                    opacity: [0.2, 0.3, 0.2]
+                  }}
+                  transition={{ 
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut" 
+                  }}
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Live Interactive Demo */}
+          <AnimatePresence>
+            {showLiveDemo && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.5 }}
+                className="mb-12"
+              >
+                <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-6 border border-pink-200">
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">🎯 Live Demo</h3>
+                    <p className="text-gray-600 text-sm">
+                      Talk with our AI persona in real-time
+                    </p>
+                  </div>
+                  
+                  <ShineBorder className="relative mx-auto max-w-md" borderClassName="rounded-2xl overflow-hidden">
+                    <div className="aspect-[9/16] w-full max-w-sm mx-auto rounded-2xl overflow-hidden bg-black">
+                      <SimliAgent 
+                        personaId="default"
+                        personaData={{
+                          name: "Demo Assistant",
+                          systemPrompt: "You are a demo assistant for Slynk. Be engaging and concise. Keep responses under 20 words.",
+                          firstMessage: "Hi! I'm a live demo of Slynk's AI technology. Try talking to me!",
+                          faceId: DEFAULT_FACE_ID,
+                          voice: "default",
+                          personaType: "default"
+                        }}
+                        onStart={() => console.log("Demo started")}
+                        onClose={() => console.log("Demo closed")}
+                      />
+                    </div>
+                  </ShineBorder>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        <ShineBorder className="relative mx-auto" borderClassName="rounded-2xl overflow-hidden pink-glow">
+        {/* Demo Video Section */}
+        <ShineBorder className="relative mx-auto" borderClassName="rounded-2xl overflow-hidden pink-glow" id="demo-video">
           <motion.div 
             className="relative"
             initial={{ opacity: 0, y: 20 }}
@@ -260,11 +227,6 @@ export function HeroSection() {
               onMouseEnter={() => setIsVideoHovered(true)}
               onMouseLeave={() => setIsVideoHovered(false)}
             >
-              {/* 
-                IMPORTANT: Replace YOUR_VIDEO_ID with your actual YouTube video ID
-                1. Upload SlynkDemo.mp4 to YouTube as unlisted video
-                2. From video URL like https://www.youtube.com/watch?v=abc123xyz, use 'abc123xyz' as YOUR_VIDEO_ID
-              */}
               <iframe
                 src="https://www.youtube-nocookie.com/embed/ay2a3qXnbzo?autoplay=1&mute=1&loop=1&playlist=ay2a3qXnbzo&controls=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3"
                 title="Slynk Demo Video"
@@ -273,8 +235,6 @@ export function HeroSection() {
                 className="w-full h-full rounded-2xl"
                 style={{ border: 'none' }}
               ></iframe>
-              
-              {/* Optional custom overlay for play/pause if needed later */}
             </div>
           </motion.div>
         </ShineBorder>
