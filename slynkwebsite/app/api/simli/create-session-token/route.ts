@@ -9,6 +9,17 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export async function POST(req: NextRequest) {
   try {
+    // Demo key bypass
+    const demoKey = req.headers.get('x-demo-key');
+    const DEMO_KEY = process.env.DEMO_KEY;
+    if (DEMO_KEY && demoKey === DEMO_KEY) {
+      return NextResponse.json({
+        sessionToken: `mock-demo-token-${uuidv4()}`,
+        isMock: true,
+        demo: true
+      });
+    }
+
     // Check if user is authenticated
     const session = await getServerSession(authOptions);
     if (!session?.user) {
