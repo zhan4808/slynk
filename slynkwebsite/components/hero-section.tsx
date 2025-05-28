@@ -148,13 +148,14 @@ export function HeroSection() {
                 {/* Animated gradient border */}
                 <div className="absolute -inset-1.5 rounded-2xl bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 opacity-75 blur-sm animate-border-flow pointer-events-none"></div>
                 
-                <Button
-                  className="relative h-14 px-8 text-base font-medium gap-2 bg-white/90 backdrop-blur-sm text-purple-600 rounded-xl transition-all shadow-xl hover:shadow-purple-400/20 hover:shadow-lg border-none hover:bg-white"
-                  onClick={() => setShowLiveDemo(!showLiveDemo)}
-                >
-                  <Play className="w-5 h-5" />
-                  {showLiveDemo ? "Hide Demo" : "Try Live Demo"}
-                </Button>
+                <Link href="/live-demo" passHref legacyBehavior>
+                  <Button
+                    className="relative h-14 px-8 text-base font-medium gap-2 bg-white/90 backdrop-blur-sm text-purple-600 rounded-xl transition-all shadow-xl hover:shadow-purple-400/20 hover:shadow-lg border-none hover:bg-white"
+                  >
+                    <Play className="w-5 h-5" />
+                    Try Live Demo
+                  </Button>
+                </Link>
                 
                 {/* Subtle pulse animation around the button */}
                 <motion.div 
